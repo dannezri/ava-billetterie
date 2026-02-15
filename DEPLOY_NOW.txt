@@ -1,0 +1,44 @@
+========================================
+🚀 DÉPLOIEMENT - COMMANDES À EXÉCUTER
+========================================
+
+Étape 1 : Configurer Vercel (5 min)
+------------------------------------
+cd /Users/dannezri/Desktop/ava
+bash VERCEL_ENV_COMMANDS.sh
+
+(Le script va vous demander de copier-coller 5 variables)
+(Sélectionner "Production, Preview, Development" pour chaque)
+
+
+Étape 2 : Déployer (1 min)
+---------------------------
+git add .
+git commit -m "feat: complete Supabase configuration"
+git push origin main
+
+
+Étape 3 : Vérifier (1 min)
+---------------------------
+curl https://ava-billetterie-web.vercel.app/api/health
+
+Devrait retourner: {"success":true,...}
+
+
+Étape 4 : Voir les logs
+------------------------
+vercel logs --follow
+
+
+✅ C'EST TOUT !
+===============
+
+Votre app sera déployée avec :
+- Database PostgreSQL (7 tables)
+- Webhooks Stripe
+- Auth Supabase
+- CI/CD automatique
+
+📚 Documentation complète : DEPLOYMENT_READY.md
+
+========================================
