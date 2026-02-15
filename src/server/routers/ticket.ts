@@ -26,14 +26,14 @@ export const ticketRouter = router({
         take: limit + 1,
         cursor: cursor ? { id: cursor } : undefined,
         where: {
-          status: 'AVAILABLE',
+          status: 'ACTIVE',
           eventId: eventId || undefined,
         },
         include: {
           event: {
             select: {
               title: true,
-              date: true,
+              eventDate: true,
               venue: true,
             },
           },
@@ -147,7 +147,7 @@ export const ticketRouter = router({
         data: {
           ...input,
           sellerId: userId,
-          status: 'PENDING_VERIFICATION',
+          status: 'PENDING_VALIDATION',
         },
         include: {
           event: true,
@@ -165,8 +165,8 @@ export const ticketRouter = router({
       z.object({
         id: z.string(),
         status: z.enum([
-          'PENDING_VERIFICATION',
-          'AVAILABLE',
+          'PENDING_VALIDATION',
+          'ACTIVE',
           'RESERVED',
           'SOLD',
           'CANCELLED',

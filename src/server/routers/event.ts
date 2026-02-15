@@ -68,7 +68,7 @@ export const eventRouter = router({
         include: {
           tickets: {
             where: {
-              status: 'AVAILABLE',
+              status: 'ACTIVE',
             },
             include: {
               seller: {
@@ -116,7 +116,7 @@ export const eventRouter = router({
         },
         take: input.limit,
         orderBy: {
-          date: 'asc',
+          eventDate: 'asc',
         },
       });
 
@@ -137,13 +137,13 @@ export const eventRouter = router({
 
       const events = await ctx.prisma.event.findMany({
         where: {
-          date: {
+          eventDate: {
             gte: now,
           },
         },
         take: input.limit,
         orderBy: {
-          date: 'asc',
+          eventDate: 'asc',
         },
       });
 
@@ -167,7 +167,7 @@ export const eventRouter = router({
         },
         take: input.limit,
         orderBy: {
-          date: 'asc',
+          eventDate: 'asc',
         },
       });
 
@@ -187,13 +187,13 @@ export const eventRouter = router({
         ctx.prisma.ticket.count({
           where: {
             eventId: input.id,
-            status: 'AVAILABLE',
+            status: 'ACTIVE',
           },
         }),
         ctx.prisma.ticket.aggregate({
           where: {
             eventId: input.id,
-            status: 'AVAILABLE',
+            status: 'ACTIVE',
           },
           _avg: {
             price: true,
