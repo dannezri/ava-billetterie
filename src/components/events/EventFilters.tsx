@@ -47,19 +47,19 @@ export function EventFilters({
   };
 
   const handleCityChange = (value: string) => {
-    const newFilters = { ...localFilters, city: value };
+    const newFilters = { ...localFilters, city: value === 'all' ? '' : value };
     setLocalFilters(newFilters);
     onFiltersChange(newFilters);
   };
 
   const handleDateRangeChange = (value: string) => {
-    const newFilters = { ...localFilters, dateRange: value };
+    const newFilters = { ...localFilters, dateRange: value === 'all' ? '' : value };
     setLocalFilters(newFilters);
     onFiltersChange(newFilters);
   };
 
   const handleCategoryChange = (value: string) => {
-    const newFilters = { ...localFilters, category: value };
+    const newFilters = { ...localFilters, category: value === 'all' ? '' : value };
     setLocalFilters(newFilters);
     onFiltersChange(newFilters);
   };
@@ -121,12 +121,12 @@ export function EventFilters({
           <Label htmlFor="category" className="text-sm font-medium">
             Catégorie
           </Label>
-          <Select value={localFilters.category} onValueChange={handleCategoryChange}>
+          <Select value={localFilters.category || 'all'} onValueChange={handleCategoryChange}>
             <SelectTrigger id="category">
               <SelectValue placeholder="Toutes" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toutes les catégories</SelectItem>
+              <SelectItem value="all">Toutes les catégories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
@@ -142,12 +142,12 @@ export function EventFilters({
             <MapPin className="mr-1 inline h-4 w-4" />
             Ville
           </Label>
-          <Select value={localFilters.city} onValueChange={handleCityChange}>
+          <Select value={localFilters.city || 'all'} onValueChange={handleCityChange}>
             <SelectTrigger id="city">
               <SelectValue placeholder="Toutes" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toutes les villes</SelectItem>
+              <SelectItem value="all">Toutes les villes</SelectItem>
               {cities.map((city) => (
                 <SelectItem key={city} value={city}>
                   {city}
@@ -163,12 +163,12 @@ export function EventFilters({
             <Calendar className="mr-1 inline h-4 w-4" />
             Période
           </Label>
-          <Select value={localFilters.dateRange} onValueChange={handleDateRangeChange}>
+          <Select value={localFilters.dateRange || 'all'} onValueChange={handleDateRangeChange}>
             <SelectTrigger id="dateRange">
               <SelectValue placeholder="Toutes" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toutes les dates</SelectItem>
+              <SelectItem value="all">Toutes les dates</SelectItem>
               <SelectItem value="today">Aujourd'hui</SelectItem>
               <SelectItem value="week">Cette semaine</SelectItem>
               <SelectItem value="month">Ce mois-ci</SelectItem>
