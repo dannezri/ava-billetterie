@@ -2,59 +2,205 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Design System - AVA Platform
+ * 
+ * Couleurs principales :
+ * - Trust Blue (#2B87E3) : Fiabilité, sécurité, transactions
+ * - Accent Green (#10B981) : Validation, succès, confiance
+ */
+
 :root {
+  /* Base colors */
   --background: 0 0% 100%;
-  --foreground: 0 0% 9%;
+  --foreground: 222 47% 11%;
+  
+  /* Card */
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 9%;
+  --card-foreground: 222 47% 11%;
+  
+  /* Popover */
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 9%;
-  --primary: 0 0% 9%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 96%;
-  --secondary-foreground: 0 0% 9%;
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 45%;
-  --accent: 0 0% 96%;
-  --accent-foreground: 0 0% 9%;
+  --popover-foreground: 222 47% 11%;
+  
+  /* Primary - Trust Blue */
+  --primary: 211 77% 53%; /* #2B87E3 */
+  --primary-foreground: 0 0% 100%;
+  
+  /* Secondary - Accent Green */
+  --secondary: 160 84% 39%; /* #10B981 */
+  --secondary-foreground: 0 0% 100%;
+  
+  /* Muted */
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  
+  /* Accent - Light version of secondary green */
+  --accent: 160 84% 95%;
+  --accent-foreground: 160 84% 20%;
+  
+  /* Destructive */
   --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 90%;
-  --input: 0 0% 90%;
-  --ring: 0 0% 9%;
+  --destructive-foreground: 0 0% 100%;
+  
+  /* Border */
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  
+  /* Ring (focus) */
+  --ring: 211 77% 53%; /* Trust Blue */
+  
+  /* Radius */
   --radius: 0.5rem;
+  
+  /* Success */
+  --success: 160 84% 39%; /* Accent Green */
+  --success-foreground: 0 0% 100%;
+  
+  /* Warning */
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+  
+  /* Info */
+  --info: 217 91% 60%;
+  --info-foreground: 0 0% 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 0 0% 9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 64%;
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 0 0% 83%;
-  }
+.dark {
+  /* Base colors */
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+  
+  /* Card */
+  --card: 222 47% 14%;
+  --card-foreground: 210 40% 98%;
+  
+  /* Popover */
+  --popover: 222 47% 14%;
+  --popover-foreground: 210 40% 98%;
+  
+  /* Primary - Trust Blue (lighter for dark mode) */
+  --primary: 211 77% 63%; /* Lighter blue */
+  --primary-foreground: 222 47% 11%;
+  
+  /* Secondary - Accent Green (lighter for dark mode) */
+  --secondary: 160 84% 49%; /* Lighter green */
+  --secondary-foreground: 222 47% 11%;
+  
+  /* Muted */
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+  
+  /* Accent */
+  --accent: 160 84% 20%;
+  --accent-foreground: 160 84% 90%;
+  
+  /* Destructive */
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 210 40% 98%;
+  
+  /* Border */
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  
+  /* Ring (focus) */
+  --ring: 211 77% 63%;
+  
+  /* Success */
+  --success: 160 84% 49%;
+  --success-foreground: 222 47% 11%;
+  
+  /* Warning */
+  --warning: 38 92% 60%;
+  --warning-foreground: 222 47% 11%;
+  
+  /* Info */
+  --info: 217 91% 70%;
+  --info-foreground: 222 47% 11%;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+  
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', sans-serif;
+  }
+  
+  /* Typography improvements */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+  
+  h1 {
+    @apply text-4xl lg:text-5xl;
+  }
+  
+  h2 {
+    @apply text-3xl lg:text-4xl;
+  }
+  
+  h3 {
+    @apply text-2xl lg:text-3xl;
+  }
+  
+  h4 {
+    @apply text-xl lg:text-2xl;
+  }
+  
+  h5 {
+    @apply text-lg lg:text-xl;
+  }
+  
+  h6 {
+    @apply text-base lg:text-lg;
+  }
+}
+
+@layer components {
+  /* Status badges styles */
+  .badge-success {
+    @apply bg-secondary/10 text-secondary border-secondary/20;
+  }
+  
+  .badge-warning {
+    @apply bg-warning/10 text-warning border-warning/20;
+  }
+  
+  .badge-error {
+    @apply bg-destructive/10 text-destructive border-destructive/20;
+  }
+  
+  .badge-info {
+    @apply bg-info/10 text-info border-info/20;
+  }
+  
+  /* Focus styles */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+  
+  /* Container with max-width */
+  .container-custom {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+}
+
+@layer utilities {
+  /* Text gradient utilities */
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent;
+  }
+  
+  .text-gradient-secondary {
+    @apply bg-gradient-to-r from-secondary to-secondary/80 bg-clip-text text-transparent;
+  }
+  
+  /* Smooth scrolling */
+  .smooth-scroll {
+    scroll-behavior: smooth;
   }
 }

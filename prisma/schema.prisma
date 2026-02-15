@@ -16,12 +16,14 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
+  name      String?
   phone     String?
   
-  kycStatus      KYCStatus @default(PENDING)
-  kycProviderId  String?   @map("kyc_provider_id")
-  stripeAccountId String?  @map("stripe_account_id")
-  trustScore     Int       @default(50) @map("trust_score")
+  kycStatus        KYCStatus @default(PENDING) @map("kyc_status")
+  kycProviderId    String?   @map("kyc_provider_id")
+  verifiedIdentity Boolean   @default(false) @map("verified_identity")
+  stripeAccountId  String?   @map("stripe_account_id")
+  trustScore       Int       @default(50) @map("trust_score")
   
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -53,16 +55,21 @@ enum KYCStatus {
 
 model Event {
   id             String    @id @default(uuid())
-  name           String
-  artist         String
+  title          String
+  description    String?
+  artist         String?
   venue          String
   city           String
+  country        String    @default("France")
   eventDate      DateTime  @map("event_date")
   doorsOpenTime  String?   @map("doors_open_time")
+  category       String?
+  imageUrl       String?   @map("image_url")
   officialUrl    String?   @map("official_url")
   isVerified     Boolean   @default(false) @map("is_verified")
   
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
   
   // Relations
   tickets Ticket[]
@@ -83,12 +90,13 @@ model Ticket {
   sellerId  String   @map("seller_id")
   
   status            TicketStatus             @default(DRAFT)
-  originalPrice     Decimal                  @map("original_price") @db.Decimal(10, 2)
-  sellingPrice      Decimal                  @map("selling_price") @db.Decimal(10, 2)
-  seatCategory      String                   @map("seat_category")
+  originalPrice     Decimal?                 @map("original_price") @db.Decimal(10, 2)
+  price             Decimal                  @db.Decimal(10, 2)
+  section           String?
+  row               String?
   seatNumber        String?                  @map("seat_number")
-  pdfUrl            String                   @map("pdf_url")
-  pdfHash           String                   @map("pdf_hash")
+  pdfUrl            String?                  @map("pdf_url")
+  pdfHash           String?                  @map("pdf_hash")
   barcodeNumber     String?                  @map("barcode_number")
   verificationStatus TicketVerificationStatus @default(PENDING) @map("verification_status")
   rejectionReason   String?                  @map("rejection_reason")
@@ -102,7 +110,6 @@ model Ticket {
   seller      User          @relation("SellerTickets", fields: [sellerId], references: [id], onDelete: Cascade)
   transaction Transaction?
   
-  @@unique([pdfHash])
   @@index([barcodeNumber])
   @@index([status])
   @@index([verificationStatus])
