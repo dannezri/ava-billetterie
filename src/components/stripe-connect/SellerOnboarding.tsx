@@ -10,7 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Loader2, CheckCircle2, AlertCircle, ExternalLink, LogIn } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
 
 interface AccountStatus {
   hasAccount: boolean;
@@ -25,6 +27,8 @@ interface AccountStatus {
 }
 
 export default function SellerOnboarding() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [accountStatus, setAccountStatus] = useState<AccountStatus | null>(null);
@@ -32,8 +36,14 @@ export default function SellerOnboarding() {
 
   // Vérifier le statut du compte au chargement
   useEffect(() => {
-    checkAccountStatus();
-  }, []);
+    if (!authLoading) {
+      if (user) {
+        checkAccountStatus();
+      } else {
+        setCheckingStatus(false);
+      }
+    }
+  }, [user, authLoading]);
 
   /**
    * Vérifier le statut du compte Connect
@@ -42,6 +52,12 @@ export default function SellerOnboarding() {
     try {
       setCheckingStatus(true);
       const response = await fetch('/api/stripe-connect/account-status');
+      
+      if (response.status === 401) {
+        setCheckingStatus(false);
+        return; // Non authentifié
+      }
+
       const data = await response.json();
 
       if (response.ok) {
@@ -152,11 +168,30 @@ export default function SellerOnboarding() {
     );
   };
 
-  if (checkingStatus) {
+  if (authLoading || checkingStatus) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Connexion requise</CardTitle>
+          <CardDescription>
+            Vous devez être connecté pour configurer votre compte vendeur.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={() => router.push('/login')} className="w-full">
+            <LogIn className="mr-2 h-4 w-4" />
+            Se connecter
+          </Button>
         </CardContent>
       </Card>
     );

@@ -72,6 +72,12 @@ export async function createConnectAccount(
       type: 'custom',
       country,
       account_token: accountToken.id,
+      // business_type est déjà dans le token
+      business_profile: {
+        mcc: '7922', // Ticket Agencies and Theatrical Producers
+        name: 'Vendeur Ava',
+        product_description: 'Revente de billets entre particuliers',
+      },
       capabilities: {
         card_payments: { requested: true },
         transfers: { requested: true },
@@ -93,10 +99,21 @@ export async function createConnectAccount(
     });
 
     // Mettre à jour l'utilisateur dans la base de données
-    await prisma.user.update({
+    // Utiliser upsert pour gérer le cas où l'utilisateur n'existe pas encore dans public.users
+    // (ce qui peut arriver en dev si auth.users et public.users sont désynchronisés)
+    await prisma.user.upsert({
       where: { id: userId },
-      data: {
+      update: {
         stripeAccountId: account.id,
+      },
+      create: {
+        id: userId,
+        email,
+        stripeAccountId: account.id,
+        // Valeurs par défaut pour les champs obligatoires
+        kycStatus: 'PENDING',
+        verifiedIdentity: false,
+        trustScore: 50,
       },
     });
 
