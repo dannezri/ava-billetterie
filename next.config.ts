@@ -13,20 +13,27 @@ const nextConfig: NextConfig = {
   },
   
   images: {
+    // Legacy domains (plus fiable pour Vercel)
+    domains: [
+      'ucarecdn.com',
+      'res.cloudinary.com',
+      'images.unsplash.com',
+    ],
+    // Modern remotePatterns (backup)
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ucarecdn.com', // Uploadcare
+        hostname: 'ucarecdn.com',
         pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'res.cloudinary.com', // Cloudinary
+        hostname: 'res.cloudinary.com',
         pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com', // Unsplash (pour les événements fictifs)
+        hostname: 'images.unsplash.com',
         pathname: '/**',
       },
     ],
