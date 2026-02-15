@@ -20,6 +20,8 @@ interface Event {
   category?: string;
   imageUrl?: string;
   date: string;
+  venue?: string;
+  city?: string;
   location: string;
   country?: string;
   availableTickets: number;
@@ -40,7 +42,7 @@ export default function EventsPage() {
   });
 
   // Extract unique cities and categories from events
-  const cities = Array.from(new Set(events.map((e) => e.location).filter(Boolean))) as string[];
+  const cities = Array.from(new Set(events.map((e) => e.city).filter(Boolean))) as string[];
   const categories = Array.from(new Set(events.map((e) => e.category).filter(Boolean))) as string[];
 
   // Fetch events

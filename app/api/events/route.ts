@@ -125,6 +125,8 @@ export async function GET(request: NextRequest) {
         category: event.category,
         imageUrl: event.imageUrl,
         date: event.eventDate,
+        venue: event.venue,
+        city: event.city,
         location: `${event.venue}, ${event.city}`,
         country: event.country,
         availableTickets,
