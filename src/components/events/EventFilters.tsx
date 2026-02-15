@@ -5,18 +5,18 @@
 
 'use client';
 
-import { useState } from 'react';
-import { Search, Calendar, MapPin, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Calendar, MapPin, Search, X } from 'lucide-react';
+import { useState } from 'react';
 
 export interface EventFiltersState {
   search: string;
