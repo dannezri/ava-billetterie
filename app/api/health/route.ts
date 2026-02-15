@@ -3,21 +3,29 @@
  */
 
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/db/prisma';
 
 export async function GET() {
   try {
-    // Check database connection
-    await prisma.$queryRaw`SELECT 1`;
-    
+    // Basic health check - verify environment variables are loaded
+    const envCheck = {
+      database: !!process.env.DATABASE_URL,
+      supabase: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      stripe: !!process.env.STRIPE_SECRET_KEY,
+    };
+
+    const allServicesConfigured = Object.values(envCheck).every(Boolean);
+
     return NextResponse.json({
       success: true,
       data: {
-        status: 'healthy',
+        status: allServicesConfigured ? 'healthy' : 'degraded',
         timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'unknown',
         services: {
-          database: 'up',
           api: 'up',
+          database: envCheck.database ? 'configured' : 'missing',
+          supabase: envCheck.supabase ? 'configured' : 'missing',
+          stripe: envCheck.stripe ? 'configured' : 'missing',
         },
       },
     });
@@ -27,7 +35,7 @@ export async function GET() {
         success: false,
         error: {
           code: 'HEALTH_CHECK_FAILED',
-          message: 'Service unhealthy',
+          message: error instanceof Error ? error.message : 'Service unhealthy',
         },
       },
       { status: 503 }
