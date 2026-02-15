@@ -162,6 +162,7 @@ export default function EventDetailPage() {
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 800px"
                 priority
+                unoptimized={event.imageUrl?.includes('unsplash')}
               />
               {event.category && (
                 <div className="absolute left-4 top-4">
