@@ -26,7 +26,7 @@ import { cache } from 'react';
 export const createCaller = cache(async () => {
   const context = await createContext({
     req: {} as any,
-    res: {} as any,
+    resHeaders: new Headers(),
   });
 
   return appRouter.createCaller(context);

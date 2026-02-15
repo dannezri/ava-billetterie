@@ -98,7 +98,7 @@ export { Popover, PopoverTrigger, PopoverContent } from './popover';
 
 // Feedback Components
 export { Toaster } from './toaster';
-export { useToast, toast } from '../hooks/use-toast';
+export { useToast, toast } from '../../hooks/use-toast';
 export { Alert, AlertTitle, AlertDescription } from './alert';
 
 // Navigation Components

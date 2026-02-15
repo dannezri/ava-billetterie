@@ -41,7 +41,7 @@ export const eventRouter = router({
           ],
         },
         orderBy: {
-          date: 'asc',
+          eventDate: 'asc',
         },
       });
 
