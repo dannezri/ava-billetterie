@@ -17,14 +17,17 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'ucarecdn.com', // Uploadcare
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com', // Cloudinary
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'images.unsplash.com', // Unsplash (pour les événements fictifs)
+        pathname: '/**',
       },
     ],
   },
