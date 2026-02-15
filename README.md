@@ -124,8 +124,9 @@ cd ava
 npm install
 
 # Configurer les variables d'environnement
-cp .env.example .env.local
-# Éditer .env.local avec vos clés API
+npm run env:setup
+npm run env:secret
+# Éditer .env.local avec vos clés API (voir QUICK_START_ENV.md)
 
 # Setup Husky (git hooks)
 npm run prepare
@@ -138,6 +139,9 @@ npm run prisma:migrate
 
 # Seed la base (données de test)
 npm run prisma:seed
+
+# Valider la configuration
+npm run env:validate
 ```
 
 ### Développement
@@ -162,6 +166,15 @@ npm run type-check       # Vérifier les types TypeScript
 npm run test             # Tests en mode watch
 npm run test:ci          # Tests pour CI
 npm run prisma:studio    # Interface Prisma Studio
+
+# Configuration environnement
+npm run env:setup        # Créer .env.local
+npm run env:secret       # Générer secret NextAuth
+npm run env:validate     # Valider les variables
+
+# Déploiement
+npm run deploy:preview      # Déployer en staging
+npm run deploy:production   # Déployer en production
 ```
 
 ---
@@ -170,23 +183,21 @@ npm run prisma:studio    # Interface Prisma Studio
 
 ### Variables d'Environnement
 
-Voir `.env.example` pour la liste complète. Variables critiques :
+**📖 Documentation complète:** [ENVIRONMENT.md](./ENVIRONMENT.md)  
+**⚡ Guide rapide (5 min):** [QUICK_START_ENV.md](./QUICK_START_ENV.md)
 
-```env
-# Database
-DATABASE_URL="postgresql://..."
+```bash
+# Créer le fichier .env.local
+npm run env:setup
 
-# Stripe
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
+# Générer un secret sécurisé
+npm run env:secret
 
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL="https://..."
-NEXT_PUBLIC_SUPABASE_ANON_KEY="..."
-
-# Email
-RESEND_API_KEY="re_..."
+# Valider la configuration
+npm run env:validate
 ```
+
+Voir [env.template](./env.template) pour la liste complète des variables.
 
 ### Stripe Setup
 
