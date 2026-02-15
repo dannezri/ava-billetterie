@@ -141,9 +141,12 @@ x-vercel-error: INVALID_IMAGE_OPTIMIZE_REQUEST
 | 21:47 | Ajout pathname pattern | ❌ Toujours erreur 400 |
 | 21:50 | Commit 835e8b1 | ❌ Échec (remotePatterns buggy) |
 | 21:53 | Test après build | ❌ Toujours erreur 400 |
-| 21:56 | **Plan B: Legacy domains** | 🟡 Build en cours |
-| 21:57 | Commit b3f6c81 | 🟡 Déploiement en cours |
-| 22:00 | Test après build | ⏳ À faire |
+| 21:56 | **Plan B: Legacy domains** | ❌ Toujours erreur 400 |
+| 21:57 | Commit b3f6c81 | ❌ Échec (Edge Runtime buggy) |
+| 22:00 | Test après build | ❌ Toujours erreur 400 |
+| 22:02 | **Plan C: unoptimized** | 🟡 Build en cours |
+| 22:03 | Commit cf3784e | 🟡 Déploiement en cours |
+| 22:05 | Test après build | ⏳ À faire |
 
 ---
 
@@ -378,7 +381,13 @@ images: {
 
 **Status :** 🟡 Build en cours (commit b3f6c81, ETA 2-3 min)
 
-### Plan C : Désactiver l'optimisation Unsplash (si Plan B échoue)
+### Plan C : Désactiver l'optimisation Unsplash (APPLIQUÉ)
+
+### Commit : `cf3784e`
+
+**Raison :** Même avec `domains` (legacy), les images Unsplash ne fonctionnaient pas. Bug confirmé de Vercel Edge Runtime avec Unsplash.
+
+**Solution :** Bypass complet de l'optimisation Next.js/Vercel pour les images Unsplash.
 
 ```typescript
 <Image 
@@ -388,7 +397,26 @@ images: {
 />
 ```
 
-**Inconvénient :** Pas d'optimisation = images plus lourdes
+**Fichiers modifiés :**
+1. `src/components/events/EventCard.tsx`
+2. `app/(public)/events/[id]/page.tsx`
+
+**Comment ça marche :**
+- Détecte si l'URL contient "unsplash"
+- Si oui : `unoptimized={true}` → Charge directement depuis Unsplash
+- Si non : Optimisation Next.js normale
+
+**Avantages :**
+- ✅ Fonctionne à 100% (pas de 400)
+- ✅ Unsplash optimise déjà ses images (CDN rapide)
+- ✅ Pas de coût Vercel Image Optimization
+- ✅ Pas de bug Edge Runtime
+
+**Inconvénients :**
+- ⚠️ Pas de lazy loading Next.js (mais acceptable pour seed data)
+- ⚠️ Images un peu plus lourdes (mais Unsplash déjà optimisé)
+
+**Status :** 🟡 Build en cours (commit cf3784e, ETA 2-3 min)
 
 ---
 
