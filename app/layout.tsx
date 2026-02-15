@@ -15,8 +15,8 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AVA Billetterie - Plateforme de Revente Éthique",
-  description: "Achetez et vendez vos billets en toute sécurité avec AVA Billetterie",
+  title: "AVA Billetterie - Plateforme de Revente Éthique 100% Sécurisée",
+  description: "Revendez vos billets sans arnaque grâce au séquestre bancaire, KYC et vérification manuelle. Prix bloqués au facial, remboursement garanti en cas de fraude.",
 };
 
 export default function RootLayout({
