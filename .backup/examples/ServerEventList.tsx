@@ -32,7 +32,7 @@ export async function ServerEventList() {
             )}
             <p className="mt-2 text-sm text-gray-500">{event.venue}</p>
             <p className="text-xs text-gray-400">
-              {new Date(event.date).toLocaleDateString('fr-FR', {
+              {new Date(event.eventDate).toLocaleDateString('fr-FR', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',

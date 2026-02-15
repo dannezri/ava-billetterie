@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
+    "build:static": "next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -18,7 +19,7 @@
     "test": "jest --watch",
     "test:ci": "jest --ci",
     "test:coverage": "jest --coverage",
-    "vercel-build": "prisma generate && next build",
+    "vercel-build": "bash scripts/vercel-build.sh",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
@@ -99,5 +100,6 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
-  }
+  },
+  "postinstall": "bash scripts/postinstall.sh"
 }
