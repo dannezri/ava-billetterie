@@ -1,0 +1,29 @@
+# CODEOWNERS for automatic review assignment
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+* @your-github-username
+
+# Database schema and migrations - require senior review
+/prisma/schema.prisma @your-github-username
+/prisma/migrations/ @your-github-username
+
+# Payment and escrow logic - critical security review
+/src/services/payments/ @your-github-username
+/src/services/escrow/ @your-github-username
+/src/app/api/payments/ @your-github-username
+
+# Authentication and KYC - security review
+/src/services/auth/ @your-github-username
+/src/services/kyc/ @your-github-username
+/src/app/api/auth/ @your-github-username
+
+# API routes - backend team
+/src/app/api/ @your-github-username
+
+# CI/CD configuration
+/.github/workflows/ @your-github-username
+
+# Security and compliance
+/SECURITY.md @your-github-username
+/.github/workflows/security.yml @your-github-username

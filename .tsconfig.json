@@ -1,0 +1,75 @@
+{
+    "compilerOptions": {
+      
+      "strict": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true,
+      "noImplicitReturns": true,
+      "noUncheckedIndexedAccess": true,
+      "noImplicitOverride": true,
+      "allowUnusedLabels": false,
+      "allowUnreachableCode": false,
+      "exactOptionalPropertyTypes": true,
+      "noPropertyAccessFromIndexSignature": false,
+  
+      "module": "ESNext",
+      "moduleResolution": "bundler",
+      "resolveJsonModule": true,
+      "allowImportingTsExtensions": true,
+  
+      "target": "ES2022",
+      "lib": ["ES2022", "DOM", "DOM.Iterable"],
+      "jsx": "preserve",
+      "noEmit": true,
+      "incremental": true,
+      "sourceMap": true,
+      "declaration": false,
+      "removeComments": true,
+  
+      "isolatedModules": true,
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "allowSyntheticDefaultImports": true,
+  
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "useDefineForClassFields": true,
+  
+      "composite": false,
+  
+      "skipLibCheck": true,
+  
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["./src/*"],
+        "@/components/*": ["./src/components/*"],
+        "@/lib/*": ["./src/lib/*"],
+        "@/hooks/*": ["./src/hooks/*"],
+        "@/types/*": ["./src/types/*"],
+        "@/utils/*": ["./src/utils/*"],
+        "@/services/*": ["./src/services/*"],
+        "@/config/*": ["./src/config/*"],
+        "@/styles/*": ["./src/styles/*"]
+      },
+  
+      "plugins": [
+        {
+          "name": "next"
+        }
+      ]
+    },
+    "include": [
+      "next-env.d.ts",
+      "**/*.ts",
+      "**/*.tsx",
+      ".next/types/**/*.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      ".next",
+      "out",
+      "build",
+      "dist"
+    ]
+  }
