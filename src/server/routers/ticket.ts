@@ -3,9 +3,9 @@
  * Handles all ticket-related tRPC procedures
  */
 
-import { z } from 'zod';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
 import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+import { protectedProcedure, publicProcedure, router } from '../trpc';
 
 export const ticketRouter = router({
   /**

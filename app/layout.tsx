@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import { TRPCProvider } from "@/lib/trpc/provider";
 import { Toaster } from "@/components/ui/toaster";
+import * as Sentry from '@sentry/nextjs';
 import "./globals.css";
 
 const inter = Inter({
@@ -14,10 +15,15 @@ const robotoMono = Roboto_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "AVA Billetterie - Plateforme de Revente Éthique 100% Sécurisée",
-  description: "Revendez vos billets sans arnaque grâce au séquestre bancaire, KYC et vérification manuelle. Prix bloqués au facial, remboursement garanti en cas de fraude.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "AVA Billetterie - Plateforme de Revente Éthique 100% Sécurisée",
+    description: "Revendez vos billets sans arnaque grâce au séquestre bancaire, KYC et vérification manuelle. Prix bloqués au facial, remboursement garanti en cas de fraude.",
+    other: {
+      ...Sentry.getTraceData()
+    }
+  };
+}
 
 export default function RootLayout({
   children,

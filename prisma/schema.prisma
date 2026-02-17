@@ -146,7 +146,7 @@ model Transaction {
   
   amount                Decimal  @db.Decimal(10, 2)
   platformFee           Decimal  @map("platform_fee") @db.Decimal(10, 2)
-  stripePaymentIntentId String   @map("stripe_payment_intent_id")
+  stripePaymentIntentId String?  @map("stripe_payment_intent_id")
   stripeTransferId      String?  @map("stripe_transfer_id")
   
   status              TransactionStatus @default(PENDING)
@@ -257,8 +257,8 @@ model AuditLog {
   
   action    AuditAction @default(ADMIN_ACTION)
   metadata  Json
-  ipAddress String      @map("ip_address")
-  userAgent String      @map("user_agent")
+  ipAddress String?     @map("ip_address")
+  userAgent String?     @map("user_agent")
   
   createdAt DateTime @default(now()) @map("created_at")
   
@@ -273,8 +273,13 @@ model AuditLog {
 
 enum AuditAction {
   TICKET_UPLOAD
+  TICKET_RESERVED
+  TICKET_PURCHASE
   KYC_ATTEMPT
   PAYMENT
+  PAYMENT_INTENT_CREATED
+  PAYMENT_FAILED
+  PAYMENT_SUCCEEDED
   DISPUTE_CREATED
   ADMIN_ACTION
 }

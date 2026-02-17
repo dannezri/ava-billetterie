@@ -23,6 +23,7 @@ export {
 // Form Components
 export { Label } from './label';
 export { Textarea } from './textarea';
+export { Checkbox } from './checkbox';
 export {
   Select,
   SelectGroup,

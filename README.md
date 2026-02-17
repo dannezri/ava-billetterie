@@ -25,10 +25,11 @@ Permettre à **10 vendeurs** de lister **50 billets** et réaliser **20 transact
 - ✅ **Audit logs** : traçabilité complète des actions
 
 ### 🎫 Gestion des Billets
-- 📤 Upload PDF sécurisé (max 5 MB)
+- 📤 **Upload PDF sécurisé** via Uploadcare (max 5 MB, PDF uniquement) ✅
 - 🔍 Extraction automatique métadonnées (code-barres, prix)
 - 🚫 **Prix plafonné** : revente ≤ prix facial (anti-scalping)
 - ⏱️ Réservation 15 minutes avant expiration
+- 🔄 **Détection doublons** : hash PDF + code-barres ✅
 
 ### 💳 Paiements & Séquestre
 - 💰 Stripe Connect (Custom Accounts)
@@ -64,9 +65,11 @@ Permettre à **10 vendeurs** de lister **50 billets** et réaliser **20 transact
 - **PostgreSQL** - Base de données ACID-compliant
 
 ### Paiements & Identité
-- **Stripe Connect** - Séquestre et paiements
+- **Stripe Connect (Custom Accounts)** - Séquestre et paiements vendeurs
 - **Stripe Identity** - KYC réglementaire
 - **Uploadcare / Cloudinary** - Upload PDF sécurisé
+
+> 📘 **Nouveau** : [Guide Stripe Connect](./STRIPE_CONNECT_QUICK_START.md) - Configuration en 5 minutes
 
 ### Auth & Sécurité
 - **Supabase Auth** - Authentification (MFA, email verification)

@@ -2,18 +2,19 @@
  * Dashboard Page (Protected)
  */
 
-import { createClient } from '@/lib/supabase/server-client';
-import { redirect } from 'next/navigation';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { LogoutButton } from '@/components/auth/LogoutButton';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { createClient } from '@/lib/supabase/server-client';
+import { ShoppingBag, Ticket, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
-import { Ticket, ShoppingBag, TrendingUp } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 export default async function DashboardPage() {
   const supabase = createClient();
@@ -28,13 +29,16 @@ export default async function DashboardPage() {
 
   return (
     <div className="container mx-auto p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">
-          Bienvenue, {user.user_metadata?.name || user.email} !
-        </h1>
-        <p className="text-muted-foreground">
-          Gérez vos billets et transactions depuis votre tableau de bord
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">
+            Bienvenue, {user.user_metadata?.name || user.email} !
+          </h1>
+          <p className="text-muted-foreground">
+            Gérez vos billets et transactions depuis votre tableau de bord
+          </p>
+        </div>
+        <LogoutButton />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

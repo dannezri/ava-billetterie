@@ -3,9 +3,9 @@
  * Site-wide footer with links and information
  */
 
-import Link from 'next/link';
-import { Ticket, Mail, Github, Twitter, Linkedin } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Github, Linkedin, Mail, Ticket, Twitter } from 'lucide-react';
+import Link from 'next/link';
 
 const footerLinks = {
   product: [

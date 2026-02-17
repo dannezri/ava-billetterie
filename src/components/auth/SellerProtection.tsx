@@ -25,7 +25,7 @@ interface SellerProtectionProps {
 export default function SellerProtection({
   children,
   fallback,
-  redirectTo = '/seller/onboarding',
+  redirectTo = '/dashboard/seller/profile',
 }: SellerProtectionProps) {
   const router = useRouter();
   const { accountStatus, loading, error, checkAccountStatus, isAccountReady } =
@@ -159,7 +159,7 @@ export function useRequireSellerAccount() {
     const verify = async () => {
       await checkAccountStatus();
       if (!isAccountReady) {
-        router.push('/seller/onboarding');
+        router.push('/dashboard/seller/profile');
       }
     };
 

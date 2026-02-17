@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createLoginLink, getUserConnectAccountId } from '@/services/stripe-connect';
 import { createClient } from '@/lib/supabase/server-client';
 
+/**
+ * @api {POST} /api/stripe-connect/dashboard-link
+ * @description Génère un lien de connexion éphémère vers le Dashboard Stripe Express pour permettre au vendeur de gérer ses informations bancaires et fiscales.
+ * 
+ * @returns {Object} JSON response
+ * - success: boolean
+ * - url: string (Lien vers Stripe Express)
+ * 
+ * @error 401 Non authentifié
+ * @error 404 Compte Stripe non trouvé
+ * @error 500 Erreur serveur
+ */
 export async function POST(req: NextRequest) {
   try {
     const supabase = createClient();

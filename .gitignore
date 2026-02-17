@@ -82,3 +82,7 @@ Desktop.ini
 
 # Local Postgres
 /postgres-data
+
+# Sentry Config File
+.env.sentry-build-plugin
+*.backup

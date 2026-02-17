@@ -5,13 +5,13 @@
 
 import { MainLayout } from '@/components/layout';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '@/components/ui/card';
-import { Shield, Heart, TrendingUp } from 'lucide-react';
+import { Heart, Shield, TrendingUp } from 'lucide-react';
 
 export default function AboutPage() {
   return (

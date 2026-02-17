@@ -1,14 +1,12 @@
 /**
  * Stripe client configuration
+ * ✅ Utilise le module de configuration centralisé
  */
 
 import Stripe from 'stripe';
+import { config } from '@/config/env';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not defined');
-}
-
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+export const stripe = new Stripe(config.stripe.secretKey, {
   apiVersion: '2024-04-10',
   typescript: true,
 });

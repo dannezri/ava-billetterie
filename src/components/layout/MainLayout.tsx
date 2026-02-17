@@ -5,8 +5,8 @@
 
 'use client';
 
-import { Header } from './Header';
 import { Footer } from './Footer';
+import { Header } from './Header';
 
 interface MainLayoutProps {
   children: React.ReactNode;

@@ -2,8 +2,8 @@
  * Validation schemas for disputes using Zod
  */
 
-import { z } from 'zod';
 import { DisputeReason } from '@/types';
+import { z } from 'zod';
 
 export const createDisputeSchema = z.object({
   transactionId: z.string().uuid('ID transaction invalide'),

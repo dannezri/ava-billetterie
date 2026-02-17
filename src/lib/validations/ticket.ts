@@ -2,8 +2,8 @@
  * Validation schemas for tickets using Zod
  */
 
-import { z } from 'zod';
 import { BUSINESS_RULES } from '@/config/constants';
+import { z } from 'zod';
 
 export const ticketUploadSchema = z.object({
   eventId: z.string().uuid('ID événement invalide'),

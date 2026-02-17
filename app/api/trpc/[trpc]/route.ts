@@ -3,10 +3,10 @@
  * This handles all tRPC requests at /api/trpc/*
  */
 
+import { createContext } from '@/server/context';
+import { appRouter } from '@/server/routers/_app';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { type NextRequest } from 'next/server';
-import { appRouter } from '@/server/routers/_app';
-import { createContext } from '@/server/context';
 
 const handler = (req: NextRequest) =>
   fetchRequestHandler({

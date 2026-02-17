@@ -6,6 +6,21 @@ import {
 } from '@/services/stripe-connect';
 import { createClient } from '@/lib/supabase/server-client';
 
+/**
+ * @api {POST} /api/stripe-connect/onboarding-link
+ * @description Génère un lien d'onboarding Stripe Connect pour un vendeur.
+ * Si le vendeur n'a pas encore de compte Stripe, un compte Custom est automatiquement créé.
+ * Le lien redirige vers le formulaire hébergé par Stripe pour la collecte des infos bancaires/identité.
+ * 
+ * @returns {Object} JSON response
+ * - success: boolean
+ * - accountId: string
+ * - onboardingUrl: string
+ * - expiresAt: number
+ * 
+ * @error 401 Non authentifié
+ * @error 500 Erreur serveur
+ */
 export async function POST(req: NextRequest) {
   try {
     const supabase = createClient();
@@ -34,8 +49,8 @@ export async function POST(req: NextRequest) {
 
     // Générer le lien d'onboarding
     const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const refreshUrl = `${APP_URL}/seller/onboarding/refresh`;
-    const returnUrl = `${APP_URL}/seller/onboarding/complete`;
+    const refreshUrl = `${APP_URL}/dashboard/seller/profile?refresh=true`;
+    const returnUrl = `${APP_URL}/dashboard/seller/profile?success=true`;
 
     const result = await createAccountOnboardingLink(accountId, refreshUrl, returnUrl);
 

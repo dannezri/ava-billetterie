@@ -4,8 +4,9 @@
  */
 
 import { router } from '../trpc';
-import { ticketRouter } from './ticket';
+import { adminRouter } from './admin';
 import { eventRouter } from './event';
+import { ticketRouter } from './ticket';
 
 /**
  * This is the primary router for your server
@@ -15,6 +16,7 @@ import { eventRouter } from './event';
 export const appRouter = router({
   ticket: ticketRouter,
   event: eventRouter,
+  admin: adminRouter,
 });
 
 // Export type definition of API

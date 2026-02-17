@@ -5,13 +5,15 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { MainLayout } from '@/components/layout';
 import { EventCard } from '@/components/events/EventCard';
 import { EventFilters, EventFiltersState } from '@/components/events/EventFilters';
-import { Skeleton } from '@/components/ui/skeleton';
+import { SearchBar } from '@/components/events/SearchBar';
+import { MainLayout } from '@/components/layout';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, CalendarRange } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface Event {
   id: string;
@@ -30,12 +32,13 @@ interface Event {
 }
 
 export default function EventsPage() {
+  const searchParams = useSearchParams();
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<EventFiltersState>({
-    search: '',
+    search: searchParams.get('search') || '',
     city: '',
     dateRange: '',
     category: '',
@@ -91,9 +94,12 @@ export default function EventsPage() {
             <CalendarRange className="h-8 w-8 text-primary" />
             <h1 className="text-4xl font-bold">Événements</h1>
           </div>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-muted-foreground mb-6">
             Découvrez tous les événements disponibles et trouvez vos billets
           </p>
+          
+          {/* Search Bar */}
+          <SearchBar className="max-w-2xl" />
         </div>
 
         {/* Filters */}

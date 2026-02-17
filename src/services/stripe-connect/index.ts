@@ -51,33 +51,16 @@ export async function createConnectAccount(
       return existingUser.stripeAccountId;
     }
 
-    // Pour les plateformes basées en France, Stripe impose l'utilisation d'Account Tokens
-    // Voir: https://stripe.com/docs/connect/account-tokens
-    console.log('🇫🇷 Creating account token for FR-based platform...');
-    
-    const accountToken = await stripe.tokens.create({
-      account: {
-        individual: {
-          email,
-        },
-        business_type: businessType,
-        tos_shown_and_accepted: true,
-      },
-    });
+    // Pour Express accounts, on ne doit PAS utiliser d'account_token
+    // Stripe gère les ToS et les informations automatiquement via l'onboarding UI
+    console.log('🚀 Creating Express account (no token needed)...');
 
-    console.log('✅ Account token created:', accountToken.id);
-
-    // Créer le compte Stripe Connect Custom avec le token
+    // Créer le compte Stripe Connect Express directement
     const account = await stripe.accounts.create({
-      type: 'custom',
+      type: 'express',
       country,
-      account_token: accountToken.id,
-      // business_type est déjà dans le token
-      business_profile: {
-        mcc: '7922', // Ticket Agencies and Theatrical Producers
-        name: 'Vendeur Ava',
-        product_description: 'Revente de billets entre particuliers',
-      },
+      email, // Email directement, pas via token
+      business_type: 'individual', // ✅ Spécifier explicitement "individual" pour des particuliers
       capabilities: {
         card_payments: { requested: true },
         transfers: { requested: true },
@@ -393,17 +376,3 @@ export async function deleteConnectAccount(accountId: string): Promise<void> {
   }
 }
 
-export default {
-  createConnectAccount,
-  createAccountOnboardingLink,
-  createAccountUpdateLink,
-  createLoginLink,
-  getAccountStatus,
-  isAccountReadyForPayments,
-  getAccountBalance,
-  createPayout,
-  listExternalAccounts,
-  addExternalAccount,
-  getUserConnectAccountId,
-  deleteConnectAccount,
-};

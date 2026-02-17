@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAccountStatus, getUserConnectAccountId } from '@/services/stripe-connect';
 import { createClient } from '@/lib/supabase/server-client';
 
+/**
+ * @api {GET} /api/stripe-connect/account-status
+ * @description Récupère le statut du compte Stripe Connect de l'utilisateur connecté.
+ * Vérifie si le compte est actif, s'il manque des informations (KYC), et s'il peut recevoir des paiements.
+ * 
+ * @returns {Object} JSON response
+ * - success: boolean
+ * - hasAccount: boolean
+ * - chargesEnabled?: boolean
+ * - payoutsEnabled?: boolean
+ * - requirements?: Stripe.Account.Requirements
+ */
 export async function GET(req: NextRequest) {
   try {
     const supabase = createClient();

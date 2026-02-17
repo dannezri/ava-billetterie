@@ -47,6 +47,21 @@ Guide de navigation pour tous les documents du projet.
 | [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) | Configuration Supabase | Développeurs |
 | [STRIPE_WEBHOOKS_SETUP.md](./STRIPE_WEBHOOKS_SETUP.md) | Configuration webhooks Stripe | Développeurs |
 
+### 💳 Stripe Connect (Custom Accounts)
+
+> 🚀 **NOUVEAU** : Implémentation complète terminée ! → [START HERE](./STRIPE_CONNECT_START_HERE.md)
+
+| Document | Description | Temps | Audience |
+|----------|-------------|-------|----------|
+| **[STRIPE_CONNECT_START_HERE.md](./STRIPE_CONNECT_START_HERE.md)** | 🎯 **Par où commencer ?** | 5 min | **Tous** |
+| [STRIPE_CONNECT_QUICK_START.md](./STRIPE_CONNECT_QUICK_START.md) | ⚡ Quick start (5 min) | 5 min | Développeurs |
+| [STRIPE_CONNECT_SETUP.md](./STRIPE_CONNECT_SETUP.md) | 📘 Guide complet (configuration, tests, API) | 30 min | Développeurs, DevOps |
+| [STRIPE_CONNECT_FEATURES.md](./STRIPE_CONNECT_FEATURES.md) | 🎯 Liste des fonctionnalités | 10 min | Product, Développeurs |
+| [STRIPE_CONNECT_COMMANDS.md](./STRIPE_CONNECT_COMMANDS.md) | 🚀 Commandes rapides | 5 min | Développeurs |
+| [STRIPE_CONNECT_README.md](./STRIPE_CONNECT_README.md) | 📖 README complet | 10 min | Tous |
+| [STRIPE_CONNECT_IMPLEMENTATION_SUMMARY.md](./STRIPE_CONNECT_IMPLEMENTATION_SUMMARY.md) | 📊 Résumé technique | 15 min | Tous |
+| [STRIPE_CONNECT_DONE.md](./STRIPE_CONNECT_DONE.md) | ✅ Ce qui a été fait | 5 min | Tous |
+
 ## 📊 Statut & Suivi
 
 | Document | Description | Audience |

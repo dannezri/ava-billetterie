@@ -4,20 +4,20 @@
 
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Mail, CheckCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { createClient } from '@/lib/supabase/browser-client';
 import { useToast } from '@/hooks/use-toast';
+import { createClient } from '@/lib/supabase/browser-client';
+import { CheckCircle, Mail } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 export default function VerifyEmailPage() {
   const [isResending, setIsResending] = useState(false);
