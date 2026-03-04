@@ -104,3 +104,17 @@ export { Alert, AlertTitle, AlertDescription } from './alert';
 
 // Navigation Components
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs';
+
+// Data Display Components
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from './table';
+export { Progress } from './progress';
+export { Calendar } from './calendar';

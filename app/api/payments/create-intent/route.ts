@@ -94,20 +94,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Convertir le montant en centimes pour Stripe
+    // Les fonds restent toujours sur le compte plateforme (escrow).
+    // Le cron auto-payout transfère la part du vendeur après la date de l'événement + 2 jours.
     const amountInCents = Math.round(Number(transaction.amount) * 100);
-    const platformFeeInCents = Math.round(Number(transaction.platformFee) * 100);
-    const sellerAmountInCents = amountInCents - platformFeeInCents;
-
-    // Vérifier si le vendeur a configuré son compte Stripe
-    const hasStripeAccount = !!transaction.seller.stripeAccountId;
 
     // Configuration du Payment Intent
     const paymentIntentConfig: Stripe.PaymentIntentCreateParams = {
       amount: amountInCents,
       currency: 'eur',
       payment_method_types: ['card'],
-      
-      // Métadonnées pour le webhook
       metadata: {
         transactionId: transaction.id,
         ticketId: transaction.ticketId,
@@ -116,25 +111,10 @@ export async function POST(request: NextRequest) {
         eventId: transaction.ticket.event.id,
         eventDate: transaction.ticket.event.eventDate.toISOString(),
         escrowReleaseDate: transaction.escrowReleaseDate?.toISOString() || '',
-        sellerHasStripeAccount: hasStripeAccount.toString(),
       },
-      
-      // Description pour le relevé bancaire
       description: `Billet ${transaction.ticket.event.title} - ${transaction.ticket.section || 'Standard'}`,
-      
-      // Email de l'acheteur
       receipt_email: transaction.buyer.email,
     };
-
-    // Si le vendeur a un compte Stripe, configurer le transfert automatique
-    if (hasStripeAccount) {
-      paymentIntentConfig.transfer_data = {
-        destination: transaction.seller.stripeAccountId!,
-        amount: sellerAmountInCents, // Montant après déduction des frais
-      };
-      paymentIntentConfig.on_behalf_of = transaction.seller.stripeAccountId!;
-    }
-    // Sinon, les fonds restent sur le compte plateforme en attendant la configuration
 
     // Créer le Payment Intent
     const paymentIntent = await stripe.paymentIntents.create(paymentIntentConfig);

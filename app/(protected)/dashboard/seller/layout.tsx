@@ -1,52 +1,40 @@
 /**
  * Layout du Dashboard Vendeur
- * Inclut la sidebar de navigation et la protection par authentification
- * Note: /profile est accessible sans protection car c'est la page d'onboarding
+ * Thème accentGreen (vert) — espace vendeur identifié visuellement
+ * Accessible à TOUT utilisateur authentifié
  */
 
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { SellerSidebar, MobileSellerSidebar } from '@/components/seller';
-import { SellerProtection } from '@/components/auth';
 
 export default function SellerDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const isProfilePage = pathname === '/dashboard/seller/profile';
+  return (
+    <div className="flex min-h-screen bg-accentGreen-50/30">
+      {/* Desktop Sidebar — fond blanc avec bordure verte */}
+      <aside className="hidden w-64 border-r border-accentGreen-100 bg-white md:block shrink-0">
+        <SellerSidebar />
+      </aside>
 
-  // La page /profile n'est pas protégée car c'est la page d'onboarding
-  const content = (
-    <div className="flex min-h-screen">
-        {/* Desktop Sidebar */}
-        <aside className="hidden w-64 border-r bg-background md:block">
-          <SellerSidebar />
-        </aside>
-
-        {/* Main Content */}
-        <div className="flex-1">
-          {/* Mobile Header */}
-          <div className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-4 md:hidden">
-            <MobileSellerSidebar />
-            <h1 className="text-lg font-semibold">Dashboard Vendeur</h1>
+      {/* Main Content */}
+      <div className="flex-1 min-w-0">
+        {/* Mobile Header */}
+        <div className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b border-accentGreen-200 bg-accentGreen-50 px-4 md:hidden">
+          <MobileSellerSidebar />
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-accentGreen-700">💼 Espace Vendeur</span>
           </div>
-
-          {/* Page Content */}
-          <main className="flex-1">
-            {children}
-          </main>
         </div>
+
+        {/* Page Content */}
+        <main className="flex-1">
+          {children}
+        </main>
       </div>
+    </div>
   );
-
-  // Si c'est la page profile, on ne protège pas
-  if (isProfilePage) {
-    return content;
-  }
-
-  // Sinon, on protège avec SellerProtection
-  return <SellerProtection>{content}</SellerProtection>;
 }

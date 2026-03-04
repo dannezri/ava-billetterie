@@ -45,6 +45,12 @@ export async function GET(request: NextRequest) {
             venue: true,
             city: true,
             category: true,
+            imageUrl: true,
+          },
+        },
+        transaction: {
+          select: {
+            createdAt: true,
           },
         },
       },
@@ -62,6 +68,7 @@ export async function GET(request: NextRequest) {
       venue: ticket.event.venue,
       city: ticket.event.city,
       category: ticket.event.category,
+      imageUrl: ticket.event.imageUrl,
       price: Number(ticket.price),
       originalPrice: ticket.originalPrice ? Number(ticket.originalPrice) : null,
       section: ticket.section,
@@ -73,6 +80,7 @@ export async function GET(request: NextRequest) {
       pdfUrl: ticket.pdfUrl,
       createdAt: ticket.createdAt,
       updatedAt: ticket.updatedAt,
+      soldAt: ticket.transaction?.createdAt ?? null,
     }));
 
     return NextResponse.json({

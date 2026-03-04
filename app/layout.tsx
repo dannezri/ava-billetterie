@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import { TRPCProvider } from "@/lib/trpc/provider";
 import { Toaster } from "@/components/ui/toaster";
+import { CartProvider } from "@/lib/cart/cart.context";
 import * as Sentry from '@sentry/nextjs';
 import "./globals.css";
 
@@ -36,8 +37,10 @@ export default function RootLayout({
         className={`${inter.variable} ${robotoMono.variable} antialiased`}
       >
         <TRPCProvider>
-          {children}
-          <Toaster />
+          <CartProvider>
+            {children}
+            <Toaster />
+          </CartProvider>
         </TRPCProvider>
       </body>
     </html>

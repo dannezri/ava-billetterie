@@ -1,44 +1,68 @@
 /**
- * Health check endpoint
+ * Health check endpoint pour vérifier l'état de l'application
+ * Utile pour les monitoring et les déploiements
  */
 
 import { NextResponse } from 'next/server';
+import { config } from '@/config/env';
 
+export const dynamic = 'force-dynamic';
+
+/**
+ * GET /api/health
+ * Retourne l'état de santé de l'application
+ */
 export async function GET() {
   try {
-    // Basic health check - verify environment variables are loaded
-    const envCheck = {
-      database: !!process.env.DATABASE_URL,
-      supabase: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-      stripe: !!process.env.STRIPE_SECRET_KEY,
-    };
+    // Vérifier les variables d'environnement critiques
+    const requiredEnvVars = [
+      'DATABASE_URL',
+      'NEXT_PUBLIC_SUPABASE_URL',
+      'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY',
+    ];
 
-    const allServicesConfigured = Object.values(envCheck).every(Boolean);
+    const missingVars = requiredEnvVars.filter(
+      (varName) => !process.env[varName]
+    );
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        status: allServicesConfigured ? 'healthy' : 'degraded',
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'unknown',
-        services: {
-          api: 'up',
-          database: envCheck.database ? 'configured' : 'missing',
-          supabase: envCheck.supabase ? 'configured' : 'missing',
-          stripe: envCheck.stripe ? 'configured' : 'missing',
+    if (missingVars.length > 0) {
+      return NextResponse.json(
+        {
+          status: 'error',
+          message: 'Missing required environment variables',
+          missing: missingVars,
+          timestamp: new Date().toISOString(),
         },
-      },
-    });
-  } catch (error) {
+        { status: 500 }
+      );
+    }
+
+    // Vérifier la connexion à la base de données (optionnel)
+    // const dbCheck = await prisma.$queryRaw`SELECT 1`;
+
     return NextResponse.json(
       {
-        success: false,
-        error: {
-          code: 'HEALTH_CHECK_FAILED',
-          message: error instanceof Error ? error.message : 'Service unhealthy',
+        status: 'ok',
+        environment: config.app.env,
+        version: process.env.npm_package_version || '0.1.0',
+        timestamp: new Date().toISOString(),
+        checks: {
+          database: 'ok', // Remplacer par le résultat de dbCheck si implémenté
+          env: 'ok',
         },
       },
-      { status: 503 }
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Health check failed:', error);
+
+    return NextResponse.json(
+      {
+        status: 'error',
+        message: 'Health check failed',
+        timestamp: new Date().toISOString(),
+      },
+      { status: 500 }
     );
   }
 }

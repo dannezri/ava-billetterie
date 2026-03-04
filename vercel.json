@@ -56,5 +56,19 @@
     "app/api/**/*.ts": {
       "maxDuration": 30
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/release-expired",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/release-escrow",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/process-auto-payouts",
+      "schedule": "0 9 * * *"
+    }
+  ]
 }

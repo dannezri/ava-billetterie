@@ -1,186 +1,265 @@
 /**
- * Events Catalog Page
- * Browse and filter available events
+ * Page Découverte Concerts & Festivals
+ * Route: /events
+ *
+ * Architecture "marketplace musicale" :
+ *   - Hero carousel (artistes mis en avant)
+ *   - Filtres horizontaux sticky (catégories musicales + dates)
+ *   - Section "Récemment consultés" (localStorage)
+ *   - Section "Recommandé pour vous" (artistes groupés)
+ *   - Section "Catégories populaires"
  */
 
-'use client';
+import { prisma } from '@/lib/prisma';
+import { EventsSearchBar } from '@/components/events-marketplace/EventsSearchBar';
+import { HeroCarousel } from '@/components/events-marketplace/HeroCarousel';
+import { FiltersBar } from '@/components/events-marketplace/FiltersBar';
+import { RecentlyViewedSection, FallbackArtist } from '@/components/events-marketplace/RecentlyViewedSection';
+import { RecommendedSection } from '@/components/events-marketplace/RecommendedSection';
+import { CategoriesSection } from '@/components/events-marketplace/CategoriesSection';
+import { ArtistCardData } from '@/components/events-marketplace/ArtistCard';
 
-import { EventCard } from '@/components/events/EventCard';
-import { EventFilters, EventFiltersState } from '@/components/events/EventFilters';
-import { SearchBar } from '@/components/events/SearchBar';
-import { MainLayout } from '@/components/layout';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, CalendarRange } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+export const metadata = {
+  title: 'Concerts & Festivals - Billets Éthiques',
+  description:
+    'Trouvez vos artistes préférés et achetez vos billets au meilleur prix. Concerts, festivals, événements live.',
+};
 
-interface Event {
-  id: string;
-  title: string;
-  description?: string;
-  category?: string;
-  imageUrl?: string;
-  date: string;
-  venue?: string;
-  city?: string;
-  location: string;
-  country?: string;
-  availableTickets: number;
-  minPrice?: number;
-  maxPrice?: number;
+// Catégories musicales autorisées (filtrer tout ce qui est sport / théâtre)
+const MUSIC_CATEGORIES = [
+  'Pop',
+  'Rock',
+  'Rap',
+  'Hip-Hop',
+  'Électro',
+  'Jazz',
+  'Reggae',
+  'Classique',
+  'Metal',
+  'R&B',
+  'Soul',
+  'Folk',
+  'Country',
+  'Latin',
+  'K-Pop',
+  'Concert',
+  'Festival',
+  'Musique',
+];
+
+interface EventsPageProps {
+  searchParams: Promise<{
+    category?: string;
+    date?: string;
+    location?: string;
+  }>;
 }
 
-export default function EventsPage() {
-  const searchParams = useSearchParams();
-  const [events, setEvents] = useState<Event[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<EventFiltersState>({
-    search: searchParams.get('search') || '',
-    city: '',
-    dateRange: '',
-    category: '',
+function getDateRange(dateFilter?: string): { gte: Date; lte?: Date } | { gte: Date } {
+  const now = new Date();
+  if (dateFilter === 'week') {
+    const end = new Date(now);
+    end.setDate(end.getDate() + 7);
+    return { gte: now, lte: end };
+  }
+  if (dateFilter === 'weekend') {
+    const day = now.getDay();
+    const daysUntilSat = (6 - day + 7) % 7 || 0;
+    const sat = new Date(now);
+    sat.setDate(now.getDate() + daysUntilSat);
+    sat.setHours(0, 0, 0, 0);
+    const sun = new Date(sat);
+    sun.setDate(sat.getDate() + 1);
+    sun.setHours(23, 59, 59, 999);
+    return { gte: sat, lte: sun };
+  }
+  if (dateFilter === 'month') {
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    return { gte: now, lte: end };
+  }
+  return { gte: now };
+}
+
+export default async function EventsPage({ searchParams }: EventsPageProps) {
+  const params = await searchParams;
+  const { category, date, location } = params;
+
+  // Filtre catégorie : si fournie et musicale, l'utiliser ; sinon, toutes les catégories musicales
+  const categoryFilter =
+    category && MUSIC_CATEGORIES.includes(category)
+      ? { in: [category] }
+      : { in: MUSIC_CATEGORIES };
+
+  const dateRange = getDateRange(date);
+
+  // Clause where de base
+  const whereBase = {
+    eventDate: dateRange,
+    OR: [
+      { category: categoryFilter },
+      // Inclure aussi les events sans catégorie mais avec artiste (edge case)
+      ...(category ? [] : [{ category: null, artist: { not: null } }]),
+    ],
+    ...(location ? { city: location } : {}),
+  };
+
+  // ─────────────────────────────────────────────────────────────
+  // AGRÉGATION : Grouper par artiste
+  // ─────────────────────────────────────────────────────────────
+  const artistGroups = await prisma.event.groupBy({
+    by: ['artist'],
+    where: {
+      ...whereBase,
+      artist: { not: null },
+    },
+    _count: { id: true },
+    _min: { eventDate: true },
+    _max: { eventDate: true },
+    orderBy: { _min: { eventDate: 'asc' } },
   });
 
-  // Extract unique cities and categories from events
-  const cities = Array.from(new Set(events.map((e) => e.city).filter(Boolean))) as string[];
-  const categories = Array.from(new Set(events.map((e) => e.category).filter(Boolean))) as string[];
+  // Enrichir chaque artiste avec l'image du premier événement
+  const artistsWithDetails: ArtistCardData[] = await Promise.all(
+    artistGroups.map(async (grp) => {
+      const firstEvent = await prisma.event.findFirst({
+        where: {
+          artist: grp.artist,
+          eventDate: dateRange,
+        },
+        orderBy: { eventDate: 'asc' },
+        select: { id: true, imageUrl: true, city: true, category: true },
+      });
 
-  // Fetch events
-  useEffect(() => {
-    fetchEvents();
-  }, [filters]);
+      return {
+        artist: grp.artist ?? 'Artiste inconnu',
+        eventsCount: grp._count.id,
+        firstEventDate: grp._min.eventDate,
+        lastEventDate: grp._max.eventDate,
+        imageUrl: firstEvent?.imageUrl ?? null,
+        city: firstEvent?.city ?? null,
+        category: firstEvent?.category ?? null,
+      };
+    }),
+  );
 
-  const fetchEvents = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // ─────────────────────────────────────────────────────────────
+  // RÉCEMMENT CONSULTÉS — fallback : artistes les plus populaires (hors filtre date)
+  // Chargés indépendamment pour toujours afficher quelque chose
+  // ─────────────────────────────────────────────────────────────
+  const popularGroups = await prisma.event.groupBy({
+    by: ['artist'],
+    where: { eventDate: { gte: new Date() }, artist: { not: null } },
+    _count: { id: true },
+    orderBy: { _count: { id: 'desc' } },
+    take: 10,
+  });
 
-      const params = new URLSearchParams();
-      if (filters.search) params.append('search', filters.search);
-      if (filters.city) params.append('city', filters.city);
-      if (filters.dateRange) params.append('dateRange', filters.dateRange);
-      if (filters.category) params.append('category', filters.category);
+  const fallbackArtists: FallbackArtist[] = await Promise.all(
+    popularGroups.map(async (grp) => {
+      const ev = await prisma.event.findFirst({
+        where: { artist: grp.artist, eventDate: { gte: new Date() } },
+        orderBy: { eventDate: 'asc' },
+        select: { id: true, imageUrl: true },
+      });
+      return {
+        artist: grp.artist ?? 'Artiste inconnu',
+        imageUrl: ev?.imageUrl ?? null,
+        eventId: ev?.id ?? '',
+      };
+    }),
+  );
 
-      const response = await fetch(`/api/events?${params.toString()}`);
-      const data = await response.json();
+  // ─────────────────────────────────────────────────────────────
+  // HERO : Top 5 artistes avec le plus d'événements
+  // ─────────────────────────────────────────────────────────────
+  const heroArtists = [...artistsWithDetails]
+    .sort((a, b) => b.eventsCount - a.eventsCount)
+    .slice(0, 5)
+    .map((a) => ({
+      artist: a.artist,
+      eventsCount: a.eventsCount,
+      imageUrl: a.imageUrl,
+      firstEventId: '', // Non utilisé dans le hero (lien vers /artist/xxx)
+    }));
 
-      if (data.success) {
-        setEvents(data.data.events);
-        setFilteredEvents(data.data.events);
-      } else {
-        setError(data.error?.message || 'Erreur lors du chargement des événements');
-      }
-    } catch (err: any) {
-      console.error('Error fetching events:', err);
-      setError('Impossible de charger les événements. Veuillez réessayer.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // ─────────────────────────────────────────────────────────────
+  // RECOMMANDÉ : artistes restants (hors hero)
+  // ─────────────────────────────────────────────────────────────
+  const heroNames = new Set(heroArtists.map((h) => h.artist));
+  const recommended = artistsWithDetails
+    .filter((a) => !heroNames.has(a.artist))
+    .slice(0, 12);
 
-  const handleFiltersChange = (newFilters: EventFiltersState) => {
-    setFilters(newFilters);
-  };
+  // ─────────────────────────────────────────────────────────────
+  // FALLBACK : si aucun artiste trouvé, tous les événements sans filtre musique
+  // (au cas où la DB n'a pas encore de catégories musicales)
+  // ─────────────────────────────────────────────────────────────
+  let finalHeroArtists = heroArtists;
+  let finalRecommended = recommended;
+
+  if (artistsWithDetails.length === 0) {
+    const allGroups = await prisma.event.groupBy({
+      by: ['artist'],
+      where: { eventDate: { gte: new Date() }, artist: { not: null } },
+      _count: { id: true },
+      _min: { eventDate: true },
+      _max: { eventDate: true },
+      orderBy: { _min: { eventDate: 'asc' } },
+    });
+
+    const allArtists: ArtistCardData[] = await Promise.all(
+      allGroups.map(async (grp) => {
+        const ev = await prisma.event.findFirst({
+          where: { artist: grp.artist, eventDate: { gte: new Date() } },
+          orderBy: { eventDate: 'asc' },
+          select: { imageUrl: true, city: true, category: true },
+        });
+        return {
+          artist: grp.artist ?? 'Artiste inconnu',
+          eventsCount: grp._count.id,
+          firstEventDate: grp._min.eventDate,
+          lastEventDate: grp._max.eventDate,
+          imageUrl: ev?.imageUrl ?? null,
+          city: ev?.city ?? null,
+          category: ev?.category ?? null,
+        };
+      }),
+    );
+
+    const sortedAll = [...allArtists].sort((a, b) => b.eventsCount - a.eventsCount);
+    finalHeroArtists = sortedAll.slice(0, 5).map((a) => ({
+      artist: a.artist,
+      eventsCount: a.eventsCount,
+      imageUrl: a.imageUrl,
+      firstEventId: '',
+    }));
+    const heroNamesAll = new Set(finalHeroArtists.map((h) => h.artist));
+    finalRecommended = sortedAll.filter((a) => !heroNamesAll.has(a.artist)).slice(0, 12);
+  }
 
   return (
-    <MainLayout>
-      <div className="container py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <CalendarRange className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold">Événements</h1>
-          </div>
-          <p className="text-lg text-muted-foreground mb-6">
-            Découvrez tous les événements disponibles et trouvez vos billets
-          </p>
-          
-          {/* Search Bar */}
-          <SearchBar className="max-w-2xl" />
-        </div>
+    <div className="min-h-screen bg-slate-50">
+      {/* Search bar */}
+      <EventsSearchBar />
 
-        {/* Filters */}
-        <div className="mb-8">
-          <EventFilters
-            filters={filters}
-            onFiltersChange={handleFiltersChange}
-            cities={cities}
-            categories={categories}
-          />
-        </div>
+      {/* Hero Carousel */}
+      <HeroCarousel artists={finalHeroArtists} />
 
-        {/* Error State */}
-        {error && (
-          <Alert variant="destructive" className="mb-8">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+      {/* Filtres horizontaux (sticky) */}
+      <FiltersBar categories={MUSIC_CATEGORIES} />
 
-        {/* Results Count */}
-        {!loading && !error && (
-          <div className="mb-4 text-sm text-muted-foreground">
-            {filteredEvents.length === 0 ? (
-              <span>Aucun événement trouvé</span>
-            ) : (
-              <span>
-                {filteredEvents.length} événement{filteredEvents.length > 1 ? 's' : ''} trouvé
-                {filteredEvents.length > 1 ? 's' : ''}
-              </span>
-            )}
-          </div>
-        )}
+      <div className="container mx-auto px-4 py-12 space-y-16">
 
-        {/* Loading State */}
-        {loading && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="space-y-3">
-                <Skeleton className="h-48 w-full" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            ))}
-          </div>
-        )}
+        {/* "Récemment consultés" — historique perso (localStorage) + fallback DB */}
+        <RecentlyViewedSection fallbackArtists={fallbackArtists} />
 
-        {/* Events Grid */}
-        {!loading && !error && filteredEvents.length > 0 && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredEvents.map((event) => (
-              <EventCard
-                key={event.id}
-                id={event.id}
-                title={event.title}
-                description={event.description}
-                category={event.category}
-                imageUrl={event.imageUrl}
-                date={new Date(event.date)}
-                location={event.location}
-                country={event.country}
-                availableTickets={event.availableTickets}
-                minPrice={event.minPrice}
-                maxPrice={event.maxPrice}
-              />
-            ))}
-          </div>
-        )}
+        {/* "Recommandé pour vous" */}
+        <RecommendedSection artists={finalRecommended} />
 
-        {/* Empty State */}
-        {!loading && !error && filteredEvents.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <CalendarRange className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Aucun événement trouvé</h3>
-            <p className="text-muted-foreground mb-4">
-              Essayez de modifier vos filtres ou revenez plus tard
-            </p>
-          </div>
-        )}
+        {/* "Catégories populaires" */}
+        <CategoriesSection categories={MUSIC_CATEGORIES.slice(0, 12)} />
+
       </div>
-    </MainLayout>
+    </div>
   );
 }

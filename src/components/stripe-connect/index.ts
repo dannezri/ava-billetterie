@@ -3,4 +3,4 @@
  */
 
 export { default as SellerOnboarding } from './SellerOnboarding';
-export { default as OnboardingFlow } from './OnboardingFlow';
+// OnboardingFlow supprimé (legacy - remplacé par WithdrawOnboarding)
