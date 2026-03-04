@@ -19,7 +19,6 @@ async function main() {
   try {
     // 1. Récupérer tous les événements
     const events = await prisma.event.findMany({
-      take: 10,
       orderBy: { eventDate: 'asc' },
     });
 
@@ -30,55 +29,22 @@ async function main() {
 
     console.log(`📅 ${events.length} événement(s) trouvé(s)\n`);
 
-    // 2. Créer des vendeurs de test (ou utiliser des existants)
-    const sellers = await Promise.all([
-      prisma.user.upsert({
-        where: { email: 'marie.laurent@test.com' },
-        update: {},
-        create: {
-          id: 'seed-seller-1',
-          email: 'marie.laurent@test.com',
-          name: 'Marie Laurent',
-          kycStatus: 'VERIFIED',
-          trustScore: 95,
-        },
-      }),
-      prisma.user.upsert({
-        where: { email: 'thomas.bernard@test.com' },
-        update: {},
-        create: {
-          id: 'seed-seller-2',
-          email: 'thomas.bernard@test.com',
-          name: 'Thomas Bernard',
-          kycStatus: 'VERIFIED',
-          trustScore: 88,
-        },
-      }),
-      prisma.user.upsert({
-        where: { email: 'sophie.dubois@test.com' },
-        update: {},
-        create: {
-          id: 'seed-seller-3',
-          email: 'sophie.dubois@test.com',
-          name: 'Sophie Dubois',
-          kycStatus: 'VERIFIED',
-          trustScore: 92,
-        },
-      }),
-      prisma.user.upsert({
-        where: { email: 'pierre.martin@test.com' },
-        update: {},
-        create: {
-          id: 'seed-seller-4',
-          email: 'pierre.martin@test.com',
-          name: 'Pierre Martin',
-          kycStatus: 'VERIFIED',
-          trustScore: 76,
-        },
-      }),
-    ]);
+    // 2. Utiliser alice.demo2@gmail.com comme vendeur unique pour tous les billets
+    const alice = await prisma.user.upsert({
+      where: { email: 'alice.demo2@gmail.com' },
+      update: { kycStatus: 'VERIFIED', trustScore: 95 },
+      create: {
+        email: 'alice.demo2@gmail.com',
+        name: 'Alice 2',
+        kycStatus: 'VERIFIED',
+        trustScore: 95,
+      },
+    });
 
-    console.log(`👥 ${sellers.length} vendeur(s) créé(s)\n`);
+    // Utiliser un tableau pour garder la compatibilité avec le code existant
+    const sellers = [alice, alice, alice, alice];
+
+    console.log(`👥 Vendeur unique: ${alice.email}\n`);
 
     // 3. Créer des billets pour chaque événement
     let totalTickets = 0;

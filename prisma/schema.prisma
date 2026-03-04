@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // Pour migrations (sans pooling)
 }
 
 // ============================================================================
@@ -24,18 +25,36 @@ model User {
   verifiedIdentity Boolean   @default(false) @map("verified_identity")
   stripeAccountId  String?   @map("stripe_account_id")
   trustScore       Int       @default(50) @map("trust_score")
-  
+
+  // ✨ Tracking ventes (tout user qui vend, sans notion de "role SELLER")
+  hasSoldTickets   Boolean   @default(false) @map("has_sold_tickets")
+  firstSaleAt      DateTime? @map("first_sale_at")
+  totalSales       Int       @default(0) @map("total_sales")
+  totalRevenue     Decimal   @default(0) @map("total_revenue") @db.Decimal(10, 2)
+
+  // Dispute stats (vendeur)
+  disputesAsSellerCount   Int @default(0) @map("disputes_as_seller_count")
+  disputesResolvedAgainst Int @default(0) @map("disputes_resolved_against")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   
   // Relations
-  ticketsForSale  Ticket[]      @relation("SellerTickets")
-  purchases       Transaction[] @relation("BuyerTransactions")
-  sales           Transaction[] @relation("SellerTransactions")
-  disputes        Dispute[]     @relation("DisputeReporter")
+  ticketsForSale       Ticket[]      @relation("SellerTickets")
+  ticketGroupsForSale  TicketGroup[] @relation("SellerTicketGroups")
+  purchases            Transaction[] @relation("BuyerTransactions")
+  sales                Transaction[] @relation("SellerTransactions")
+  disputes         Dispute[]       @relation("DisputeReporter")
+  resolvedDisputes Dispute[]       @relation("DisputeResolver")
+  assignedDisputes Dispute[]       @relation("AssignedDisputes")
+  disputeMessages  DisputeMessage[] @relation("DisputeMessageAuthor")
   reviewsGiven    Review[]      @relation("ReviewsGiven")
   reviewsReceived Review[]      @relation("ReviewsReceived")
   auditLogs       AuditLog[]
+  favorites       Favorite[]
+  notifications         Notification[]
+  userEventFollows      UserEventFollow[]
+  notificationPreferences NotificationPreferences?
   
   @@index([email])
   @@index([kycStatus])
@@ -72,12 +91,50 @@ model Event {
   updatedAt DateTime @updatedAt @map("updated_at")
   
   // Relations
-  tickets Ticket[]
-  
+  tickets      Ticket[]
+  ticketGroups TicketGroup[]
+  favorites    Favorite[]
+  userEventFollows UserEventFollow[]
+
   @@index([eventDate])
   @@index([city])
   @@index([artist])
   @@map("events")
+}
+
+// ============================================================================
+// TICKET GROUPS (billets côte à côte vendus ensemble)
+// ============================================================================
+
+model TicketGroup {
+  id         String            @id @default(uuid())
+  eventId    String            @map("event_id")
+  sellerId   String            @map("seller_id")
+  quantity   Int
+  totalPrice Decimal           @map("total_price") @db.Decimal(10, 2)
+  section    String?
+  status     TicketGroupStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  seller  User     @relation("SellerTicketGroups", fields: [sellerId], references: [id], onDelete: Cascade)
+  tickets Ticket[]
+
+  @@index([eventId])
+  @@index([sellerId])
+  @@index([quantity])
+  @@index([status])
+  @@map("ticket_groups")
+}
+
+enum TicketGroupStatus {
+  ACTIVE
+  RESERVED
+  SOLD
+  CANCELLED
 }
 
 // ============================================================================
@@ -88,6 +145,7 @@ model Ticket {
   id        String   @id @default(uuid())
   eventId   String   @map("event_id")
   sellerId  String   @map("seller_id")
+  groupId   String?  @map("group_id")
   
   status            TicketStatus             @default(DRAFT)
   originalPrice     Decimal?                 @map("original_price") @db.Decimal(10, 2)
@@ -97,9 +155,22 @@ model Ticket {
   seatNumber        String?                  @map("seat_number")
   pdfUrl            String?                  @map("pdf_url")
   pdfHash           String?                  @map("pdf_hash")
+  pdfSizeBytes      Int?                     @map("pdf_size_bytes")
   barcodeNumber     String?                  @map("barcode_number")
+  barcodeType       String?                  @map("barcode_type") @db.VarChar(20)
   verificationStatus TicketVerificationStatus @default(PENDING) @map("verification_status")
   rejectionReason   String?                  @map("rejection_reason")
+
+  // ✨ Données extraites automatiquement du PDF
+  extractedEventName String?  @map("extracted_event_name") @db.VarChar(255)
+  extractedDate      DateTime? @map("extracted_date")
+  extractedVenue     String?  @map("extracted_venue") @db.VarChar(255)
+  extractedCity      String?  @map("extracted_city") @db.VarChar(100)
+  extractedCategory  String?  @map("extracted_category") @db.VarChar(100)
+  extractedSeat      String?  @map("extracted_seat") @db.VarChar(50)
+  extractedPrice     Decimal? @map("extracted_price") @db.Decimal(10, 2)
+  extractionConfidence Float? @map("extraction_confidence") // 0.0 à 1.0
+  extractionWarnings Json?    @map("extraction_warnings")  // Array de strings
   
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
@@ -108,8 +179,9 @@ model Ticket {
   // Relations
   event       Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
   seller      User          @relation("SellerTickets", fields: [sellerId], references: [id], onDelete: Cascade)
+  group       TicketGroup?  @relation(fields: [groupId], references: [id], onDelete: SetNull)
   transaction Transaction?
-  
+
   @@index([barcodeNumber])
   @@index([status])
   @@index([verificationStatus])
@@ -147,11 +219,17 @@ model Transaction {
   amount                Decimal  @db.Decimal(10, 2)
   platformFee           Decimal  @map("platform_fee") @db.Decimal(10, 2)
   stripePaymentIntentId String?  @map("stripe_payment_intent_id")
-  stripeTransferId      String?  @map("stripe_transfer_id")
+  stripeTransferId      String?  @unique @map("stripe_transfer_id") @db.VarChar(255)
   
   status              TransactionStatus @default(PENDING)
   escrowReleaseDate   DateTime          @map("escrow_release_date")
   releasedAt          DateTime?         @map("released_at")
+
+  // ✨ Virement automatique par billet (J+2 après événement)
+  autoPayoutStatus    AutoPayoutStatus  @default(PENDING) @map("auto_payout_status")
+  autoPayoutDate      DateTime?         @map("auto_payout_date")
+  autoPayoutError     String?           @map("auto_payout_error") @db.Text
+  manualReview        Boolean           @default(false) @map("manual_review")
   
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -167,16 +245,27 @@ model Transaction {
   @@index([escrowReleaseDate])
   @@index([buyerId])
   @@index([sellerId])
+  @@index([autoPayoutStatus])
   @@index([stripePaymentIntentId])
   @@map("transactions")
 }
 
 enum TransactionStatus {
   PENDING
+  CANCELLED
+  COMPLETED
   ESCROWED
   RELEASED
   REFUNDED
   DISPUTED
+}
+
+enum AutoPayoutStatus {
+  PENDING         // En attente (J+2 pas encore passé)
+  PROCESSING      // Cron en cours de traitement
+  COMPLETED       // Virement effectué
+  FAILED          // Échec temporaire (retry demain)
+  MANUAL_REVIEW   // Échec permanent (action manuelle requise)
 }
 
 // ============================================================================
@@ -194,23 +283,57 @@ model Dispute {
   
   status          DisputeStatus @default(OPEN)
   resolutionNotes String?       @map("resolution_notes")
+  refundAmount    Decimal?      @map("refund_amount") @db.Decimal(10, 2)
+  resolvedById    String?       @map("resolved_by_id")
   resolvedAt      DateTime?     @map("resolved_at")
+
+  // Admin management
+  assignedTo      String?       @map("assigned_to")
+  stripeRefundId  String?       @map("stripe_refund_id")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  transaction    Transaction      @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  reporter       User             @relation("DisputeReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  resolvedBy     User?            @relation("DisputeResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+  assignedAdmin  User?            @relation("AssignedDisputes", fields: [assignedTo], references: [id], onDelete: SetNull)
+  messages       DisputeMessage[]
+  
+  @@index([status])
+  @@index([reporterId])
+  @@index([assignedTo])
+  @@index([createdAt])
+  @@map("disputes")
+}
+
+model DisputeMessage {
+  id         String   @id @default(uuid())
+  disputeId  String   @map("dispute_id")
+  authorId   String   @map("author_id")
+  
+  message     String  @db.Text
+  attachments Json?
+  isInternal  Boolean @default(false) @map("is_internal")
   
   createdAt DateTime @default(now()) @map("created_at")
   
   // Relations
-  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
-  reporter    User        @relation("DisputeReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  dispute Dispute @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  author  User    @relation("DisputeMessageAuthor", fields: [authorId], references: [id], onDelete: Cascade)
   
-  @@index([status])
-  @@index([reporterId])
-  @@map("disputes")
+  @@index([disputeId])
+  @@map("dispute_messages")
 }
 
 enum DisputeReason {
   FAKE_TICKET
   NO_ACCESS
   DUPLICATE
+  EVENT_CANCELLED
+  WRONG_TICKET
+  SELLER_NO_RESPONSE
   OTHER
 }
 
@@ -248,6 +371,114 @@ model Review {
 }
 
 // ============================================================================
+// FAVORITES
+// ============================================================================
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  eventId   String   @map("event_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@index([userId])
+  @@index([eventId])
+  @@map("favorites")
+}
+
+// ============================================================================
+// NOTIFICATIONS
+// ============================================================================
+
+model Notification {
+  id       String @id @default(uuid())
+
+  userId   String @map("user_id")
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type     NotificationType
+  title    String           @db.VarChar(255)
+  message  String           @db.Text
+
+  metadata  Json?
+  linkUrl   String?  @map("link_url") @db.VarChar(500)
+  ctaText   String?  @map("cta_text") @db.VarChar(50)
+
+  isRead  Boolean   @default(false) @map("is_read")
+  readAt  DateTime? @map("read_at")
+
+  priority  NotificationPriority @default(MEDIUM)
+
+  expiresAt DateTime? @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@index([userId, type])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  TRANSACTION
+  DISPUTE
+  PRICE_ALERT
+  SYSTEM
+  SOCIAL
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model UserEventFollow {
+  id      String @id @default(uuid())
+  userId  String @map("user_id")
+  eventId String @map("event_id")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  alertOnNewTicket Boolean  @default(true) @map("alert_on_new_ticket")
+  alertOnPriceDrop Boolean  @default(true) @map("alert_on_price_drop")
+  priceThreshold   Decimal? @map("price_threshold") @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, eventId])
+  @@index([eventId])
+  @@map("user_event_follows")
+}
+
+model NotificationPreferences {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  emailTransactions Boolean @default(true) @map("email_transactions")
+  emailDisputes     Boolean @default(true) @map("email_disputes")
+  emailPriceAlerts  Boolean @default(true) @map("email_price_alerts")
+  emailSystem       Boolean @default(true) @map("email_system")
+
+  pushEnabled Boolean @default(false) @map("push_enabled")
+  pushSound   Boolean @default(true) @map("push_sound")
+
+  dailyDigest Boolean @default(false) @map("daily_digest")
+  digestTime  String  @default("09:00") @map("digest_time")
+
+  priceAlertFrequency String @default("INSTANT") @map("price_alert_frequency")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("notification_preferences")
+}
+
+// ============================================================================
 // AUDIT LOGS
 // ============================================================================
 
@@ -282,4 +513,8 @@ enum AuditAction {
   PAYMENT_SUCCEEDED
   DISPUTE_CREATED
   ADMIN_ACTION
+  PAYOUT_CREATED      // Legacy (ancien système de retrait manuel)
+  PAYOUT_FAILED       // Legacy (ancien système de retrait manuel)
+  AUTO_PAYOUT_COMPLETED
+  AUTO_PAYOUT_FAILED
 }

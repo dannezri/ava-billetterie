@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { 
-  Package, 
-  TrendingUp, 
-  CreditCard, 
+import {
+  Package,
   User,
   Menu,
-  X
+  Plus,
+  BarChart3,
+  History,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -20,21 +20,33 @@ const navItems = [
     title: 'Mes Billets',
     href: '/dashboard/seller',
     icon: Package,
+    description: 'Billets en vente',
+    exact: true,
   },
   {
-    title: 'Ventes',
-    href: '/dashboard/seller/sales',
-    icon: TrendingUp,
+    title: 'Vendre un billet',
+    href: '/sell-ticket',
+    icon: Plus,
+    description: 'Mettre en vente',
+    highlight: true,
   },
   {
-    title: 'Paiements',
-    href: '/dashboard/seller/payments',
-    icon: CreditCard,
+    title: 'Historique & Paiements',
+    href: '/dashboard/seller/history',
+    icon: History,
+    description: 'Ventes et virements automatiques',
   },
   {
-    title: 'Profil',
+    title: 'Analytics',
+    href: '/dashboard/seller/analytics',
+    icon: BarChart3,
+    description: 'Performances',
+  },
+  {
+    title: 'Profil vendeur',
     href: '/dashboard/seller/profile',
     icon: User,
+    description: 'Informations vendeur',
   },
 ];
 
@@ -45,32 +57,57 @@ interface SellerSidebarProps {
 function SidebarContent() {
   const pathname = usePathname();
 
+  const isActive = (href: string, exact?: boolean) => {
+    if (exact) return pathname === href;
+    return pathname.startsWith(href);
+  };
+
   return (
     <div className="space-y-4 py-4">
+      {/* Badge espace vendeur */}
+      <div className="px-4">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accentGreen-50 border border-accentGreen-200">
+          <span className="text-base leading-none">💼</span>
+          <span className="text-sm font-semibold text-accentGreen-700">Espace Vendeur</span>
+        </div>
+      </div>
+
       <div className="px-3 py-2">
-        <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-          Dashboard Vendeur
-        </h2>
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
-            
+            const active = isActive(item.href, item.exact);
+
             return (
-              <Button
+              <Link
                 key={item.href}
-                asChild
-                variant={isActive ? 'secondary' : 'ghost'}
+                href={item.href}
                 className={cn(
-                  'w-full justify-start',
-                  isActive && 'bg-secondary'
+                  'flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                  active
+                    ? 'bg-accentGreen-50 text-accentGreen-700 border border-accentGreen-200'
+                    : item.highlight
+                    ? 'text-accentGreen-600 hover:bg-accentGreen-50 hover:text-accentGreen-700'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 )}
               >
-                <Link href={item.href}>
-                  <Icon className="mr-2 h-4 w-4" />
-                  {item.title}
-                </Link>
-              </Button>
+                <Icon
+                  className={cn(
+                    'h-4 w-4',
+                    active
+                      ? 'text-accentGreen-600'
+                      : item.highlight
+                      ? 'text-accentGreen-500'
+                      : ''
+                  )}
+                />
+                <span>{item.title}</span>
+                {item.highlight && !active && (
+                  <span className="ml-auto text-xs bg-accentGreen-100 text-accentGreen-700 px-1.5 py-0.5 rounded">
+                    Nouveau
+                  </span>
+                )}
+              </Link>
             );
           })}
         </div>

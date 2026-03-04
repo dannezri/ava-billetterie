@@ -3,6 +3,10 @@ import { withSentryConfig } from '@sentry/nextjs';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
+  // Packages exclus du bundling webpack côté serveur
+  // mupdf : WASM ESM avec top-level await — ne peut pas être bundlé
+  serverExternalPackages: ['pdf-parse', 'pdfjs-dist', 'mupdf'],
   
   eslint: {
     ignoreDuringBuilds: true,
@@ -16,11 +20,23 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ucarecdn.com', // Uploadcare
+        hostname: 'ucarecdn.com', // Uploadcare (domaine public standard)
+      },
+      {
+        protocol: 'https',
+        hostname: '*.ucarecd.net', // Uploadcare (domaine CDN custom du projet)
       },
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com', // Cloudinary
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com', // Unsplash (images événements)
+      },
+      {
+        protocol: 'https',
+        hostname: '*.ticketm.net', // Ticketmaster CDN (images événements)
       },
     ],
   },
@@ -52,6 +68,11 @@ const nextConfig = {
   },
 
   webpack: (config, { isServer }) => {
+    if (isServer) {
+      // mupdf est ESM avec top-level await — externalisé pour que webpack
+      // émette import('mupdf') au lieu de le bundler (ce qui échouerait)
+      config.externals.push({ 'mupdf': 'module mupdf' });
+    }
     config.externals.push({
       'bufferutil': 'bufferutil',
       'utf-8-validate': 'utf-8-validate',

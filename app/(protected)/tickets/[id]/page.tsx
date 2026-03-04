@@ -13,9 +13,14 @@ import {
   Calendar, 
   Euro,
   Home,
-  Eye
+  Eye,
+  Tag,
+  ShoppingBag,
+  Banknote,
+  Circle,
 } from 'lucide-react';
 import Link from 'next/link';
+import { DevPayoutButton } from './DevPayoutButton';
 
 interface TicketDetailPageProps {
   params: {
@@ -27,6 +32,167 @@ interface TicketDetailPageProps {
  * Page de détail d'un billet créé
  * Affiche le statut de validation et les informations du billet
  */
+// ---------------------------------------------------------------------------
+// Timeline helpers
+// ---------------------------------------------------------------------------
+
+type TimelineStep = {
+  label: string;
+  description: string;
+  date: Date | null;
+  status: 'done' | 'active' | 'pending';
+  icon: React.ReactNode;
+};
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function TicketTimeline({
+  ticket,
+}: {
+  ticket: {
+    createdAt: Date;
+    updatedAt: Date;
+    status: string;
+    verificationStatus: string;
+    transaction: {
+      createdAt: Date;
+      releasedAt: Date | null;
+      status: string;
+      autoPayoutStatus: string | null;
+      autoPayoutDate: Date | null;
+    } | null;
+  };
+}) {
+  const isApproved =
+    ticket.verificationStatus === 'APPROVED' ||
+    ticket.status === 'ACTIVE' ||
+    ticket.status === 'SOLD';
+
+  const isSold = ticket.status === 'SOLD';
+
+  const autoPayoutStatus = ticket.transaction?.autoPayoutStatus ?? null;
+  const isPaid = autoPayoutStatus === 'COMPLETED';
+  const isPayoutProcessing = autoPayoutStatus === 'PROCESSING';
+  const isPayoutFailed = autoPayoutStatus === 'FAILED' || autoPayoutStatus === 'MANUAL_REVIEW';
+  const payoutDate = isPaid ? (ticket.transaction?.autoPayoutDate ?? null) : null;
+
+  const getPayoutDescription = () => {
+    if (isPaid) return 'Les fonds ont été virés sur votre compte.';
+    if (isPayoutProcessing) return 'Le virement est en cours de traitement par Stripe.';
+    if (isPayoutFailed) return 'Un problème est survenu. Contactez le support.';
+    if (isSold) return 'Le virement sera déclenché automatiquement sous 48h.';
+    return 'Le virement sera effectué après confirmation de réception.';
+  };
+
+  const getPayoutStepStatus = (): 'done' | 'active' | 'pending' => {
+    if (isPaid) return 'done';
+    if (isPayoutProcessing || isPayoutFailed) return 'active';
+    return 'pending';
+  };
+
+  const steps: TimelineStep[] = [
+    {
+      label: 'Mise en vente',
+      description: 'Votre billet a été soumis à la validation.',
+      date: ticket.createdAt,
+      status: 'done',
+      icon: <Tag className="w-4 h-4" />,
+    },
+    {
+      label: 'Publié',
+      description: isApproved
+        ? 'Votre billet est visible sur la plateforme.'
+        : 'En attente de validation par notre équipe.',
+      date: isApproved ? ticket.updatedAt : null,
+      status: isApproved ? 'done' : 'active',
+      icon: <CheckCircle className="w-4 h-4" />,
+    },
+    {
+      label: 'Vendu',
+      description: isSold
+        ? 'Un acheteur a acheté votre billet.'
+        : "En attente d'un acheteur.",
+      date: isSold ? (ticket.transaction?.createdAt ?? null) : null,
+      status: isSold ? 'done' : 'pending',
+      icon: <ShoppingBag className="w-4 h-4" />,
+    },
+    {
+      label: 'Virement effectué',
+      description: getPayoutDescription(),
+      date: payoutDate,
+      status: getPayoutStepStatus(),
+      icon: <Banknote className="w-4 h-4" />,
+    },
+  ];
+
+  return (
+    <ol className="relative">
+      {steps.map((step, index) => {
+        const isLast = index === steps.length - 1;
+        return (
+          <li key={step.label} className={`relative flex gap-4 ${!isLast ? 'pb-8' : ''}`}>
+            {/* Ligne verticale */}
+            {!isLast && (
+              <span
+                className={`absolute left-[17px] top-8 w-0.5 h-full ${
+                  step.status === 'done' ? 'bg-primary' : 'bg-border'
+                }`}
+                aria-hidden
+              />
+            )}
+
+            {/* Icône */}
+            <span
+              className={`relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 ${
+                step.status === 'done'
+                  ? 'bg-primary border-primary text-primary-foreground'
+                  : step.status === 'active'
+                  ? 'bg-background border-primary text-primary'
+                  : 'bg-background border-border text-muted-foreground'
+              }`}
+            >
+              {step.status === 'pending' ? (
+                <Circle className="w-4 h-4" />
+              ) : (
+                step.icon
+              )}
+            </span>
+
+            {/* Contenu */}
+            <div className="flex-1 pt-1">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p
+                  className={`font-semibold text-sm ${
+                    step.status === 'pending' ? 'text-muted-foreground' : 'text-foreground'
+                  }`}
+                >
+                  {step.label}
+                </p>
+                {step.date && (
+                  <span className="text-xs text-muted-foreground tabular-nums">
+                    {formatDate(step.date)}
+                  </span>
+                )}
+              </div>
+              <p className="mt-0.5 text-sm text-muted-foreground">{step.description}</p>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+// ---------------------------------------------------------------------------
+
 export default async function TicketDetailPage({ params }: TicketDetailPageProps) {
   // 1. Vérifier l'authentification
   const supabase = await createClient();
@@ -55,6 +221,16 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
           id: true,
           email: true,
           name: true,
+        },
+      },
+      transaction: {
+        select: {
+          id: true,
+          createdAt: true,
+          releasedAt: true,
+          status: true,
+          autoPayoutStatus: true,
+          autoPayoutDate: true,
         },
       },
     },
@@ -154,7 +330,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
             <strong>Raison :</strong> {ticket.rejectionReason}
             <div className="mt-2">
               <Button variant="outline" size="sm" asChild>
-                <Link href="/tickets/new">Créer un nouveau billet</Link>
+                <Link href="/sell-ticket">Créer un nouveau billet</Link>
               </Button>
             </div>
           </AlertDescription>
@@ -321,10 +497,34 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
         </Card>
       )}
 
+      {/* Timeline */}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="w-5 h-5" />
+            Suivi du billet
+          </CardTitle>
+          <CardDescription>
+            Retrouvez chaque étape de la vie de votre billet
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <TicketTimeline ticket={ticket} />
+
+          {/* Bouton dev-only pour déclencher le virement manuellement */}
+          {process.env.NODE_ENV !== 'production' && ticket.transaction && (
+            <DevPayoutButton
+              transactionId={ticket.transaction.id}
+              autoPayoutStatus={ticket.transaction.autoPayoutStatus}
+            />
+          )}
+        </CardContent>
+      </Card>
+
       {/* Actions */}
       <div className="mt-8 flex justify-center gap-4">
         <Button variant="outline" asChild>
-          <Link href="/tickets/new">Créer un autre billet</Link>
+          <Link href="/sell-ticket">Créer un autre billet</Link>
         </Button>
         <Button asChild>
           <Link href="/dashboard/seller">Retour au tableau de bord</Link>

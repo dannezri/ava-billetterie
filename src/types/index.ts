@@ -122,6 +122,9 @@ export enum DisputeReason {
   FAKE_TICKET = 'fake_ticket',
   NO_ACCESS = 'no_access',
   DUPLICATE = 'duplicate',
+  EVENT_CANCELLED = 'event_cancelled',
+  WRONG_TICKET = 'wrong_ticket',
+  SELLER_NO_RESPONSE = 'seller_no_response',
   OTHER = 'other',
 }
 

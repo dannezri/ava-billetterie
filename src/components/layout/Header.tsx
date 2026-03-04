@@ -1,6 +1,6 @@
 /**
  * Header Component with Authentication
- * Mobile-first responsive navigation
+ * Mobile-first responsive navigation avec SpaceSwitcher contextuel
  */
 
 'use client';
@@ -25,8 +25,10 @@ import {
 } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/use-auth';
+import { useCurrentSpace } from '@/hooks/useCurrentSpace';
 import { cn } from '@/lib/utils';
 import {
+    Bell,
     Heart,
     LayoutDashboard,
     LogOut,
@@ -36,6 +38,10 @@ import {
     Ticket,
     User,
 } from 'lucide-react';
+import { CartIcon } from '@/components/cart/CartIcon';
+import { NotificationBell } from '@/components/layout/NotificationBell';
+import { SpaceSwitcher } from '@/components/layout/SpaceSwitcher';
+import { TestUserSwitcher } from '@/components/dev/TestUserSwitcher';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -50,6 +56,7 @@ export function Header() {
   const { user, loading, signOut } = useAuth();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const currentSpace = useCurrentSpace();
 
   const getInitials = (email: string) => {
     return email.split('@')[0].substring(0, 2).toUpperCase();
@@ -57,41 +64,60 @@ export function Header() {
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
+  const isAuthenticated = currentSpace.space === 'buyer' || currentSpace.space === 'seller';
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header
+      className={cn(
+        'sticky top-0 z-50 w-full border-b backdrop-blur transition-colors duration-200',
+        isAuthenticated
+          ? cn(currentSpace.theme.background, 'supports-[backdrop-filter]:bg-opacity-95')
+          : 'bg-background/95 supports-[backdrop-filter]:bg-background/60'
+      )}
+    >
       <div className="container flex h-16 items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-2 md:gap-8">
+        {/* Gauche : SpaceSwitcher (si auth) + Logo */}
+        <div className="flex items-center gap-2 md:gap-4">
+          {/* SpaceSwitcher : visible uniquement en espace buyer/seller */}
+          {user && <SpaceSwitcher />}
+
           <Link
             href="/"
             className="flex items-center space-x-2"
             onClick={closeMobileMenu}
           >
-            <Ticket className="h-6 w-6" />
+            <Ticket className={cn('h-6 w-6', isAuthenticated && currentSpace.theme.accent)} />
             <span className="font-bold text-xl">AVA</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'text-sm font-medium transition-colors hover:text-primary',
-                  pathname === item.href
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          {/* Desktop Navigation publique (masquée en espace auth) */}
+          {!isAuthenticated && (
+            <nav className="hidden md:flex items-center gap-6">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'text-sm font-medium transition-colors hover:text-primary',
+                    pathname === item.href
+                      ? 'text-primary'
+                      : 'text-muted-foreground'
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          )}
         </div>
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
+          {/* Switcher de profil test (visible uniquement si NEXT_PUBLIC_TEST_USER_SWITCHER=true) */}
+          {process.env.NEXT_PUBLIC_TEST_USER_SWITCHER === 'true' && (
+            <TestUserSwitcher currentEmail={user?.email} />
+          )}
+          <CartIcon />
           {loading ? (
             <Skeleton className="h-10 w-24" />
           ) : user ? (
@@ -102,8 +128,10 @@ export function Header() {
                 size="sm"
                 className="hidden lg:flex"
               >
-                <Link href="/tickets/create">Vendre un billet</Link>
+                <Link href="/sell-ticket">Vendre un billet</Link>
               </Button>
+
+              <NotificationBell />
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -143,19 +171,7 @@ export function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/profile/settings">
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Paramètres</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/tickets/my-tickets">
-                      <Ticket className="mr-2 h-4 w-4" />
-                      <span>Mes billets</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/purchases">
+                    <Link href="/my-purchases">
                       <ShoppingBag className="mr-2 h-4 w-4" />
                       <span>Mes achats</span>
                     </Link>
@@ -164,6 +180,18 @@ export function Header() {
                     <Link href="/favorites">
                       <Heart className="mr-2 h-4 w-4" />
                       <span>Favoris</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/notifications">
+                      <Bell className="mr-2 h-4 w-4" />
+                      <span>Notifications</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Paramètres</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -191,6 +219,9 @@ export function Header() {
 
         {/* Mobile Menu Button */}
         <div className="flex md:hidden items-center gap-2">
+          {user && isAuthenticated && <SpaceSwitcher />}
+          <CartIcon />
+          {user && <NotificationBell />}
           {user && (
             <Avatar className="h-8 w-8">
               <AvatarFallback className="text-xs">
@@ -258,7 +289,7 @@ export function Header() {
                     {/* User Actions */}
                     <div className="flex flex-col gap-2">
                       <Link
-                        href="/tickets/create"
+                        href="/sell-ticket"
                         onClick={closeMobileMenu}
                         className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
                       >
@@ -282,23 +313,7 @@ export function Header() {
                         Mon profil
                       </Link>
                       <Link
-                        href="/profile/settings"
-                        onClick={closeMobileMenu}
-                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
-                      >
-                        <Settings className="mr-3 h-4 w-4" />
-                        Paramètres
-                      </Link>
-                      <Link
-                        href="/tickets/my-tickets"
-                        onClick={closeMobileMenu}
-                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
-                      >
-                        <Ticket className="mr-3 h-4 w-4" />
-                        Mes billets
-                      </Link>
-                      <Link
-                        href="/purchases"
+                        href="/my-purchases"
                         onClick={closeMobileMenu}
                         className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
                       >
@@ -313,7 +328,33 @@ export function Header() {
                         <Heart className="mr-3 h-4 w-4" />
                         Favoris
                       </Link>
+                      <Link
+                        href="/notifications"
+                        onClick={closeMobileMenu}
+                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
+                      >
+                        <Bell className="mr-3 h-4 w-4" />
+                        Notifications
+                      </Link>
+                      <Link
+                        href="/profile"
+                        onClick={closeMobileMenu}
+                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
+                      >
+                        <Settings className="mr-3 h-4 w-4" />
+                        Paramètres
+                      </Link>
                     </div>
+                    <Separator />
+                    {/* Switcher de profil test (mobile) */}
+                    {process.env.NEXT_PUBLIC_TEST_USER_SWITCHER === 'true' && (
+                      <div className="px-4 py-2">
+                        <p className="text-xs text-orange-500 font-bold uppercase tracking-wide mb-2">
+                          Test — Changer de profil
+                        </p>
+                        <TestUserSwitcher currentEmail={user?.email} />
+                      </div>
+                    )}
                     <Separator />
                     <Button
                       variant="ghost"

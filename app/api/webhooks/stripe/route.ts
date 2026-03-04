@@ -1,51 +1,56 @@
 /**
  * Stripe Webhooks Handler
- * Gère les événements Stripe (paiements, KYC, transferts)
+ * Gère les événements Stripe (paiements individuels, groupes, KYC, transferts)
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
 import prisma from '@/lib/db/prisma';
 import stripe from '@/lib/stripe/client';
+import { NotificationService } from '@/lib/services/notification.service';
+import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
 
-// Désactiver le body parser de Next.js pour les webhooks Stripe
 export const runtime = 'nodejs';
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-if (!webhookSecret) {
-  console.warn('⚠️ STRIPE_WEBHOOK_SECRET not configured');
-}
+// ─── Point d'entrée ────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  if (!webhookSecret) {
+    console.error('❌ STRIPE_WEBHOOK_SECRET manquant');
+    return NextResponse.json({ error: 'Configuration error' }, { status: 500 });
+  }
+
+  let event: Stripe.Event;
+
   try {
     const body = await req.text();
     const signature = req.headers.get('stripe-signature');
 
-    if (!signature || !webhookSecret) {
-      console.error('❌ Missing signature or webhook secret');
-      return NextResponse.json(
-        { error: 'Webhook signature or secret missing' },
-        { status: 400 }
-      );
+    if (!signature) {
+      return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
     }
 
-    let event: Stripe.Event;
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+  } catch (err) {
+    console.error('❌ Signature invalide:', err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+  }
 
-    try {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      console.error('❌ Webhook signature verification failed:', errorMessage);
-      return NextResponse.json(
-        { error: `Webhook Error: ${errorMessage}` },
-        { status: 400 }
-      );
-    }
+  // Idempotence
+  const alreadyProcessed = await prisma.auditLog.findFirst({
+    where: {
+      action: 'ADMIN_ACTION',
+      metadata: { path: ['eventId'], equals: event.id },
+    },
+  });
 
-    console.log('✅ Webhook event received:', event.type);
+  if (alreadyProcessed) {
+    console.log(`ℹ️ Event ${event.id} déjà traité`);
+    return NextResponse.json({ received: true });
+  }
 
-    // Router les événements selon leur type
+  try {
     switch (event.type) {
       case 'payment_intent.succeeded':
         await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
@@ -56,390 +61,411 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'charge.succeeded':
-        await handleChargeSucceeded(event.data.object as Stripe.Charge);
+        // Couvert par payment_intent.succeeded — log uniquement
+        console.log(`✅ Charge succeeded: ${(event.data.object as Stripe.Charge).id}`);
         break;
 
       case 'transfer.created':
-        await handleTransferCreated(event.data.object as Stripe.Transfer);
+      case 'transfer.paid':
+        await handleTransferCompleted(event.data.object as Stripe.Transfer);
+        break;
+
+      case 'transfer.failed':
+        await handleTransferFailed(event.data.object as Stripe.Transfer);
+        break;
+
+      case 'payout.paid':
+      case 'payout.failed':
+        console.log(`ℹ️ Payout event: ${event.type}`);
         break;
 
       case 'identity.verification_session.verified':
-        await handleIdentityVerified(event.data.object as Stripe.Identity.VerificationSession);
+        await handleIdentityVerified(
+          event.data.object as Stripe.Identity.VerificationSession
+        );
         break;
 
       case 'identity.verification_session.requires_input':
-        await handleIdentityRequiresInput(event.data.object as Stripe.Identity.VerificationSession);
+        await handleIdentityRequiresInput(
+          event.data.object as Stripe.Identity.VerificationSession
+        );
+        break;
+
+      case 'account.updated':
+        await handleAccountUpdated(event.data.object as Stripe.Account);
+        break;
+
+      case 'account.application.deauthorized':
+        console.warn(`⚠️ Account deauthorized: ${(event.data.object as Stripe.Account).id}`);
+        break;
+
+      case 'capability.updated':
+      case 'person.created':
+      case 'person.updated':
+      case 'external_account.created':
+        console.log(`ℹ️ Unhandled (benign): ${event.type}`);
         break;
 
       default:
-        console.log(`ℹ️ Unhandled event type: ${event.type}`);
+        console.log(`ℹ️ Unhandled event: ${event.type}`);
     }
 
-    return NextResponse.json({ received: true });
-  } catch (error) {
-    console.error('❌ Webhook error:', error);
-    return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 500 }
-    );
-  }
-}
-
-// ============================================================================
-// HANDLERS
-// ============================================================================
-
-/**
- * Paiement réussi → Mettre à jour la transaction en séquestre + Envoyer emails
- */
-async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
-  console.log('💰 Payment succeeded:', paymentIntent.id);
-
-  const transactionId = paymentIntent.metadata.transactionId;
-
-  if (!transactionId) {
-    console.error('❌ Missing transactionId in metadata');
-    return;
-  }
-
-  try {
-    // Récupérer la transaction avec toutes les relations
-    const transaction = await prisma.transaction.findUnique({
-      where: { id: transactionId },
-      include: {
-        ticket: {
-          include: {
-            event: true,
-          },
+    // Log de succès (idempotence)
+    await prisma.auditLog.create({
+      data: {
+        userId: null,
+        action: 'ADMIN_ACTION',
+        metadata: {
+          eventId: event.id,
+          eventType: event.type,
+          processedAt: new Date().toISOString(),
+          source: 'stripe_webhook',
         },
-        buyer: true,
-        seller: true,
+        ipAddress: 'stripe-webhook',
+        userAgent: 'stripe',
       },
     });
 
-    if (!transaction) {
-      console.error('❌ Transaction not found:', transactionId);
+    return NextResponse.json({ received: true });
+  } catch (err) {
+    console.error(`❌ Erreur processing ${event.type}:`, err);
+    return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
+  }
+}
+
+// ─── Handlers paiements ────────────────────────────────────────────────────────
+
+async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+  const meta = paymentIntent.metadata;
+  const purchaseType = meta?.purchaseType;
+
+  if (purchaseType === 'group' || purchaseType === 'cart') {
+    // ── Achat groupe ou panier : N billets, N transactions ─────────────────
+    const transactionIds = (meta.transactionIds ?? '').split(',').filter(Boolean);
+
+    if (transactionIds.length === 0) {
+      console.error('⚠️ group payment_intent sans transactionIds:', paymentIntent.id);
       return;
     }
 
-    // Mettre à jour la transaction en séquestre
-    await prisma.transaction.update({
-      where: { id: transactionId },
-      data: {
-        status: 'ESCROWED',
-        stripePaymentIntentId: paymentIntent.id,
-      },
-    });
+    await prisma.$transaction(async (tx) => {
+      const transactions = await tx.transaction.findMany({
+        where: { id: { in: transactionIds }, status: 'PENDING' },
+        include: { ticket: true },
+      });
 
-    // Mettre à jour le statut du billet
-    await prisma.ticket.update({
-      where: { id: transaction.ticketId },
-      data: { status: 'SOLD' },
-    });
+      if (transactions.length === 0) {
+        console.log('ℹ️ Group transactions déjà traitées:', transactionIds);
+        return;
+      }
 
-    // Créer un audit log
-    await prisma.auditLog.create({
-      data: {
-        userId: transaction.buyerId,
-        action: 'PAYMENT_SUCCEEDED',
-        metadata: {
-          transactionId: transaction.id,
-          paymentIntentId: paymentIntent.id,
-          amount: transaction.amount,
+      const ticketIds = transactions.map((t) => t.ticketId);
+
+      // Marquer tous les billets SOLD
+      await tx.ticket.updateMany({
+        where: { id: { in: ticketIds } },
+        data: { status: 'SOLD' },
+      });
+
+      // Marquer toutes les transactions COMPLETED.
+      // Les fonds restent sur la plateforme — le cron auto-payout gérera le virement vendeur.
+      await tx.transaction.updateMany({
+        where: { id: { in: transactionIds } },
+        data: {
+          status: 'COMPLETED',
+          stripePaymentIntentId: paymentIntent.id,
         },
-      },
+      });
+
+      // Mettre à jour les stats vendeur
+      const sellerId = meta.sellerId;
+      if (sellerId) {
+        const totalRevenue = transactions.reduce(
+          (s, t) => s + Number(t.amount) - Number(t.platformFee),
+          0
+        );
+        await tx.user.update({
+          where: { id: sellerId },
+          data: {
+            hasSoldTickets: true,
+            totalSales: { increment: transactions.length },
+            totalRevenue: { increment: totalRevenue },
+          },
+        });
+      }
+
+      await tx.auditLog.create({
+        data: {
+          userId: meta.buyerId ?? 'unknown',
+          action: 'PAYMENT_SUCCEEDED',
+          metadata: {
+            paymentIntentId: paymentIntent.id,
+            transactionIds,
+            purchaseType: 'group',
+            amount: paymentIntent.amount / 100,
+          },
+        },
+      });
     });
 
-    console.log('✅ Transaction updated to ESCROWED, ticket marked as SOLD');
+    console.log(
+      `✅ Groupe payé: ${transactionIds.length} billets (PI: ${paymentIntent.id})`
+    );
+  } else {
+    // ── Achat individuel : 1 billet, 1 transaction ─────────────────────────
+    const transactionId = meta?.transactionId;
 
-    // Envoyer les emails
-    await sendPurchaseConfirmationEmails(transaction);
+    if (!transactionId) {
+      console.error('⚠️ payment_intent sans transactionId:', paymentIntent.id);
+      return;
+    }
 
-  } catch (error) {
-    console.error('❌ Error handling payment success:', error);
-  }
-}
+    await prisma.$transaction(async (tx) => {
+      const transaction = await tx.transaction.findUnique({
+        where: { id: transactionId, status: 'PENDING' },
+        include: { ticket: true },
+      });
 
-/**
- * Envoyer les emails de confirmation d'achat
- */
-async function sendPurchaseConfirmationEmails(transaction: any) {
-  try {
-    const { Resend } = await import('resend');
-    const resend = new Resend(process.env.RESEND_API_KEY);
+      if (!transaction) {
+        console.log('ℹ️ Transaction déjà traitée:', transactionId);
+        return;
+      }
 
-    // Format de la date de l'événement
-    const eventDate = new Date(transaction.ticket.event.eventDate);
-    const formattedDate = eventDate.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+      await tx.ticket.update({
+        where: { id: transaction.ticketId },
+        data: { status: 'SOLD' },
+      });
+
+      // Les fonds restent sur la plateforme — le cron auto-payout gérera le virement vendeur.
+      await tx.transaction.update({
+        where: { id: transactionId },
+        data: {
+          status: 'COMPLETED',
+          stripePaymentIntentId: paymentIntent.id,
+        },
+      });
+
+      await tx.user.update({
+        where: { id: transaction.sellerId },
+        data: {
+          hasSoldTickets: true,
+          totalSales: { increment: 1 },
+          totalRevenue: {
+            increment: Number(transaction.amount) - Number(transaction.platformFee),
+          },
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          userId: transaction.buyerId,
+          action: 'PAYMENT_SUCCEEDED',
+          metadata: {
+            paymentIntentId: paymentIntent.id,
+            transactionId,
+            purchaseType: 'single',
+            amount: paymentIntent.amount / 100,
+          },
+        },
+      });
     });
 
-    // Format de la date de libération du séquestre
-    const releaseDate = new Date(transaction.escrowReleaseDate);
-    const formattedReleaseDate = releaseDate.toLocaleDateString('fr-FR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-
-    // Email à l'acheteur
-    await resend.emails.send({
-      from: 'AVA Billetterie <noreply@ava-tickets.com>',
-      to: transaction.buyer.email,
-      subject: `✅ Achat confirmé - ${transaction.ticket.event.title}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #2B87E3; color: white; padding: 20px; text-align: center; }
-              .content { background: #f9f9f9; padding: 20px; }
-              .ticket-info { background: white; padding: 15px; margin: 15px 0; border-left: 4px solid #10B981; }
-              .button { display: inline-block; padding: 12px 24px; background: #2B87E3; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
-              .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>🎉 Achat confirmé !</h1>
-              </div>
-              <div class="content">
-                <p>Bonjour ${transaction.buyer.name || 'cher client'},</p>
-                <p>Votre achat de billet a été confirmé avec succès !</p>
-                
-                <div class="ticket-info">
-                  <h2>📋 Récapitulatif</h2>
-                  <p><strong>Événement :</strong> ${transaction.ticket.event.title}</p>
-                  <p><strong>Date :</strong> ${formattedDate}</p>
-                  <p><strong>Lieu :</strong> ${transaction.ticket.event.venue}, ${transaction.ticket.event.city}</p>
-                  ${transaction.ticket.section ? `<p><strong>Placement :</strong> ${transaction.ticket.section}</p>` : ''}
-                  <p><strong>Montant payé :</strong> ${Number(transaction.amount).toFixed(2)}€</p>
-                </div>
-
-                <p><strong>🎟️ Votre billet</strong></p>
-                <p>Votre billet est maintenant disponible dans votre espace personnel.</p>
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard" class="button">
-                  Télécharger mon billet
-                </a>
-
-                <p><strong>🛡️ Protection acheteur</strong></p>
-                <p>Votre paiement est sécurisé par notre système de séquestre. Les fonds seront transférés au vendeur 2 jours après l'événement, vous laissant le temps de signaler tout problème.</p>
-
-                <p><strong>📧 Besoin d'aide ?</strong></p>
-                <p>Notre équipe est à votre disposition : <a href="mailto:support@ava-tickets.com">support@ava-tickets.com</a></p>
-              </div>
-              <div class="footer">
-                <p>© 2026 AVA Billetterie - Plateforme de revente de billets éthique</p>
-                <p>Cet email a été envoyé à ${transaction.buyer.email}</p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
-    });
-
-    // Email au vendeur
-    await resend.emails.send({
-      from: 'AVA Billetterie <noreply@ava-tickets.com>',
-      to: transaction.seller.email,
-      subject: `💰 Vente réalisée - ${transaction.ticket.event.title}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #10B981; color: white; padding: 20px; text-align: center; }
-              .content { background: #f9f9f9; padding: 20px; }
-              .sale-info { background: white; padding: 15px; margin: 15px 0; border-left: 4px solid #2B87E3; }
-              .button { display: inline-block; padding: 12px 24px; background: #10B981; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
-              .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>💰 Vente réalisée !</h1>
-              </div>
-              <div class="content">
-                <p>Bonjour ${transaction.seller.name || 'cher vendeur'},</p>
-                <p>Félicitations ! Votre billet a été vendu avec succès.</p>
-                
-                <div class="sale-info">
-                  <h2>📋 Détails de la vente</h2>
-                  <p><strong>Événement :</strong> ${transaction.ticket.event.title}</p>
-                  <p><strong>Date événement :</strong> ${formattedDate}</p>
-                  ${transaction.ticket.section ? `<p><strong>Placement :</strong> ${transaction.ticket.section}</p>` : ''}
-                  <p><strong>Prix de vente :</strong> ${Number(transaction.ticket.price).toFixed(2)}€</p>
-                  <p><strong>Frais plateforme (5%) :</strong> ${Number(transaction.platformFee).toFixed(2)}€</p>
-                  <p><strong>Montant net :</strong> ${(Number(transaction.amount) - Number(transaction.platformFee)).toFixed(2)}€</p>
-                </div>
-
-                <p><strong>💸 Paiement</strong></p>
-                <p>Votre paiement sera disponible le <strong>${formattedReleaseDate}</strong> (2 jours après l'événement).</p>
-                <p>Les fonds seront automatiquement transférés sur votre compte Stripe Connect.</p>
-
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/seller" class="button">
-                  Voir mes ventes
-                </a>
-
-                <p><strong>🛡️ Système de séquestre</strong></p>
-                <p>Le paiement est sécurisé par notre système de séquestre. Cela garantit la satisfaction de l'acheteur et protège votre réputation de vendeur.</p>
-
-                <p><strong>📧 Questions ?</strong></p>
-                <p>Contactez-nous : <a href="mailto:support@ava-tickets.com">support@ava-tickets.com</a></p>
-              </div>
-              <div class="footer">
-                <p>© 2026 AVA Billetterie - Plateforme de revente de billets éthique</p>
-                <p>Cet email a été envoyé à ${transaction.seller.email}</p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
-    });
-
-    console.log('✅ Confirmation emails sent to buyer and seller');
-  } catch (error) {
-    console.error('❌ Error sending emails:', error);
-    // Ne pas faire échouer le webhook si l'email échoue
-  }
-}
-
-/**
- * Paiement échoué → Libérer la réservation
- */
-async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
-  console.log('❌ Payment failed:', paymentIntent.id);
-
-  const ticketId = paymentIntent.metadata.ticket_id;
-
-  if (!ticketId) {
-    return;
-  }
-
-  try {
-    // Remettre le billet en vente
-    await prisma.ticket.update({
-      where: { id: ticketId },
-      data: { status: 'ACTIVE' },
-    });
-
-    console.log('✅ Ticket released back to marketplace');
-  } catch (error) {
-    console.error('❌ Error handling payment failure:', error);
-  }
-}
-
-/**
- * Charge réussie (confirmation supplémentaire)
- */
-async function handleChargeSucceeded(charge: Stripe.Charge) {
-  console.log('💳 Charge succeeded:', charge.id);
-  // Log pour audit
-  // TODO: Créer audit log
-}
-
-/**
- * Transfert créé → Séquestre libéré vers le vendeur
- */
-async function handleTransferCreated(transfer: Stripe.Transfer) {
-  console.log('💸 Transfer created:', transfer.id);
-
-  const transactionId = transfer.metadata.transaction_id;
-
-  if (!transactionId) {
-    console.error('❌ Missing transaction_id in transfer metadata');
-    return;
-  }
-
-  try {
-    await prisma.transaction.update({
+    // Notifications acheteur + vendeur (fire-and-forget)
+    const txData = await prisma.transaction.findUnique({
       where: { id: transactionId },
-      data: {
-        status: 'RELEASED',
-        stripeTransferId: transfer.id,
-        releasedAt: new Date(),
-      },
+      include: { ticket: { include: { event: true } } },
     });
+    if (txData) {
+      const eventName = txData.ticket.event.title;
+      Promise.all([
+        NotificationService.notifyPurchaseConfirmed({
+          userId: txData.buyerId,
+          transactionId,
+          eventName,
+          amount: Number(txData.amount),
+        }),
+        NotificationService.notifyTicketSold({
+          userId: txData.sellerId,
+          transactionId,
+          eventName,
+          amount: Number(txData.amount) - Number(txData.platformFee),
+        }),
+      ]).catch(() => null);
+    }
 
-    console.log('✅ Transaction marked as released');
-
-    // TODO: Envoyer email au vendeur
-  } catch (error) {
-    console.error('❌ Error handling transfer:', error);
+    console.log(`✅ Paiement individuel réussi (PI: ${paymentIntent.id})`);
   }
 }
 
-/**
- * KYC vérifié → Mettre à jour le statut utilisateur
- */
+async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
+  const meta = paymentIntent.metadata;
+  const purchaseType = meta?.purchaseType;
+
+  if (purchaseType === 'group') {
+    const transactionIds = (meta.transactionIds ?? '').split(',').filter(Boolean);
+
+    if (transactionIds.length > 0) {
+      await prisma.$transaction(async (tx) => {
+        const transactions = await tx.transaction.findMany({
+          where: { id: { in: transactionIds } },
+        });
+        const ticketIds = transactions.map((t) => t.ticketId);
+
+        // Remettre les billets en ACTIVE
+        await tx.ticket.updateMany({
+          where: { id: { in: ticketIds } },
+          data: { status: 'ACTIVE' },
+        });
+
+        await tx.transaction.updateMany({
+          where: { id: { in: transactionIds } },
+          data: { status: 'CANCELLED' },
+        });
+      });
+
+      console.warn(
+        `⚠️ Groupe paiement échoué: ${transactionIds.length} billets remis en vente (PI: ${paymentIntent.id})`
+      );
+    }
+  } else {
+    const transactionId = meta?.transactionId;
+    if (transactionId) {
+      const transaction = await prisma.transaction.findUnique({
+        where: { id: transactionId },
+      });
+      if (transaction) {
+        await prisma.ticket.update({
+          where: { id: transaction.ticketId },
+          data: { status: 'ACTIVE' },
+        });
+        await prisma.transaction.update({
+          where: { id: transactionId },
+          data: { status: 'CANCELLED' },
+        });
+      }
+      console.warn(`⚠️ Paiement individuel échoué (PI: ${paymentIntent.id})`);
+    }
+  }
+
+  await prisma.auditLog.create({
+    data: {
+      userId: meta?.buyerId ?? 'unknown',
+      action: 'PAYMENT_FAILED',
+      metadata: {
+        paymentIntentId: paymentIntent.id,
+        purchaseType: purchaseType ?? 'single',
+        error: paymentIntent.last_payment_error?.message ?? 'unknown',
+      },
+    },
+  });
+}
+
+// ─── Handlers KYC ─────────────────────────────────────────────────────────────
+
 async function handleIdentityVerified(
   session: Stripe.Identity.VerificationSession
 ) {
-  console.log('✅ Identity verified:', session.id);
+  const userId = session.metadata?.userId;
+  if (!userId) return;
 
-  const userId = session.metadata?.user_id;
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      kycStatus: 'VERIFIED',
+      verifiedIdentity: true,
+      kycProviderId: session.id,
+    },
+  });
 
-  if (!userId) {
-    console.error('❌ Missing user_id in verification session metadata');
-    return;
-  }
-
-  try {
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        kycStatus: 'VERIFIED',
-        kycProviderId: session.id,
-      },
-    });
-
-    console.log('✅ User KYC status updated to VERIFIED');
-
-    // TODO: Envoyer email de confirmation
-  } catch (error) {
-    console.error('❌ Error updating KYC status:', error);
-  }
+  NotificationService.notifyKYCApproved(userId).catch(() => null);
+  console.log(`✅ KYC vérifié pour user: ${userId}`);
 }
 
-/**
- * KYC nécessite input supplémentaire
- */
 async function handleIdentityRequiresInput(
   session: Stripe.Identity.VerificationSession
 ) {
-  console.log('⚠️ Identity requires input:', session.id);
+  const userId = session.metadata?.userId;
+  if (!userId) return;
 
-  const userId = session.metadata?.user_id;
+  await prisma.user.update({
+    where: { id: userId },
+    data: { kycStatus: 'REJECTED' },
+  });
 
-  if (!userId) {
+  NotificationService.notifyKYCRejected(userId).catch(() => null);
+  console.warn(`⚠️ KYC échoué pour user: ${userId}`);
+}
+
+// ─── Handlers Transfers (auto-payout) ─────────────────────────────────────────
+
+async function handleTransferCompleted(transfer: Stripe.Transfer) {
+  const transactionId = transfer.metadata?.transaction_id;
+
+  if (!transactionId) {
+    console.log(`ℹ️ Transfer ${transfer.id} sans transaction_id dans les metadata — ignoré`);
     return;
   }
 
-  try {
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        kycStatus: 'PENDING',
-      },
-    });
+  const transaction = await prisma.transaction.findUnique({
+    where: { id: transactionId },
+    select: { id: true, autoPayoutStatus: true },
+  });
 
-    console.log('✅ User KYC status updated to PENDING');
+  if (!transaction) {
+    console.warn(`⚠️ Transfer ${transfer.id} : transaction ${transactionId} introuvable`);
+    return;
+  }
 
-    // TODO: Envoyer email demandant plus d'informations
-  } catch (error) {
-    console.error('❌ Error updating KYC status:', error);
+  // Déjà marqué COMPLETED → idempotent
+  if (transaction.autoPayoutStatus === 'COMPLETED') {
+    console.log(`ℹ️ Transaction ${transactionId} déjà COMPLETED — skip`);
+    return;
+  }
+
+  await prisma.transaction.update({
+    where: { id: transactionId },
+    data: {
+      autoPayoutStatus: 'COMPLETED',
+      autoPayoutDate: new Date(),
+      stripeTransferId: transfer.id,
+      autoPayoutError: null,
+    },
+  });
+
+  console.log(`✅ Transfer ${transfer.id} → transaction ${transactionId} marquée COMPLETED`);
+}
+
+async function handleTransferFailed(transfer: Stripe.Transfer) {
+  const transactionId = transfer.metadata?.transaction_id;
+  if (!transactionId) return;
+
+  await prisma.transaction.update({
+    where: { id: transactionId },
+    data: {
+      autoPayoutStatus: 'FAILED',
+      autoPayoutError: `Stripe transfer ${transfer.id} échoué`,
+    },
+  }).catch(() => null);
+
+  console.warn(`⚠️ Transfer ${transfer.id} échoué → transaction ${transactionId} marquée FAILED`);
+}
+
+// ─── Handlers Stripe Connect ───────────────────────────────────────────────────
+
+async function handleAccountUpdated(account: Stripe.Account) {
+  // Mettre à jour le stripeAccountId si l'onboarding est complété
+  const user = await prisma.user.findFirst({
+    where: { stripeAccountId: account.id },
+  });
+
+  if (!user) return;
+
+  const isEnabled =
+    account.charges_enabled && account.payouts_enabled;
+
+  if (isEnabled) {
+    console.log(`✅ Stripe Connect actif pour: ${account.id}`);
+  } else {
+    console.log(`ℹ️ Stripe Connect mise à jour: ${account.id} (enabled: ${isEnabled})`);
   }
 }

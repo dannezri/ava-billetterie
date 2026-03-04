@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { uploadFile } from '@uploadcare/upload-client';
-import { validateFile, type UploadedFileInfo } from '@/config/uploadcare';
-import { AlertCircle, FileCheck, Upload, X } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { validateFile, type UploadedFileInfo } from '@/config/uploadcare';
+import { AlertCircle, FileCheck, Upload, X } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 interface SimpleUploadWidgetProps {
   onUploadComplete: (fileInfo: UploadedFileInfo) => void;
   onUploadError?: (error: string) => void;
   onUploadStart?: () => void;
+  /** Appelé avec le File brut dès la sélection (avant l'upload Uploadcare) */
+  onFileSelect?: (file: File) => void;
   disabled?: boolean;
   className?: string;
 }
@@ -23,6 +24,7 @@ export function SimpleUploadWidget({
   onUploadComplete,
   onUploadError,
   onUploadStart,
+  onFileSelect,
   disabled = false,
   className = '',
 }: SimpleUploadWidgetProps) {
@@ -32,14 +34,13 @@ export function SimpleUploadWidget({
   const [uploadedFile, setUploadedFile] = useState<UploadedFileInfo | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const publicKey = process.env.NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY;
-
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     // Validation côté client
     const validation = validateFile(file);
+
     if (!validation.valid) {
       setError(validation.error || 'Fichier invalide');
       onUploadError?.(validation.error || 'Fichier invalide');
@@ -47,39 +48,40 @@ export function SimpleUploadWidget({
     }
 
     setError(null);
+    // Notifier immédiatement avec le File brut (avant l'upload Uploadcare)
+    onFileSelect?.(file);
     setIsUploading(true);
     setUploadProgress(0);
     onUploadStart?.();
 
     try {
-      if (!publicKey) {
-        throw new Error('Clé publique Uploadcare manquante');
-      }
+      // Upload via notre route API → Supabase Storage (contourne FileTypeForbiddenError d'Uploadcare)
+      const formData = new FormData();
+      formData.append('file', file);
 
-      // Upload avec l'Upload Client API
-      const result = await uploadFile(file, {
-        publicKey,
-        store: 'auto',
-        onProgress: ({ value }) => {
-          const progress = Math.round(value * 100);
-          setUploadProgress(progress);
-        },
+      // Simuler une progression indéterminée pendant l'upload
+      const progressInterval = setInterval(() => {
+        setUploadProgress((prev) => Math.min(prev + 10, 85));
+      }, 200);
+
+      const response = await fetch('/api/upload/ticket-pdf', {
+        method: 'POST',
+        body: formData,
       });
 
-      // Créer l'objet UploadedFileInfo
-      const fileInfo: UploadedFileInfo = {
-        uuid: result.uuid,
-        name: result.name || file.name,
-        size: result.size || file.size,
-        mimeType: result.mimeType || file.type,
-        cdnUrl: result.cdnUrl || '',
-        originalUrl: result.originalUrl || result.cdnUrl || '',
-      };
+      clearInterval(progressInterval);
 
-      setUploadedFile(fileInfo);
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || `Erreur serveur (${response.status})`);
+      }
+
+      const result: UploadedFileInfo = await response.json();
+
+      setUploadedFile(result);
       setIsUploading(false);
       setUploadProgress(100);
-      onUploadComplete(fileInfo);
+      onUploadComplete(result);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erreur lors de l\'upload';
       setError(errorMsg);

@@ -7,6 +7,20 @@ import prisma from '@/lib/db/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-client';
 
+/**
+ * Calcule la date de libération du séquestre.
+ * En test (ESCROW_RELEASE_HOURS=0) : libération immédiate (Date.now()).
+ * En production : date événement + 2 jours (J+2 standard).
+ */
+function getEscrowReleaseDate(eventDate: Date): Date {
+  const hoursEnv = process.env.ESCROW_RELEASE_HOURS;
+  if (hoursEnv !== undefined && hoursEnv !== '') {
+    const hours = parseFloat(hoursEnv);
+    return new Date(Date.now() + hours * 60 * 60 * 1000);
+  }
+  return new Date(eventDate.getTime() + 2 * 24 * 60 * 60 * 1000);
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Vérifier l'authentification
@@ -42,23 +56,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Récupérer l'utilisateur
-    const user = await prisma.user.findUnique({
+    // Récupérer l'utilisateur — upsert pour les comptes Supabase Auth sans record DB
+    const user = await prisma.user.upsert({
       where: { email: supabaseUser.email! },
+      update: {},
+      create: {
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        name: supabaseUser.user_metadata?.name ?? null,
+      },
     });
-
-    if (!user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'USER_NOT_FOUND',
-            message: 'Utilisateur non trouvé',
-          },
-        },
-        { status: 404 }
-      );
-    }
 
     // Transaction atomique pour réserver le billet
     const result = await prisma.$transaction(async (tx) => {
@@ -88,11 +95,13 @@ export async function POST(request: NextRequest) {
         throw new Error('Vous ne pouvez pas acheter votre propre billet');
       }
 
-      // 2. Mettre à jour le statut du billet à RESERVED
+      // 2. Mettre à jour le statut du billet à RESERVED avec expiration dans 15 min
+      const reservationExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
       const updatedTicket = await tx.ticket.update({
         where: { id: ticketId },
         data: {
           status: 'RESERVED',
+          expiresAt: reservationExpiresAt,
         },
       });
 
@@ -111,10 +120,10 @@ export async function POST(request: NextRequest) {
           amount: totalAmount,
           platformFee: platformFee,
           status: 'PENDING',
-          // Date de libération du séquestre = date événement + 2 jours
-          escrowReleaseDate: new Date(
-            ticket.event.eventDate.getTime() + 2 * 24 * 60 * 60 * 1000
-          ),
+          // Date de libération du séquestre
+          // En test (ESCROW_RELEASE_HOURS=0) : immédiatement après la vente
+          // En production : date événement + 2 jours (J+2)
+          escrowReleaseDate: getEscrowReleaseDate(ticket.event.eventDate),
         },
       });
 
@@ -150,11 +159,25 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Error reserving ticket:', error);
 
-    // Si c'est une erreur métier, retourner 400
+    // Conflit de réservation simultanée (contrainte unique ticket_id)
+    if (error.code === 'P2002' && error.meta?.target?.includes('ticket_id')) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'ALREADY_RESERVED',
+            message: 'Ce billet vient d\'être réservé par un autre acheteur.',
+          },
+        },
+        { status: 409 }
+      );
+    }
+
+    // Erreur métier
     if (
-      error.message.includes('disponible') ||
-      error.message.includes('vérifié') ||
-      error.message.includes('propre billet')
+      error.message?.includes('disponible') ||
+      error.message?.includes('vérifié') ||
+      error.message?.includes('propre billet')
     ) {
       return NextResponse.json(
         {
@@ -185,8 +208,11 @@ export async function POST(request: NextRequest) {
 // Endpoint pour annuler une réservation (si timer expire)
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.email) {
+    // Vérifier l'authentification
+    const supabase = createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
       return NextResponse.json(
         { success: false, error: { code: 'UNAUTHORIZED' } },
         { status: 401 }
@@ -214,10 +240,10 @@ export async function DELETE(request: NextRequest) {
         throw new Error('Transaction non trouvée ou déjà traitée');
       }
 
-      // Remettre le billet en ACTIVE
+      // Remettre le billet en ACTIVE et effacer l'expiration
       await tx.ticket.update({
         where: { id: transaction.ticketId },
-        data: { status: 'ACTIVE' },
+        data: { status: 'ACTIVE', expiresAt: null },
       });
 
       // Marquer la transaction comme annulée

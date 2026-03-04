@@ -22,18 +22,20 @@ async function main() {
 
   // Create sample users
   console.log('👥 Creating users...');
+
+  // alice.demo2@gmail.com est le vendeur principal (tous les billets en vente lui appartiennent)
   const user1 = await prisma.user.create({
     data: {
-      email: 'alice@example.com',
-      name: 'Alice Martin',
+      email: 'alice.demo2@gmail.com',
+      name: 'Alice 2',
       phone: '+33612345678',
       kycStatus: 'VERIFIED',
       verifiedIdentity: true,
-      trustScore: 85,
-      stripeAccountId: 'acct_alice_test_123',
+      trustScore: 95,
     },
   });
 
+  // Acheteurs de test
   const user2 = await prisma.user.create({
     data: {
       email: 'bob@example.com',
@@ -42,7 +44,6 @@ async function main() {
       kycStatus: 'VERIFIED',
       verifiedIdentity: true,
       trustScore: 92,
-      stripeAccountId: 'acct_bob_test_456',
     },
   });
 
@@ -56,7 +57,7 @@ async function main() {
     },
   });
 
-  console.log(`✅ Created ${3} users`);
+  console.log(`✅ Created ${3} users (vendeur principal: alice.demo2@gmail.com)`);
 
   // Create 5 sample events
   console.log('🎭 Creating events...');
@@ -161,6 +162,7 @@ async function main() {
   // Create sample tickets
   console.log('🎟️  Creating tickets...');
 
+  // Tous les billets en vente appartiennent à alice.demo2@gmail.com (user1)
   // Tickets for The Weeknd
   await prisma.ticket.create({
     data: {
@@ -179,7 +181,7 @@ async function main() {
   await prisma.ticket.create({
     data: {
       eventId: event1.id,
-      sellerId: user2.id,
+      sellerId: user1.id,
       status: 'ACTIVE',
       price: 120.0,
       originalPrice: 150.0,
@@ -208,7 +210,7 @@ async function main() {
   await prisma.ticket.create({
     data: {
       eventId: event2.id,
-      sellerId: user2.id,
+      sellerId: user1.id,
       status: 'ACTIVE',
       price: 280.0,
       section: 'Court Central',
@@ -234,7 +236,7 @@ async function main() {
   await prisma.ticket.create({
     data: {
       eventId: event3.id,
-      sellerId: user2.id,
+      sellerId: user1.id,
       status: 'ACTIVE',
       price: 320.0,
       section: 'Carré Or',
@@ -248,7 +250,7 @@ async function main() {
   await prisma.ticket.create({
     data: {
       eventId: event4.id,
-      sellerId: user2.id,
+      sellerId: user1.id,
       status: 'ACTIVE',
       price: 550.0,
       originalPrice: 599.0,
@@ -272,7 +274,7 @@ async function main() {
   await prisma.ticket.create({
     data: {
       eventId: event5.id,
-      sellerId: user2.id,
+      sellerId: user1.id,
       status: 'ACTIVE',
       price: 85.0,
       originalPrice: 95.0,
@@ -296,11 +298,11 @@ async function main() {
     },
   });
 
-  // Ticket pending verification
+  // Ticket en attente de vérification (alice aussi)
   await prisma.ticket.create({
     data: {
       eventId: event1.id,
-      sellerId: user3.id,
+      sellerId: user1.id,
       status: 'PENDING_VALIDATION',
       price: 140.0,
       section: 'Tribune C',

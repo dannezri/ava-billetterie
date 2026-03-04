@@ -1,19 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAccountStatus, getUserConnectAccountId } from '@/services/stripe-connect';
+import { getAccountStatus } from '@/services/stripe-connect';
 import { createClient } from '@/lib/supabase/server-client';
 
-/**
- * @api {GET} /api/stripe-connect/account-status
- * @description Récupère le statut du compte Stripe Connect de l'utilisateur connecté.
- * Vérifie si le compte est actif, s'il manque des informations (KYC), et s'il peut recevoir des paiements.
- * 
- * @returns {Object} JSON response
- * - success: boolean
- * - hasAccount: boolean
- * - chargesEnabled?: boolean
- * - payoutsEnabled?: boolean
- * - requirements?: Stripe.Account.Requirements
- */
 export async function GET(req: NextRequest) {
   try {
     const supabase = createClient();
@@ -26,31 +14,23 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
     }
 
-    // Récupérer l'accountId depuis la base de données
-    const accountId = await getUserConnectAccountId(user.id);
+    const { searchParams } = new URL(req.url);
+    const accountId = searchParams.get('accountId');
 
     if (!accountId) {
-      return NextResponse.json({
-        success: false,
-        hasAccount: false,
-        message: 'Aucun compte Stripe Connect trouvé',
-      });
+      return NextResponse.json({ error: 'accountId requis' }, { status: 400 });
     }
 
     const status = await getAccountStatus(accountId);
 
     return NextResponse.json({
       success: true,
-      hasAccount: true,
       ...status,
     });
   } catch (error) {
     console.error('Error getting account status:', error);
     return NextResponse.json(
-      {
-        error: 'Erreur lors de la récupération du statut',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
+      { error: 'Erreur lors de la récupération du statut', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

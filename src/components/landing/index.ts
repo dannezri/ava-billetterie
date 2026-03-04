@@ -4,5 +4,8 @@ export { Features } from './Features';
 export { Guarantees } from './Guarantees';
 export { Testimonials } from './Testimonials';
 export { FAQ } from './FAQ';
+export { FAQAccordion } from './FAQAccordion';
 export { CTA } from './CTA';
 export { Footer } from './Footer';
+export { PriceCalculator } from './PriceCalculator';
+export { ComparisonTable } from './ComparisonTable';

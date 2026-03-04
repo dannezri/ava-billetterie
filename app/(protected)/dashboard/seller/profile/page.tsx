@@ -118,15 +118,24 @@ export default function SellerProfilePage() {
           Gérez vos informations, sécurité et configuration de votre compte vendeur
         </p>
         
+        {/* ✨ NOUVEAU : KYC/Stripe requis uniquement pour le RETRAIT (pas pour vendre) */}
         {!isFullyOnboarded && (
-          <Alert variant="warning" className="mt-4 border-yellow-200 bg-yellow-50 text-yellow-900">
-            <AlertTriangle className="h-4 w-4 text-yellow-600" />
-            <AlertTitle>Action requise</AlertTitle>
+          <Alert className="mt-4 border-blue-200 bg-blue-50 text-blue-900">
+            <AlertTriangle className="h-4 w-4 text-blue-600" />
+            <AlertTitle>Configuration pour le retrait</AlertTitle>
             <AlertDescription>
-              Pour vendre sur Ava, vous devez compléter votre configuration :
+              <strong>Vous pouvez vendre des billets dès maintenant</strong>, sans configuration
+              préalable. La vérification ci-dessous est uniquement requise pour{' '}
+              <a
+                href="/dashboard/seller/withdraw"
+                className="underline font-medium hover:no-underline"
+              >
+                retirer vos gains
+              </a>{' '}
+              :
               <ul className="list-disc list-inside mt-2 text-sm">
                 {!profile.stripeAccountId && <li>Configurer le compte de paiement (Stripe)</li>}
-                {profile.kycStatus !== 'VERIFIED' && <li>Vérifier votre identité</li>}
+                {profile.kycStatus !== 'VERIFIED' && <li>Vérifier votre identité (KYC)</li>}
               </ul>
             </AlertDescription>
           </Alert>
@@ -135,9 +144,10 @@ export default function SellerProfilePage() {
         {isFullyOnboarded && (
           <Alert className="mt-4 border-green-200 bg-green-50 text-green-900">
             <ShieldCheck className="h-4 w-4 text-green-600" />
-            <AlertTitle>Compte vérifié</AlertTitle>
+            <AlertTitle>Compte prêt pour les retraits</AlertTitle>
             <AlertDescription>
-              Votre compte est entièrement configuré et vérifié. Vous pouvez vendre sans restriction.
+              Votre identité est vérifiée et votre compte bancaire est configuré. Vous pouvez vendre
+              et retirer vos gains sans restriction.
             </AlertDescription>
           </Alert>
         )}
@@ -179,9 +189,10 @@ export default function SellerProfilePage() {
         {/* Tab: Configuration (Onboarding) */}
         <TabsContent value="onboarding" className="space-y-6">
           <div>
-            <h2 className="text-xl font-semibold mb-2">Configuration du compte vendeur</h2>
+            <h2 className="text-xl font-semibold mb-2">Configuration pour le retrait</h2>
             <p className="text-sm text-muted-foreground mb-6">
-              Complétez ces étapes pour commencer à vendre sur la plateforme
+              Complétez ces étapes pour pouvoir retirer vos gains après chaque vente.{' '}
+              <strong>Non requis pour vendre un billet.</strong>
             </p>
           </div>
 

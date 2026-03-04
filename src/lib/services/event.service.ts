@@ -1,0 +1,516 @@
+/**
+ * Event Service
+ * Logique métier pour les événements
+ */
+
+import { prisma } from '@/lib/prisma';
+import { Prisma, TicketStatus, TicketVerificationStatus } from '@prisma/client';
+import {
+  AdjacentTicketsService,
+  type IAdjacentGroup,
+} from '@/lib/services/adjacent-tickets.service';
+
+/**
+ * Récupère les événements avec filtres et pagination
+ */
+export async function getEvents(params: {
+  page?: number;
+  limit?: number;
+  sort?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  cities?: string[];
+  categories?: string[];
+  artists?: string;
+  priceMin?: number;
+  priceMax?: number;
+}) {
+  const {
+    page = 1,
+    limit = 12,
+    sort = 'relevance',
+    dateFrom,
+    dateTo,
+    cities,
+    categories,
+    artists,
+    priceMin,
+    priceMax,
+  } = params;
+
+  const skip = (page - 1) * limit;
+
+  // Construction du WHERE clause
+  const where: Prisma.EventWhereInput = {
+    isVerified: true,
+    eventDate: {
+      gte: dateFrom ? new Date(dateFrom) : new Date(),
+      ...(dateTo && { lte: new Date(dateTo) }),
+    },
+    ...(cities && cities.length > 0 && { city: { in: cities } }),
+    ...(categories && categories.length > 0 && { category: { in: categories } }),
+    ...(artists && {
+      artist: { contains: artists, mode: 'insensitive' as Prisma.QueryMode },
+    }),
+    // Le filtre billet n'est appliqué que lorsqu'un filtre de prix est actif.
+    // Les événements à venir sans billet disponible (complets) restent visibles.
+    ...(priceMin !== undefined || priceMax !== undefined
+      ? {
+          tickets: {
+            some: {
+              status: TicketStatus.ACTIVE,
+              verificationStatus: TicketVerificationStatus.APPROVED,
+              price: {
+                ...(priceMin !== undefined && { gte: priceMin }),
+                ...(priceMax !== undefined && { lte: priceMax }),
+              },
+            },
+          },
+        }
+      : {}),
+  };
+
+  // Construction du ORDER BY clause
+  let orderBy: Prisma.EventOrderByWithRelationInput[] = [];
+  switch (sort) {
+    case 'date_asc':
+      orderBy = [{ eventDate: 'asc' }];
+      break;
+    case 'date_desc':
+      orderBy = [{ eventDate: 'desc' }];
+      break;
+    case 'price_min':
+      // Note: Prisma ne supporte pas le tri par champs agrégés directement
+      // On trie par date par défaut et on fera le tri en post-traitement si nécessaire
+      orderBy = [{ eventDate: 'asc' }];
+      break;
+    case 'popularity':
+      orderBy = [{ eventDate: 'asc' }];
+      break;
+    default:
+      orderBy = [{ eventDate: 'asc' }];
+  }
+
+  // Exécution des requêtes en parallèle
+  const [events, total, availableCities, availableCategories] = await Promise.all([
+    // Récupération des événements
+    prisma.event.findMany({
+      where,
+      include: {
+        tickets: {
+          where: {
+            status: TicketStatus.ACTIVE,
+            verificationStatus: TicketVerificationStatus.APPROVED,
+          },
+          select: {
+            price: true,
+          },
+        },
+      },
+      orderBy,
+      skip,
+      take: limit,
+    }),
+    // Comptage total
+    prisma.event.count({ where }),
+    // Récupération des villes disponibles
+    prisma.event.findMany({
+      where: { isVerified: true, eventDate: { gte: new Date() } },
+      select: { city: true },
+      distinct: ['city'],
+    }),
+    // Récupération des catégories disponibles
+    prisma.event.findMany({
+      where: { isVerified: true, eventDate: { gte: new Date() }, category: { not: null } },
+      select: { category: true },
+      distinct: ['category'],
+    }),
+  ]);
+
+  // Calcul des stats pour chaque événement
+  const eventsWithStats = events.map((event) => {
+    const prices = event.tickets.map((t) => Number(t.price));
+    return {
+      ...event,
+      ticketsAvailable: event.tickets.length,
+      isSoldOut: event.tickets.length === 0,
+      minPrice: prices.length > 0 ? Math.min(...prices) : null,
+      maxPrice: prices.length > 0 ? Math.max(...prices) : null,
+      tickets: undefined, // Retirer les tickets du retour
+    };
+  });
+
+  return {
+    events: eventsWithStats,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+    filters: {
+      availableCities: availableCities.map((e) => e.city).filter(Boolean),
+      availableCategories: availableCategories
+        .map((e) => e.category)
+        .filter(Boolean) as string[],
+    },
+  };
+}
+
+/**
+ * Récupère un événement par ID avec tickets et statistiques
+ *
+ * Logique de filtrage selon quantity + together :
+ *  - quantity = 0 → pas de filtre (tous les billets individuels)
+ *  - quantity = 1 → billets individuels uniquement (group_id = null)
+ *  - quantity > 1 + together = true → groupes de N billets exactement
+ *  - quantity > 1 + together = false → billets individuels (achat multiple séparé)
+ */
+export async function getEventById(
+  id: string,
+  filterParams?: { quantity?: number; together?: boolean }
+) {
+  const quantity = filterParams?.quantity ?? 0;
+  const together = filterParams?.together ?? false;
+
+  const sellerSelect = {
+    id: true,
+    name: true,
+    trustScore: true,
+    sales: {
+      where: { status: 'RELEASED' as const },
+      select: { id: true },
+    },
+  };
+
+  // Fetch event info (sans tickets pour les stats globales)
+  const event = await prisma.event.findUnique({
+    where: { id },
+  });
+
+  if (!event) {
+    return null;
+  }
+
+  // ── Stats globales (toujours calculées sur les billets individuels actifs) ──
+  const allActiveTickets = await prisma.ticket.findMany({
+    where: {
+      eventId: id,
+      status: TicketStatus.ACTIVE,
+      verificationStatus: TicketVerificationStatus.APPROVED,
+    },
+    select: { price: true },
+  });
+
+  const allPrices = allActiveTickets.map((t) => Number(t.price));
+  const minPrice = allPrices.length > 0 ? Math.min(...allPrices) : 0;
+  const maxPrice = allPrices.length > 0 ? Math.max(...allPrices) : 0;
+  const avgPrice =
+    allPrices.length > 0 ? allPrices.reduce((a, b) => a + b, 0) / allPrices.length : 0;
+
+  const priceDistribution = [
+    { range: '0-50', count: 0 },
+    { range: '50-100', count: 0 },
+    { range: '100-150', count: 0 },
+    { range: '150-200', count: 0 },
+    { range: '200+', count: 0 },
+  ];
+  allPrices.forEach((price) => {
+    if (price < 50) priceDistribution[0].count++;
+    else if (price < 100) priceDistribution[1].count++;
+    else if (price < 150) priceDistribution[2].count++;
+    else if (price < 200) priceDistribution[3].count++;
+    else priceDistribution[4].count++;
+  });
+
+  // ── Fetch billets filtrés ──────────────────────────────────────────────────
+  let tickets: any[] = [];
+  let groups: any[] = [];
+
+  if (quantity === 0 || quantity === 1 || (quantity > 1 && !together)) {
+    // Cas 1/2/4 : Afficher billets individuels (group_id = null)
+    // On inclut ACTIVE et RESERVED : les RESERVED apparaissent grisés avec décompte
+    const rawTickets = await prisma.ticket.findMany({
+      where: {
+        eventId: id,
+        status: { in: [TicketStatus.ACTIVE, TicketStatus.RESERVED] },
+        verificationStatus: TicketVerificationStatus.APPROVED,
+        groupId: null,
+      },
+      include: {
+        seller: { select: sellerSelect },
+      },
+      orderBy: { price: 'asc' },
+    });
+
+    tickets = rawTickets.map((ticket) => ({
+      ...ticket,
+      eventId: ticket.eventId,
+      price: Number(ticket.price),
+      originalPrice: ticket.originalPrice !== null ? Number(ticket.originalPrice) : null,
+      seller: {
+        id: ticket.seller.id,
+        name: ticket.seller.name,
+        trustScore: ticket.seller.trustScore,
+        totalSales: ticket.seller.sales.length,
+      },
+    }));
+  } else if (quantity > 1 && together) {
+    // Cas 3 : N billets côte à côte → détection automatique billets adjacents
+    // On inclut seulement les ACTIVE pour la détection de groupes adjacents
+    const rawTickets = await prisma.ticket.findMany({
+      where: {
+        eventId: id,
+        status: TicketStatus.ACTIVE,
+        verificationStatus: TicketVerificationStatus.APPROVED,
+        groupId: null,
+      },
+      include: { seller: { select: sellerSelect } },
+    });
+
+    const ticketsForDetection = rawTickets.map((t) => ({
+      id: t.id,
+      sellerId: t.sellerId,
+      section: t.section,
+      seatNumber: t.seatNumber,
+      price: Number(t.price),
+      seller: {
+        id: t.seller.id,
+        name: t.seller.name,
+        trustScore: t.seller.trustScore,
+        totalSales: t.seller.sales.length,
+      },
+    }));
+
+    groups = AdjacentTicketsService.findAdjacentGroups(ticketsForDetection, quantity);
+  }
+
+  return {
+    event,
+    tickets,
+    groups,
+    stats: {
+      ticketsAvailable: allActiveTickets.length,
+      minPrice,
+      maxPrice,
+      avgPrice: Math.round(avgPrice * 100) / 100,
+      priceDistribution,
+    },
+    filter: { quantity, together },
+  };
+}
+
+/**
+ * Récupère un billet par ID avec event et vendeur
+ */
+export async function getTicketById(ticketId: string) {
+  const ticket = await prisma.ticket.findUnique({
+    where: { id: ticketId },
+    include: {
+      event: true,
+      seller: {
+        select: {
+          id: true,
+          name: true,
+          trustScore: true,
+          createdAt: true,
+          sales: {
+            where: { status: 'RELEASED' },
+            select: { id: true },
+          },
+          reviewsReceived: {
+            take: 3,
+            orderBy: { createdAt: 'desc' },
+            select: {
+              rating: true,
+              comment: true,
+              createdAt: true,
+              reviewer: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!ticket) {
+    return null;
+  }
+
+  // Calcul statistiques vendeur
+  const avgRating =
+    ticket.seller.reviewsReceived.length > 0
+      ? ticket.seller.reviewsReceived.reduce((acc, r) => acc + r.rating, 0) /
+        ticket.seller.reviewsReceived.length
+      : 0;
+
+  return {
+    ticket,
+    event: ticket.event,
+    seller: {
+      id: ticket.seller.id,
+      name: ticket.seller.name,
+      trustScore: ticket.seller.trustScore,
+      totalSales: ticket.seller.sales.length,
+      memberSince: ticket.seller.createdAt,
+      reviews: ticket.seller.reviewsReceived,
+      avgRating: Math.round(avgRating * 10) / 10,
+    },
+  };
+}
+
+/**
+ * Recherche globale (événements, artistes, villes)
+ */
+export async function searchGlobal(params: {
+  query: string;
+  type?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const { query, type = 'all', page = 1, limit = 20 } = params;
+  const skip = (page - 1) * limit;
+
+  const searchWhere: Prisma.EventWhereInput = {
+    isVerified: true,
+    eventDate: { gte: new Date() },
+    OR: [
+      { title: { contains: query, mode: 'insensitive' as Prisma.QueryMode } },
+      { artist: { contains: query, mode: 'insensitive' as Prisma.QueryMode } },
+      { venue: { contains: query, mode: 'insensitive' as Prisma.QueryMode } },
+      { city: { contains: query, mode: 'insensitive' as Prisma.QueryMode } },
+    ],
+  };
+
+  let events: any[] = [];
+  let artists: any[] = [];
+  let cities: any[] = [];
+
+  if (type === 'all' || type === 'events') {
+    events = await prisma.event.findMany({
+      where: searchWhere,
+      include: {
+        tickets: {
+          where: {
+            status: TicketStatus.ACTIVE,
+            verificationStatus: TicketVerificationStatus.APPROVED,
+          },
+          select: { price: true },
+        },
+      },
+      orderBy: { eventDate: 'asc' },
+      skip: type === 'events' ? skip : 0,
+      take: type === 'events' ? limit : 5,
+    });
+
+    // Ajouter stats
+    events = events.map((event) => {
+      const prices = event.tickets.map((t: any) => Number(t.price));
+      return {
+        ...event,
+        ticketsAvailable: event.tickets.length,
+        minPrice: prices.length > 0 ? Math.min(...prices) : null,
+        maxPrice: prices.length > 0 ? Math.max(...prices) : null,
+        tickets: undefined,
+      };
+    });
+  }
+
+  if (type === 'all' || type === 'artists') {
+    const artistsResults = await prisma.event.groupBy({
+      by: ['artist', 'category'],
+      where: {
+        artist: { contains: query, mode: 'insensitive' as Prisma.QueryMode },
+        isVerified: true,
+        eventDate: { gte: new Date() },
+      },
+      _count: { id: true },
+      take: type === 'artists' ? limit : 3,
+    });
+
+    artists = artistsResults
+      .filter((a) => a.artist)
+      .map((a) => ({
+        name: a.artist!,
+        category: a.category || 'Autre',
+        eventsCount: a._count.id,
+      }));
+  }
+
+  if (type === 'all' || type === 'cities') {
+    const citiesResults = await prisma.event.groupBy({
+      by: ['city'],
+      where: {
+        city: { contains: query, mode: 'insensitive' as Prisma.QueryMode },
+        isVerified: true,
+        eventDate: { gte: new Date() },
+      },
+      _count: { id: true },
+      take: type === 'cities' ? limit : 5,
+    });
+
+    cities = citiesResults.map((c) => ({
+      name: c.city,
+      eventsCount: c._count.id,
+    }));
+  }
+
+  const totalResults = events.length + artists.length + cities.length;
+
+  return {
+    query,
+    results: {
+      events,
+      artists,
+      cities,
+    },
+    totalResults,
+  };
+}
+
+/**
+ * Récupère les événements populaires
+ */
+export async function getPopularEvents(limit = 10) {
+  const events = await prisma.event.findMany({
+    where: {
+      isVerified: true,
+      eventDate: { gte: new Date() },
+    },
+    include: {
+      tickets: {
+        where: {
+          status: TicketStatus.ACTIVE,
+          verificationStatus: TicketVerificationStatus.APPROVED,
+        },
+        select: { price: true },
+      },
+    },
+    take: limit,
+    orderBy: {
+      eventDate: 'asc',
+    },
+  });
+
+  return events.map((event) => {
+    const prices = event.tickets.map((t) => Number(t.price));
+    return {
+      ...event,
+      ticketsAvailable: event.tickets.length,
+      minPrice: prices.length > 0 ? Math.min(...prices) : null,
+      maxPrice: prices.length > 0 ? Math.max(...prices) : null,
+      tickets: undefined,
+    };
+  });
+}
+
+/**
+ * Récupère les événements à venir
+ */
+export async function getUpcomingEvents(limit = 10) {
+  return getPopularEvents(limit);
+}

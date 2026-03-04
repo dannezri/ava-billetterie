@@ -65,14 +65,17 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Protected routes - require authentication
+  // ✨ NOUVEAU : /seller supprimé (plus de route /seller/*), /withdraw ajouté
   const protectedPaths = [
     '/dashboard',
     '/tickets',
     '/profile',
     '/sell-ticket',
-    '/seller',
+    '/withdraw',
     '/buyer',
     '/account',
+    '/disputes',
+    '/my-purchases',
   ];
   const isProtectedRoute = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)
