@@ -41,7 +41,7 @@ export function PriceCalculator() {
         </div>
       </div>
 
-      <div className="space-y-3 bg-zinc-50 dark:bg-zinc-900 p-5 rounded-xl border border-zinc-200 dark:border-zinc-800">
+      <div className="space-y-3 bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-800">
         <div className="flex justify-between items-center">
           <span className="text-muted-foreground">Prix du billet</span>
           <span className="font-semibold">{ticketPrice.toFixed(2)} €</span>
@@ -53,7 +53,7 @@ export function PriceCalculator() {
               5%
             </span>
           </div>
-          <span className="font-semibold text-zinc-500">+{platformFee.toFixed(2)} €</span>
+          <span className="font-semibold text-gray-500">+{platformFee.toFixed(2)} €</span>
         </div>
         <Separator />
         <div className="flex justify-between items-center pt-1">

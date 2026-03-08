@@ -6,43 +6,44 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils/index';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        // Trust Blue - Primaire
+        // Primary — Trust Blue solid
         default:
-          'bg-primary text-primary-foreground shadow hover:bg-primary/90 active:scale-[0.98]',
-        // Accent Green - Secondaire (success/validation)
+          'bg-blue-600 text-white shadow-clean rounded-clean hover:bg-blue-700 hover:shadow-clean-hover active:scale-[0.98]',
+        // Secondary — white outlined
         secondary:
-          'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/90 active:scale-[0.98]',
+          'bg-white border border-gray-300 text-gray-700 shadow-clean rounded-clean hover:bg-gray-50 hover:border-gray-400 active:scale-[0.98]',
         // Destructive
         destructive:
-          'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 active:scale-[0.98]',
-        // Outline
+          'bg-red-500 text-white shadow-clean rounded-clean hover:bg-red-600 active:scale-[0.98]',
+        // Outline (alias to secondary for shadcn compat)
         outline:
-          'border-2 border-input bg-background hover:bg-accent hover:text-accent-foreground active:scale-[0.98]',
+          'bg-white border border-gray-300 text-gray-700 shadow-clean rounded-clean hover:bg-gray-50 hover:border-gray-400 active:scale-[0.98]',
         // Ghost
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        ghost: 'rounded-clean text-gray-700 hover:bg-gray-100 hover:text-gray-900',
         // Link
-        link: 'text-primary underline-offset-4 hover:underline',
-        // Success (similaire à secondary mais plus explicite)
+        link: 'text-blue-600 underline-offset-4 hover:underline hover:text-blue-700',
+        // Success
         success:
-          'bg-success text-success-foreground shadow-sm hover:bg-success/90 active:scale-[0.98]',
+          'bg-emerald-500 text-white shadow-clean rounded-clean hover:bg-emerald-600 active:scale-[0.98]',
         // Warning
         warning:
-          'bg-warning text-warning-foreground shadow-sm hover:bg-warning/90 active:scale-[0.98]',
+          'bg-amber-500 text-white shadow-clean rounded-clean hover:bg-amber-600 active:scale-[0.98]',
         // Info
-        info: 'bg-info text-info-foreground shadow-sm hover:bg-info/90 active:scale-[0.98]',
-        // Subtle (very light)
+        info:
+          'bg-blue-50 text-blue-700 border border-blue-200 rounded-clean hover:bg-blue-100 active:scale-[0.98]',
+        // Subtle
         subtle:
-          'bg-muted text-muted-foreground hover:bg-muted/80 active:scale-[0.98]',
+          'bg-gray-100 text-gray-700 rounded-clean hover:bg-gray-200 active:scale-[0.98]',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3 text-xs',
-        lg: 'h-12 rounded-lg px-8 text-base',
-        xl: 'h-14 rounded-lg px-10 text-lg',
+        default: 'h-10 px-5 py-2 text-sm',
+        sm: 'h-8 px-4 py-1.5 text-xs rounded-clean-sm',
+        lg: 'h-12 px-8 text-base',
+        xl: 'h-14 px-10 text-lg',
         icon: 'h-10 w-10',
         'icon-sm': 'h-8 w-8',
         'icon-lg': 'h-12 w-12',

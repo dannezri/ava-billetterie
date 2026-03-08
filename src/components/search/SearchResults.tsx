@@ -34,10 +34,10 @@ export function SearchResults({ results, query }: ISearchResultsProps) {
   if (!hasResults) {
     return (
       <div className="py-12 text-center">
-        <p className="mb-2 text-lg font-semibold text-slate-900">
+        <p className="mb-2 text-lg font-semibold text-gray-900">
           Aucun résultat pour "{query}"
         </p>
-        <p className="text-slate-600">
+        <p className="text-gray-600">
           Essayez avec d'autres mots-clés ou vérifiez l'orthographe
         </p>
       </div>
@@ -49,7 +49,7 @@ export function SearchResults({ results, query }: ISearchResultsProps) {
       {/* Événements */}
       {results.events.length > 0 && (
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-slate-900">
+          <h2 className="mb-4 text-2xl font-bold text-gray-900">
             Événements ({results.events.length})
           </h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -63,7 +63,7 @@ export function SearchResults({ results, query }: ISearchResultsProps) {
       {/* Artistes */}
       {results.artists.length > 0 && (
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-slate-900">
+          <h2 className="mb-4 text-2xl font-bold text-gray-900">
             Artistes ({results.artists.length})
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -75,8 +75,8 @@ export function SearchResults({ results, query }: ISearchResultsProps) {
                       <User className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-900">{artist.name}</h3>
-                      <p className="text-sm text-slate-600">{artist.category}</p>
+                      <h3 className="font-semibold text-gray-900">{artist.name}</h3>
+                      <p className="text-sm text-gray-600">{artist.category}</p>
                     </div>
                   </div>
                   <Button size="sm" variant="outline" asChild>
@@ -94,7 +94,7 @@ export function SearchResults({ results, query }: ISearchResultsProps) {
       {/* Villes */}
       {results.cities.length > 0 && (
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-slate-900">
+          <h2 className="mb-4 text-2xl font-bold text-gray-900">
             Villes ({results.cities.length})
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
@@ -104,8 +104,8 @@ export function SearchResults({ results, query }: ISearchResultsProps) {
                   <div className="flex items-center gap-3">
                     <MapPin className="h-5 w-5 text-blue-600" />
                     <div>
-                      <h3 className="font-semibold text-slate-900">{city.name}</h3>
-                      <p className="text-xs text-slate-600">
+                      <h3 className="font-semibold text-gray-900">{city.name}</h3>
+                      <p className="text-xs text-gray-600">
                         {city.eventsCount} événement{city.eventsCount > 1 ? 's' : ''}
                       </p>
                     </div>

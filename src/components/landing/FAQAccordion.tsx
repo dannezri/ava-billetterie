@@ -21,18 +21,18 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
       {items.map((item, index) => (
         <div
           key={index}
-          className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-all dark:border-zinc-800 dark:bg-zinc-950"
+          className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all dark:border-gray-800 dark:bg-gray-950"
         >
           <button
             onClick={() => setOpenIndex(openIndex === index ? null : index)}
-            className="flex w-full items-start justify-between gap-4 p-6 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900"
+            className="flex w-full items-start justify-between gap-4 p-6 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-900"
           >
-            <span className="text-base font-semibold text-zinc-900 dark:text-white">
+            <span className="text-base font-semibold text-gray-900 dark:text-white">
               {item.question}
             </span>
             <ChevronDown
               className={cn(
-                'h-5 w-5 flex-shrink-0 text-zinc-500 transition-transform duration-200',
+                'h-5 w-5 flex-shrink-0 text-gray-500 transition-transform duration-200',
                 openIndex === index && 'rotate-180'
               )}
             />
@@ -44,7 +44,7 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
             )}
           >
             <div className="overflow-hidden">
-              <div className="border-t border-zinc-100 p-6 pt-4 text-sm leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+              <div className="border-t border-gray-100 p-6 pt-4 text-sm leading-relaxed text-gray-600 dark:border-gray-800 dark:text-gray-400">
                 {item.answer}
               </div>
             </div>

@@ -4,14 +4,14 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils/index';
 
 const cardVariants = cva(
-  'rounded-lg border bg-card text-card-foreground transition-all duration-200',
+  'rounded-clean border border-gray-200 bg-white text-gray-900 transition-all duration-200',
   {
     variants: {
       variant: {
-        default: 'shadow-sm',
-        elevated: 'shadow-md hover:shadow-lg',
-        outline: 'border-2',
-        ghost: 'border-transparent shadow-none',
+        default: 'shadow-clean',
+        elevated: 'shadow-clean-md hover:shadow-clean-lg',
+        outline: 'border-2 border-gray-200',
+        ghost: 'border-transparent shadow-none bg-gray-50',
       },
       padding: {
         none: '',
@@ -20,7 +20,7 @@ const cardVariants = cva(
         lg: 'p-8',
       },
       interactive: {
-        true: 'cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:translate-y-0',
+        true: 'cursor-pointer hover:shadow-clean-md hover:border-gray-300',
       },
     },
     defaultVariants: {
@@ -75,9 +75,9 @@ const CardTitle = React.forwardRef<
   }
 >(({ className, as: Comp = 'h3', ...props }, ref) => (
   <Comp
-    ref={ref as any}
+    ref={ref as React.Ref<HTMLHeadingElement>}
     className={cn(
-      'font-semibold leading-none tracking-tight',
+      'font-semibold leading-tight tracking-tight text-gray-900',
       Comp === 'h1' && 'text-4xl',
       Comp === 'h2' && 'text-3xl',
       Comp === 'h3' && 'text-2xl',
@@ -97,7 +97,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn('text-sm text-muted-foreground', className)}
+    className={cn('text-sm text-gray-500 leading-relaxed', className)}
     {...props}
   />
 ));
@@ -140,7 +140,6 @@ const CardFooter = React.forwardRef<
 ));
 CardFooter.displayName = 'CardFooter';
 
-// Composant Card Badge pour afficher des badges de statut
 const CardBadge = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
@@ -150,12 +149,12 @@ const CardBadge = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'absolute right-4 top-4 rounded-full px-2.5 py-0.5 text-xs font-medium',
-      variant === 'success' && 'bg-success/10 text-success',
-      variant === 'warning' && 'bg-warning/10 text-warning',
-      variant === 'error' && 'bg-destructive/10 text-destructive',
-      variant === 'info' && 'bg-info/10 text-info',
-      variant === 'default' && 'bg-muted text-muted-foreground',
+      'absolute right-4 top-4 rounded-clean-sm px-2.5 py-0.5 text-xs font-medium',
+      variant === 'success' && 'bg-emerald-50 text-emerald-700',
+      variant === 'warning' && 'bg-amber-50 text-amber-700',
+      variant === 'error' && 'bg-red-50 text-red-700',
+      variant === 'info' && 'bg-blue-50 text-blue-700',
+      variant === 'default' && 'bg-gray-100 text-gray-600',
       className
     )}
     {...props}

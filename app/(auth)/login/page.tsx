@@ -1,31 +1,19 @@
-/**
- * Login Page
- */
-
 'use client';
 
 import { Button } from '@/components/ui/button';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/use-auth';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
@@ -48,126 +36,134 @@ function LoginForm() {
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: { email: '', password: '' },
   });
 
   async function onSubmit(values: LoginFormData) {
     setIsLoading(true);
     const { error } = await signIn(values.email, values.password);
     setIsLoading(false);
-
-    if (!error) {
-      router.push(redirect);
-    }
+    if (!error) router.push(redirect);
   }
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
-            Connexion
-          </CardTitle>
-          <CardDescription className="text-center">
-            Connectez-vous à votre compte AVA Billetterie
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="vous@exemple.com"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mot de passe</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
 
-              <div className="flex items-center justify-between">
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-muted-foreground hover:text-primary"
-                >
-                  Mot de passe oublié ?
-                </Link>
-              </div>
-
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Connexion...' : 'Se connecter'}
-              </Button>
-            </form>
-          </Form>
-
-          <div className="relative my-4">
-            <Separator />
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-xs text-muted-foreground">
-              OU
-            </span>
-          </div>
-
-          <div className="text-center text-sm text-muted-foreground">
-            Pas encore de compte ?{' '}
-            <Link
-              href="/signup"
-              className="font-medium text-primary hover:underline"
-            >
-              Créer un compte
-            </Link>
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <div className="text-xs text-center text-muted-foreground">
-            En vous connectant, vous acceptez nos{' '}
-            <Link href="/terms" className="hover:underline">
-              Conditions d&apos;utilisation
-            </Link>{' '}
-            et notre{' '}
-            <Link href="/privacy" className="hover:underline">
-              Politique de confidentialité
-            </Link>
-            .
-          </div>
-        </CardFooter>
-      </Card>
-
-      <Link
-        href="/"
-        className="mt-4 text-sm text-muted-foreground hover:text-primary"
-      >
-        ← Retour à l&apos;accueil
+      {/* Brand */}
+      <Link href="/" className="mb-8 flex items-center gap-2 text-2xl font-bold text-blue-600">
+        Ava
       </Link>
+
+      <div className="w-full max-w-md bg-white border border-gray-200 rounded-clean shadow-clean p-8">
+
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Connexion</h1>
+          <p className="text-sm text-gray-500">
+            Connectez-vous à votre compte AVA Billetterie
+          </p>
+        </div>
+
+        {/* Form */}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Adresse email
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="vous@exemple.com"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Mot de passe
+                    </FormLabel>
+                    <Link
+                      href="/forgot-password"
+                      className="text-xs text-blue-600 hover:text-blue-700 no-underline"
+                    >
+                      Mot de passe oublié ?
+                    </Link>
+                  </div>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="••••••••"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              loading={isLoading}
+              className="mt-2"
+            >
+              {isLoading ? 'Connexion…' : 'Se connecter'}
+            </Button>
+          </form>
+        </Form>
+
+        {/* Divider */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-100" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-white px-3 text-xs text-gray-400">OU</span>
+          </div>
+        </div>
+
+        {/* Sign up link */}
+        <p className="text-center text-sm text-gray-500">
+          Pas encore de compte ?{' '}
+          <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-700 no-underline">
+            Créer un compte
+          </Link>
+        </p>
+      </div>
+
+      {/* Trust indicator */}
+      <div className="mt-6 flex items-center gap-2 text-xs text-gray-400">
+        <ShieldCheck className="h-4 w-4 text-emerald-500" />
+        <span>Connexion sécurisée — vos données sont protégées</span>
+      </div>
+
+      {/* Legal */}
+      <p className="mt-4 text-center text-xs text-gray-400 max-w-sm">
+        En vous connectant, vous acceptez nos{' '}
+        <Link href="/terms" className="underline hover:text-gray-600">
+          Conditions d&apos;utilisation
+        </Link>{' '}
+        et notre{' '}
+        <Link href="/privacy" className="underline hover:text-gray-600">
+          Politique de confidentialité
+        </Link>
+        .
+      </p>
     </div>
   );
 }
@@ -176,18 +172,14 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="container flex h-screen w-screen flex-col items-center justify-center">
-          <Card className="w-full max-w-md">
-            <CardHeader className="space-y-1">
-              <Skeleton className="h-8 w-3/4 mx-auto" />
-              <Skeleton className="h-4 w-full" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-            </CardContent>
-          </Card>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+          <div className="w-full max-w-md bg-white border border-gray-200 rounded-clean shadow-clean p-8 space-y-4">
+            <Skeleton className="h-8 w-1/2 mx-auto" />
+            <Skeleton className="h-4 w-3/4 mx-auto" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
         </div>
       }
     >

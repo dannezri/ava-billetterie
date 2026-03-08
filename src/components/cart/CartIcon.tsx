@@ -44,7 +44,7 @@ export function CartIcon({ className }: { className?: string }) {
         href="/cart"
         aria-label="Panier vide"
         className={cn(
-          'relative flex items-center justify-center rounded-md p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900',
+          'relative flex items-center justify-center rounded-md p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900',
           className
         )}
       >

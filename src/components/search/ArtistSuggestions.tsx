@@ -32,15 +32,15 @@ export function ArtistSuggestions({ artists, onSelectArtist }: IArtistSuggestion
             <button
               key={index}
               onClick={() => onSelectArtist(artist.name)}
-              className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white p-3 text-left transition-all hover:border-blue-300 hover:shadow-sm"
+              className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-3 text-left transition-all hover:border-blue-300 hover:shadow-sm"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
                   <User className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-slate-900">{artist.name}</p>
-                  <p className="text-xs text-slate-600">{artist.category}</p>
+                  <p className="font-medium text-gray-900">{artist.name}</p>
+                  <p className="text-xs text-gray-600">{artist.category}</p>
                 </div>
               </div>
               <Badge variant="secondary">

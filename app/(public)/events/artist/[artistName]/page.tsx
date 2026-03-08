@@ -59,7 +59,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
   const totalTickets = events.reduce((sum, ev) => sum + ev.tickets.length, 0);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gray-50">
 
       {/* Hero artiste */}
       <section className="relative h-80 w-full overflow-hidden md:h-96">
@@ -113,7 +113,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
 
       {/* Liste des dates */}
       <div className="container mx-auto px-4 py-10">
-        <h2 className="mb-6 text-2xl font-bold text-slate-900">Choisissez une date</h2>
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">Choisissez une date</h2>
 
         <div className="grid gap-4 md:grid-cols-2">
           {events.map((event) => {
@@ -135,7 +135,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
                       <p className="mb-1 text-sm font-semibold uppercase tracking-wide text-emerald-600">
                         {eventDate.toLocaleDateString('fr-FR', { weekday: 'long' })}
                       </p>
-                      <p className="text-xl font-bold text-slate-900">
+                      <p className="text-xl font-bold text-gray-900">
                         {eventDate.toLocaleDateString('fr-FR', {
                           day: 'numeric',
                           month: 'long',
@@ -143,7 +143,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
                         })}
                       </p>
                       {event.doorsOpenTime && (
-                        <p className="mt-0.5 text-sm text-slate-500">
+                        <p className="mt-0.5 text-sm text-gray-500">
                           Ouverture des portes : {event.doorsOpenTime}
                         </p>
                       )}
@@ -158,8 +158,8 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
                   </div>
 
                   {/* Lieu */}
-                  <div className="mb-4 flex items-center gap-2 text-sm text-slate-600">
-                    <MapPin className="h-4 w-4 flex-shrink-0 text-slate-400" />
+                  <div className="mb-4 flex items-center gap-2 text-sm text-gray-600">
+                    <MapPin className="h-4 w-4 flex-shrink-0 text-gray-400" />
                     <span>
                       {event.venue}
                       {event.city ? `, ${event.city}` : ''}
@@ -168,19 +168,19 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
 
                   {/* Titre événement */}
                   {event.title && event.title !== name && (
-                    <p className="mb-4 text-sm text-slate-500">{event.title}</p>
+                    <p className="mb-4 text-sm text-gray-500">{event.title}</p>
                   )}
 
                   {/* Footer : prix + CTA */}
-                  <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+                  <div className="flex items-center justify-between border-t border-gray-100 pt-4">
                     <div>
                       {eventMinPrice !== null ? (
                         <>
-                          <p className="text-xs text-slate-500">À partir de</p>
-                          <p className="text-lg font-bold text-slate-900">{eventMinPrice}€</p>
+                          <p className="text-xs text-gray-500">À partir de</p>
+                          <p className="text-lg font-bold text-gray-900">{eventMinPrice}€</p>
                         </>
                       ) : (
-                        <p className="text-sm text-slate-500">Prix non disponible</p>
+                        <p className="text-sm text-gray-500">Prix non disponible</p>
                       )}
                     </div>
                     <Button

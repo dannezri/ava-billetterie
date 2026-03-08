@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createAccountLink } from '@/services/stripe-connect';
+import { createAccountOnboardingLink } from '@/services/stripe-connect';
 import { createClient } from '@/lib/supabase/server-client';
 
 export async function POST(req: NextRequest) {
@@ -15,13 +15,18 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { accountId } = body;
+    const { accountId, refreshUrl, returnUrl } = body;
 
     if (!accountId) {
       return NextResponse.json({ error: 'accountId requis' }, { status: 400 });
     }
 
-    const result = await createAccountLink({ accountId });
+    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || '';
+    const result = await createAccountOnboardingLink(
+      accountId,
+      refreshUrl || `${origin}/dashboard/seller/onboarding/refresh`,
+      returnUrl || `${origin}/dashboard/seller/onboarding/return`
+    );
 
     return NextResponse.json({
       success: true,

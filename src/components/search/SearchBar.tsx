@@ -29,7 +29,7 @@ export function SearchBar({ query, onSearch }: ISearchBarProps) {
     <form onSubmit={handleSubmit} className="w-full">
       <div className="relative flex gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
           <Input
             type="text"
             value={localQuery}

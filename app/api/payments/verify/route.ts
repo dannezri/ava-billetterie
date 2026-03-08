@@ -10,11 +10,7 @@ import prisma from '@/lib/db/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-client';
 import { NotificationService } from '@/lib/services/notification.service';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-});
+import { stripePayments as stripe } from '@/lib/stripe/client';
 
 export async function POST(request: NextRequest) {
   try {

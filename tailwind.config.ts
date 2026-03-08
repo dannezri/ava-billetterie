@@ -7,6 +7,7 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     container: {
@@ -63,20 +64,34 @@ const config: Config = {
           DEFAULT: 'hsl(var(--info))',
           foreground: 'hsl(var(--info-foreground))',
         },
-        // Trust Blue palette (raw colors)
-        trustBlue: {
-          50: '#EBF5FF',
-          100: '#D6EBFF',
-          200: '#B3D9FF',
-          300: '#80C1FF',
-          400: '#4DA8FF',
-          500: '#2B87E3',
-          600: '#1A6FCC',
-          700: '#0F54A3',
-          800: '#083D7A',
-          900: '#042952',
+        // Clean Tech extended palette
+        clean: {
+          bg: '#FFFFFF',
+          'bg-alt': '#F9FAFB',
+          'bg-hover': '#F3F4F6',
+          text: '#111827',
+          'text-secondary': '#374151',
+          'text-tertiary': '#6B7280',
+          'text-disabled': '#9CA3AF',
+          border: '#E5E7EB',
+          'border-hover': '#D1D5DB',
+          accent: '#2563EB',
+          'accent-hover': '#1D4ED8',
         },
-        // Accent Green palette (raw colors)
+        // Trust Blue palette
+        trustBlue: {
+          50: '#EFF6FF',
+          100: '#DBEAFE',
+          200: '#BFDBFE',
+          300: '#93C5FD',
+          400: '#60A5FA',
+          500: '#3B82F6',
+          600: '#2563EB',
+          700: '#1D4ED8',
+          800: '#1E40AF',
+          900: '#1E3A8A',
+        },
+        // Accent Green palette
         accentGreen: {
           50: '#ECFDF5',
           100: '#D1FAE5',
@@ -94,6 +109,10 @@ const config: Config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        // Clean Tech radii
+        clean: '12px',
+        'clean-sm': '8px',
+        'clean-lg': '16px',
       },
       fontFamily: {
         sans: [
@@ -107,13 +126,35 @@ const config: Config = {
           'sans-serif',
         ],
         mono: [
+          'JetBrains Mono',
           'Fira Code',
           'Monaco',
           'Consolas',
-          'Liberation Mono',
-          'Courier New',
           'monospace',
         ],
+      },
+      // Clean Tech shadows — ultra-subtle
+      boxShadow: {
+        clean: '0 1px 3px 0 rgba(0,0,0,0.05), 0 1px 2px 0 rgba(0,0,0,0.03)',
+        'clean-md': '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)',
+        'clean-lg': '0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.03)',
+        'clean-hover': '0 4px 12px 0 rgba(37,99,235,0.10)',
+      },
+      // Clean Tech transitions
+      transitionDuration: {
+        clean: '200ms',
+      },
+      // Extra spacing
+      spacing: {
+        18: '4.5rem',
+        72: '18rem',
+        84: '21rem',
+        96: '24rem',
+      },
+      // Line heights
+      lineHeight: {
+        'relaxed-plus': '1.75',
+        'loose-plus': '2',
       },
       keyframes: {
         'accordion-down': {

@@ -3,9 +3,10 @@
  * Statistiques de prix pour un événement
  */
 
-import { TrendingDown, TrendingUp, Minus } from 'lucide-react';
+'use client';
+
+import { TrendingDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 interface IPriceStatsProps {
   stats: {
@@ -31,41 +32,61 @@ export function PriceStats({ stats }: IPriceStatsProps) {
         {/* Prix min/max/moyen */}
         <div className="grid grid-cols-3 gap-2">
           <div className="rounded-lg bg-green-50 p-3 text-center">
-            <p className="mb-1 text-xs text-slate-600">Minimum</p>
+            <p className="mb-1 text-xs text-gray-600">Minimum</p>
             <p className="text-lg font-bold text-green-600">{stats.minPrice}€</p>
           </div>
           <div className="rounded-lg bg-blue-50 p-3 text-center">
-            <p className="mb-1 text-xs text-slate-600">Moyen</p>
+            <p className="mb-1 text-xs text-gray-600">Moyen</p>
             <p className="text-lg font-bold text-blue-600">{stats.avgPrice}€</p>
           </div>
           <div className="rounded-lg bg-orange-50 p-3 text-center">
-            <p className="mb-1 text-xs text-slate-600">Maximum</p>
+            <p className="mb-1 text-xs text-gray-600">Maximum</p>
             <p className="text-lg font-bold text-orange-600">{stats.maxPrice}€</p>
           </div>
         </div>
 
-        {/* Distribution des prix (histogramme simple) */}
+        {/* Distribution des prix — barres animées avec labels intégrés */}
         <div>
-          <p className="mb-2 text-sm font-medium text-slate-700">Distribution</p>
+          <p className="mb-2.5 text-sm font-semibold text-gray-700">Distribution des prix</p>
           <div className="space-y-2">
-            {stats.priceDistribution.map((item) => {
+            {stats.priceDistribution.map((item, i) => {
               if (item.count === 0) return null;
-              const percentage = (item.count / maxCount) * 100;
+              const pct = Math.round((item.count / maxCount) * 100);
+              const isMax = item.count === maxCount;
 
               return (
-                <div key={item.range}>
-                  <div className="mb-1 flex items-center justify-between text-xs">
-                    <span className="text-slate-600">{item.range}€</span>
-                    <span className="font-medium text-slate-900">
-                      {item.count} billet{item.count > 1 ? 's' : ''}
-                    </span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                <div key={item.range} className="flex items-center gap-2">
+                  {/* Range label */}
+                  <span className="w-20 shrink-0 text-right text-[11px] font-medium text-gray-500">
+                    {item.range}€
+                  </span>
+
+                  {/* Bar */}
+                  <div className="relative h-6 flex-1 overflow-hidden rounded-full bg-gray-100">
                     <div
-                      className="h-full bg-blue-600 transition-all duration-300"
-                      style={{ width: `${percentage}%` }}
+                      className={[
+                        'h-full rounded-full transition-all duration-500',
+                        isMax ? 'bg-blue-600' : 'bg-blue-400',
+                      ].join(' ')}
+                      style={{
+                        width: `${pct}%`,
+                        transitionDelay: `${i * 60}ms`,
+                      }}
                     />
+                    {/* Count inside bar */}
+                    {pct > 30 && (
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-white">
+                        {item.count} billet{item.count > 1 ? 's' : ''}
+                      </span>
+                    )}
                   </div>
+
+                  {/* Count outside if bar too short */}
+                  {pct <= 30 && (
+                    <span className="shrink-0 text-[11px] font-semibold text-gray-700">
+                      {item.count}
+                    </span>
+                  )}
                 </div>
               );
             })}

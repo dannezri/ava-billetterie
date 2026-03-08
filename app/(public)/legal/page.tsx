@@ -18,24 +18,24 @@ export default function LegalPage() {
     <div className="py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-zinc-900 dark:text-white mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
             Mentions Légales
           </h1>
 
-          <div className="space-y-10 text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
+          <div className="space-y-10 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
             <section>
-              <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                 1. Éditeur du Site
               </h2>
               <div className="space-y-2">
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Raison sociale :</strong> AVA SAS</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Forme juridique :</strong> Société par actions simplifiée (SAS)</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Capital social :</strong> [X] euros</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Siège social :</strong> [Adresse], [Code postal] Paris, France</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">SIRET :</strong> [XXX XXX XXX XXXXX]</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">RCS :</strong> Paris [Numéro RCS]</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Numéro TVA intracommunautaire :</strong> FR [Numéro TVA]</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Email :</strong>{' '}
+                <p><strong className="text-gray-800 dark:text-gray-200">Raison sociale :</strong> AVA SAS</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Forme juridique :</strong> Société par actions simplifiée (SAS)</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Capital social :</strong> [X] euros</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Siège social :</strong> [Adresse], [Code postal] Paris, France</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">SIRET :</strong> [XXX XXX XXX XXXXX]</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">RCS :</strong> Paris [Numéro RCS]</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Numéro TVA intracommunautaire :</strong> FR [Numéro TVA]</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Email :</strong>{' '}
                   <a href="mailto:contact@ava-billetterie.com" className="text-primary hover:underline">
                     contact@ava-billetterie.com
                   </a>
@@ -44,7 +44,7 @@ export default function LegalPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                 2. Directeur de la Publication
               </h2>
               <p>
@@ -54,29 +54,29 @@ export default function LegalPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                 3. Hébergement
               </h2>
               <div className="space-y-2">
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Hébergeur principal :</strong> Vercel Inc.</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Adresse :</strong> 440 N Barranca Ave #4133, Covina, CA 91723, USA</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Site web :</strong>{' '}
+                <p><strong className="text-gray-800 dark:text-gray-200">Hébergeur principal :</strong> Vercel Inc.</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Adresse :</strong> 440 N Barranca Ave #4133, Covina, CA 91723, USA</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Site web :</strong>{' '}
                   <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                     vercel.com
                   </a>
                 </p>
-                <p className="mt-3"><strong className="text-zinc-800 dark:text-zinc-200">Base de données :</strong> Supabase Inc., infrastructure Europe (Frankfurt)</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Stockage fichiers :</strong> Uploadcare Inc., infrastructure Europe</p>
+                <p className="mt-3"><strong className="text-gray-800 dark:text-gray-200">Base de données :</strong> Supabase Inc., infrastructure Europe (Frankfurt)</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Stockage fichiers :</strong> Uploadcare Inc., infrastructure Europe</p>
               </div>
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                 4. Traitement des Paiements
               </h2>
               <div className="space-y-2">
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Prestataire de paiement :</strong> Stripe Payments Europe Limited</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Adresse :</strong> 1 Grand Canal Street Lower, Grand Canal Dock, Dublin, D02 H210, Irlande</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Prestataire de paiement :</strong> Stripe Payments Europe Limited</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Adresse :</strong> 1 Grand Canal Street Lower, Grand Canal Dock, Dublin, D02 H210, Irlande</p>
                 <p>
                   Stripe est un établissement de paiement agréé et supervisé par la Banque Centrale d&apos;Irlande.
                   Notre mécanisme de séquestre bancaire est géré via Stripe Connect, soumis aux réglementations européennes
@@ -86,7 +86,7 @@ export default function LegalPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                 5. Propriété Intellectuelle
               </h2>
               <p>
@@ -102,7 +102,7 @@ export default function LegalPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                 6. Données Personnelles
               </h2>
               <p>
@@ -117,7 +117,7 @@ export default function LegalPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                 7. Médiation
               </h2>
               <p>
@@ -139,20 +139,20 @@ export default function LegalPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                 8. Crédits
               </h2>
               <div className="space-y-2">
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Conception & développement :</strong> Équipe AVA</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Framework :</strong> Next.js 14 (Vercel)</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Icônes :</strong> Lucide React</p>
-                <p><strong className="text-zinc-800 dark:text-zinc-200">Composants UI :</strong> shadcn/ui (Radix UI)</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Conception & développement :</strong> Équipe AVA</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Framework :</strong> Next.js 14 (Vercel)</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Icônes :</strong> Lucide React</p>
+                <p><strong className="text-gray-800 dark:text-gray-200">Composants UI :</strong> shadcn/ui (Radix UI)</p>
               </div>
             </section>
           </div>
 
           {/* Liens */}
-          <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
             <p className="text-sm text-muted-foreground mb-4">Voir aussi :</p>
             <div className="flex flex-wrap gap-3">
               {[

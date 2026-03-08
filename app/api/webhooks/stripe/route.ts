@@ -66,13 +66,11 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'transfer.created':
-      case 'transfer.paid':
         await handleTransferCompleted(event.data.object as Stripe.Transfer);
         break;
 
-      case 'transfer.failed':
-        await handleTransferFailed(event.data.object as Stripe.Transfer);
-        break;
+      // transfer.failed n'est pas un event Stripe standard — log uniquement
+      // case 'transfer.failed': (non supporté par l'API Stripe actuelle)
 
       case 'payout.paid':
       case 'payout.failed':
@@ -96,13 +94,13 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'account.application.deauthorized':
-        console.warn(`⚠️ Account deauthorized: ${(event.data.object as Stripe.Account).id}`);
+        console.warn(`⚠️ Account deauthorized: ${(event.data.object as unknown as Stripe.Account).id}`);
         break;
 
       case 'capability.updated':
       case 'person.created':
       case 'person.updated':
-      case 'external_account.created':
+      case 'account.external_account.created':
         console.log(`ℹ️ Unhandled (benign): ${event.type}`);
         break;
 

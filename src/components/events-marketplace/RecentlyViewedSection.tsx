@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Heart, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -26,20 +26,20 @@ interface RecentlyViewedSectionProps {
 }
 
 const STORAGE_KEY = 'ava_recently_viewed';
-const PLACEHOLDER_GRADIENTS = [
-  'from-violet-700 to-purple-900',
-  'from-rose-700 to-pink-900',
-  'from-emerald-700 to-teal-900',
-  'from-amber-700 to-orange-900',
-  'from-blue-700 to-indigo-900',
+const PLACEHOLDER_COLORS = [
+  'bg-blue-50 text-blue-400',
+  'bg-emerald-50 text-emerald-400',
+  'bg-amber-50 text-amber-400',
+  'bg-rose-50 text-rose-400',
+  'bg-purple-50 text-purple-400',
 ];
 
-function getGradient(name: string) {
+function getPlaceholderColor(name: string) {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return PLACEHOLDER_GRADIENTS[Math.abs(hash) % PLACEHOLDER_GRADIENTS.length];
+  return PLACEHOLDER_COLORS[Math.abs(hash) % PLACEHOLDER_COLORS.length];
 }
 
 export function RecentlyViewedSection({ fallbackArtists = [] }: RecentlyViewedSectionProps) {
@@ -85,7 +85,7 @@ export function RecentlyViewedSection({ fallbackArtists = [] }: RecentlyViewedSe
   return (
     <section>
       <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-slate-900">
+        <h2 className="text-2xl font-bold text-gray-900">
           {isFallback ? 'Populaires en ce moment' : 'Récemment consultés'}
         </h2>
         <div className="flex items-center gap-2">
@@ -118,7 +118,7 @@ export function RecentlyViewedSection({ fallbackArtists = [] }: RecentlyViewedSe
             {!isFallback && isEditing && (
               <button
                 onClick={() => handleRemove(item.artist)}
-                className="absolute -right-2 -top-2 z-10 rounded-full bg-slate-800 p-0.5 text-white shadow transition hover:bg-slate-700"
+                className="absolute -right-2 -top-2 z-10 rounded-full bg-gray-800 p-0.5 text-white shadow transition hover:bg-gray-700"
                 aria-label={`Supprimer ${item.artist}`}
               >
                 <X className="h-3.5 w-3.5" />
@@ -135,24 +135,14 @@ export function RecentlyViewedSection({ fallbackArtists = [] }: RecentlyViewedSe
                       className="object-cover"
                     />
                   ) : (
-                    <div
-                      className={cn(
-                        'flex h-full w-full items-center justify-center bg-gradient-to-br',
-                        getGradient(item.artist),
-                      )}
-                    >
-                      <span className="text-3xl font-bold text-white/40">
+                    <div className={cn('flex h-full w-full items-center justify-center', getPlaceholderColor(item.artist))}>
+                      <span className="text-3xl font-bold opacity-60">
                         {item.artist.charAt(0)}
                       </span>
                     </div>
                   )}
-                  {/* Badge favoris */}
-                  <div className="absolute right-2 top-2 flex items-center gap-1 rounded-full bg-black/55 px-1.5 py-0.5 text-xs text-white backdrop-blur-sm">
-                    <Heart className="h-3 w-3 fill-rose-400 text-rose-400" />
-                    <span>53</span>
-                  </div>
                 </div>
-                <p className="truncate text-sm font-semibold text-slate-900">
+                <p className="truncate text-sm font-semibold text-gray-900">
                   {item.artist}
                 </p>
               </div>

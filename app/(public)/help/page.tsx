@@ -44,7 +44,7 @@ const categories = [
     icon: Ticket,
     title: 'Vendre un billet',
     description: 'Mise en vente, vérification, paiement',
-    color: 'from-purple-500 to-pink-500',
+    color: 'from-blue-500 to-pink-500',
     bgColor: 'bg-purple-50 dark:bg-purple-950/20',
     count: 10,
   },
@@ -152,13 +152,13 @@ export default function HelpPage() {
       {/* Hero */}
       <section className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-5xl">
             Comment pouvons-nous{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
               vous aider ?
             </span>
           </h1>
-          <p className="text-xl text-zinc-600 dark:text-zinc-400">
+          <p className="text-xl text-gray-600 dark:text-gray-400">
             Trouvez rapidement les réponses à vos questions ou contactez notre équipe
           </p>
 
@@ -167,7 +167,7 @@ export default function HelpPage() {
             <input
               type="text"
               placeholder="Rechercher dans l'aide... (ex: remboursement, KYC, séquestre)"
-              className="w-full px-5 py-4 pr-12 rounded-2xl border-2 border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors text-sm"
+              className="w-full px-5 py-4 pr-12 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors text-sm"
               readOnly
             />
             <HelpCircle className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -178,7 +178,7 @@ export default function HelpPage() {
       {/* Catégories */}
       <section className="container mx-auto px-4">
         <div className="text-center mb-10">
-          <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Parcourir par catégorie
           </h2>
         </div>
@@ -187,7 +187,7 @@ export default function HelpPage() {
           {categories.map((cat, index) => (
             <Card
               key={index}
-              className="p-6 cursor-pointer hover:shadow-lg transition-all group border-zinc-200 dark:border-zinc-800"
+              className="p-6 cursor-pointer hover:shadow-lg transition-all group border-gray-200 dark:border-gray-800"
             >
               <div className="flex items-start gap-4">
                 <div className={`w-12 h-12 rounded-xl ${cat.bgColor} flex items-center justify-center flex-shrink-0`}>
@@ -197,10 +197,10 @@ export default function HelpPage() {
                   />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-zinc-900 dark:text-white group-hover:text-primary transition-colors mb-1">
+                  <h3 className="font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors mb-1">
                     {cat.title}
                   </h3>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-2">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
                     {cat.description}
                   </p>
                   <span className="text-xs text-muted-foreground">
@@ -215,14 +215,14 @@ export default function HelpPage() {
       </section>
 
       {/* Questions fréquentes acheteurs */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 py-16">
+      <section className="bg-gray-50 dark:bg-gray-900 py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/20 flex items-center justify-center">
                 <ShoppingCart className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
-              <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Pour les acheteurs
               </h2>
             </div>
@@ -238,7 +238,7 @@ export default function HelpPage() {
             <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/20 flex items-center justify-center">
               <Ticket className="h-5 w-5 text-purple-600 dark:text-purple-400" />
             </div>
-            <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               Pour les vendeurs
             </h2>
           </div>
@@ -247,14 +247,14 @@ export default function HelpPage() {
       </section>
 
       {/* Questions Garantie */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 py-16">
+      <section className="bg-gray-50 dark:bg-gray-900 py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-950/20 flex items-center justify-center">
                 <Shield className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
-              <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Garantie Sérénité
               </h2>
             </div>
@@ -275,10 +275,10 @@ export default function HelpPage() {
       <section className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Vous ne trouvez pas votre réponse ?
             </h2>
-            <p className="text-zinc-600 dark:text-zinc-400">
+            <p className="text-gray-600 dark:text-gray-400">
               Notre équipe répond en moins de 2h, même le week-end
             </p>
           </div>
@@ -288,10 +288,10 @@ export default function HelpPage() {
               <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/20 flex items-center justify-center mx-auto mb-5">
                 <Mail className="h-7 w-7 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-2">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                 Email Support
               </h3>
-              <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-6">
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
                 Pour toute question générale. Réponse sous 2h en semaine,
                 sous 4h le week-end.
               </p>
@@ -307,10 +307,10 @@ export default function HelpPage() {
               <div className="w-14 h-14 rounded-2xl bg-green-50 dark:bg-green-950/20 flex items-center justify-center mx-auto mb-5">
                 <MessageSquare className="h-7 w-7 text-green-600 dark:text-green-400" />
               </div>
-              <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-2">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                 Hotline Concert 🚨
               </h3>
-              <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-6">
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
                 Problème le jour J ? Hotline dédiée disponible
                 18h–2h les jours de concerts. Réponse immédiate.
               </p>

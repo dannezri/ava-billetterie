@@ -5,20 +5,20 @@ import { AlertCircle, Check } from 'lucide-react';
 import { cn } from '@/lib/utils/index';
 
 const inputVariants = cva(
-  'flex w-full rounded-md border bg-background text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+  'flex w-full rounded-clean border bg-white text-gray-900 text-sm transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500',
   {
     variants: {
       variant: {
         default:
-          'border-input ring-offset-background focus-visible:ring-ring',
+          'border-gray-300 focus-visible:border-blue-600 focus-visible:ring-blue-600',
         error:
-          'border-destructive focus-visible:ring-destructive text-destructive',
+          'border-red-400 focus-visible:border-red-500 focus-visible:ring-red-500 text-red-700',
         success:
-          'border-success focus-visible:ring-success',
+          'border-emerald-400 focus-visible:border-emerald-500 focus-visible:ring-emerald-500',
       },
       inputSize: {
         default: 'h-10 px-3 py-2',
-        sm: 'h-9 px-2.5 py-1.5 text-xs',
+        sm: 'h-9 px-2.5 py-1.5 text-xs rounded-clean-sm',
         lg: 'h-12 px-4 py-3 text-base',
       },
     },

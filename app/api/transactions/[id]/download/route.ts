@@ -35,7 +35,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     // 3. Récupérer la transaction pour obtenir l'URL du PDF
     const { transaction } = await getTransactionById(params.id, session.user.id);
 
-    if (!transaction.ticket.pdf_url) {
+    if (!transaction.ticket.pdfUrl) {
       return NextResponse.json(
         {
           error: 'Not found',
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({
       success: true,
       data: {
-        secureUrl: transaction.ticket.pdf_url,
+        secureUrl: transaction.ticket.pdfUrl,
         filename: `billet-${transaction.ticket.event.title.replace(/\s/g, '-')}.pdf`,
         transactionId: transaction.id,
       },

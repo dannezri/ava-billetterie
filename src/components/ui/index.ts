@@ -7,6 +7,11 @@
 
 // Core Components
 export { Button, buttonVariants, type ButtonProps } from './button';
+// Clean Tech Components
+export { ButtonClean } from './button-clean';
+export { CardClean } from './card-clean';
+export { InputClean } from './input-clean';
+export { BadgeClean } from './badge-clean';
 export { Input, inputVariants, type InputProps } from './input';
 export {
   Card,

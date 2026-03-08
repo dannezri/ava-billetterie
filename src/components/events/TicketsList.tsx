@@ -106,10 +106,10 @@ export function TicketsList({
       <Card>
         <CardContent className="flex min-h-[300px] flex-col items-center justify-center p-8 text-center">
           <AlertCircle className="mb-4 h-12 w-12 text-orange-400" />
-          <h3 className="mb-2 text-lg font-semibold text-slate-900">
+          <h3 className="mb-2 text-lg font-semibold text-gray-900">
             Aucun groupe de {filterQuantity} billets disponible
           </h3>
-          <p className="mb-6 text-slate-600">
+          <p className="mb-6 text-gray-600">
             Il n'existe pas de groupe de {filterQuantity} billets côte à côte pour cet événement.
           </p>
           <div className="flex flex-col gap-2 w-full max-w-xs">
@@ -132,11 +132,11 @@ export function TicketsList({
     return (
       <Card>
         <CardContent className="flex min-h-[300px] flex-col items-center justify-center p-8 text-center">
-          <Ticket className="mb-4 h-12 w-12 text-slate-300" />
-          <h3 className="mb-2 text-lg font-semibold text-slate-900">
+          <Ticket className="mb-4 h-12 w-12 text-gray-300" />
+          <h3 className="mb-2 text-lg font-semibold text-gray-900">
             Aucun billet disponible
           </h3>
-          <p className="text-slate-600">
+          <p className="text-gray-600">
             Il n'y a pas de billets en vente pour cet événement actuellement.
           </p>
         </CardContent>
@@ -150,18 +150,18 @@ export function TicketsList({
       {hasTickets && (
         <section className="space-y-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-2xl font-bold text-slate-900">
+            <h2 className="text-2xl font-bold text-gray-900">
               {activeTickets.length} billet
               {activeTickets.length > 1 ? 's' : ''} disponible
               {activeTickets.length > 1 ? 's' : ''}
               {filteredTickets.length > activeTickets.length && (
-                <span className="ml-2 text-sm font-normal text-slate-400">
+                <span className="ml-2 text-sm font-normal text-gray-400">
                   (+{filteredTickets.length - activeTickets.length} temporairement réservé
                   {filteredTickets.length - activeTickets.length > 1 ? 's' : ''})
                 </span>
               )}
               {filterQuantity > 1 && !filterTogether && (
-                <span className="ml-2 text-base font-normal text-slate-500">
+                <span className="ml-2 text-base font-normal text-gray-500">
                   (achetez-en {filterQuantity} séparément)
                 </span>
               )}
@@ -209,11 +209,11 @@ export function TicketsList({
       {hasGroups && (
         <section className="space-y-4">
           <div className="flex items-baseline gap-3">
-            <h2 className="text-2xl font-bold text-slate-900">
+            <h2 className="text-2xl font-bold text-gray-900">
               {groups.length} groupe{groups.length > 1 ? 's' : ''} de {filterQuantity} billets
               côte à côte
             </h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-gray-500">
               Sièges consécutifs détectés automatiquement
             </p>
           </div>

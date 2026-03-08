@@ -9,8 +9,8 @@ export const uploadcareConfig = {
   // Contraintes de sécurité pour les billets PDF
   constraints: {
     maxFileSize: 5 * 1024 * 1024, // 5 MB en bytes
-    allowedFileTypes: ['application/pdf'],
-    allowedExtensions: ['.pdf'],
+    allowedFileTypes: ['application/pdf'] as readonly string[],
+    allowedExtensions: ['.pdf'] as readonly string[],
   },
 
   // Configuration du widget

@@ -1,30 +1,18 @@
-/**
- * Sign Up Page
- */
-
 'use client';
 
 import { Button } from '@/components/ui/button';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/use-auth';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Check, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -52,155 +40,165 @@ export default function SignupPage() {
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
+    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
   });
 
   async function onSubmit(values: SignupFormData) {
     setIsLoading(true);
     const { error } = await signUp(values.email, values.password, values.name);
     setIsLoading(false);
-
-    if (!error) {
-      router.push('/verify-email');
-    }
+    if (!error) router.push('/verify-email');
   }
 
   return (
-    <div className="container flex min-h-screen w-screen flex-col items-center justify-center py-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
-            Créer un compte
-          </CardTitle>
-          <CardDescription className="text-center">
-            Rejoignez AVA Billetterie et commencez à acheter ou vendre des
-            billets en toute sécurité
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nom complet</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Jean Dupont"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="vous@exemple.com"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mot de passe</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirmer le mot de passe</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 py-8">
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Création...' : 'Créer mon compte'}
-              </Button>
-            </form>
-          </Form>
-
-          <div className="relative my-4">
-            <Separator />
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-xs text-muted-foreground">
-              OU
-            </span>
-          </div>
-
-          <div className="text-center text-sm text-muted-foreground">
-            Vous avez déjà un compte ?{' '}
-            <Link
-              href="/login"
-              className="font-medium text-primary hover:underline"
-            >
-              Se connecter
-            </Link>
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <div className="text-xs text-center text-muted-foreground">
-            En créant un compte, vous acceptez nos{' '}
-            <Link href="/terms" className="hover:underline">
-              Conditions d&apos;utilisation
-            </Link>{' '}
-            et notre{' '}
-            <Link href="/privacy" className="hover:underline">
-              Politique de confidentialité
-            </Link>
-            .
-          </div>
-        </CardFooter>
-      </Card>
-
-      <Link
-        href="/"
-        className="mt-4 text-sm text-muted-foreground hover:text-primary"
-      >
-        ← Retour à l&apos;accueil
+      {/* Brand */}
+      <Link href="/" className="mb-8 text-2xl font-bold text-blue-600">
+        Ava
       </Link>
+
+      <div className="w-full max-w-md bg-white border border-gray-200 rounded-clean shadow-clean p-8">
+
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Créer un compte</h1>
+          <p className="text-sm text-gray-500">
+            Rejoignez AVA Billetterie et achetez ou vendez en toute sécurité
+          </p>
+        </div>
+
+        {/* Form */}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Nom complet
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Jean Dupont" disabled={isLoading} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Adresse email
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="vous@exemple.com"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Mot de passe
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="••••••••"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Confirmer le mot de passe
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="••••••••"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              loading={isLoading}
+              className="mt-2"
+            >
+              {isLoading ? 'Création…' : 'Créer mon compte'}
+            </Button>
+          </form>
+        </Form>
+
+        {/* Divider */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-100" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-white px-3 text-xs text-gray-400">OU</span>
+          </div>
+        </div>
+
+        {/* Login link */}
+        <p className="text-center text-sm text-gray-500">
+          Vous avez déjà un compte ?{' '}
+          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-700 no-underline">
+            Se connecter
+          </Link>
+        </p>
+      </div>
+
+      {/* Trust indicators */}
+      <div className="mt-6 flex flex-col sm:flex-row items-center gap-4 text-xs text-gray-400">
+        {['Inscription gratuite', 'Données sécurisées RGPD', 'Vérification par email'].map((item) => (
+          <div key={item} className="flex items-center gap-1.5">
+            <Check className="h-3.5 w-3.5 text-emerald-500" />
+            <span>{item}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Legal */}
+      <p className="mt-4 text-center text-xs text-gray-400 max-w-sm">
+        En créant un compte, vous acceptez nos{' '}
+        <Link href="/terms" className="underline hover:text-gray-600">
+          Conditions d&apos;utilisation
+        </Link>{' '}
+        et notre{' '}
+        <Link href="/privacy" className="underline hover:text-gray-600">
+          Politique de confidentialité
+        </Link>
+        .
+      </p>
     </div>
   );
 }

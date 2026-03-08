@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import { createClient } from '@/lib/supabase/server-client';
 import { randomUUID } from 'crypto';
+import { uploadTicketLimiter, applyRateLimit } from '@/lib/rate-limit';
 
 const BUCKET = 'ticket-pdfs';
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -21,6 +22,10 @@ export async function POST(req: NextRequest) {
   if (authError || !user) {
     return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
   }
+
+  // Rate limiting par user
+  const rateLimitResponse = await applyRateLimit(uploadTicketLimiter, user.id);
+  if (rateLimitResponse) return rateLimitResponse;
 
   // Récupérer le fichier
   let formData: FormData;
@@ -35,7 +40,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Aucun fichier fourni' }, { status: 400 });
   }
 
-  // Validation type MIME
+  // Validation type MIME (déclaratif)
   if (file.type !== 'application/pdf') {
     return NextResponse.json({ error: 'Seuls les fichiers PDF sont acceptés' }, { status: 400 });
   }
@@ -60,6 +65,13 @@ export async function POST(req: NextRequest) {
   // Upload vers Supabase Storage
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
+
+  // Validation magic bytes PDF : signature %PDF (25 50 44 46)
+  // Protège contre les fichiers malveillants renommés en .pdf
+  const isPDF = buffer[0] === 0x25 && buffer[1] === 0x50 && buffer[2] === 0x44 && buffer[3] === 0x46;
+  if (!isPDF) {
+    return NextResponse.json({ error: 'Signature de fichier invalide : ce fichier n\'est pas un PDF' }, { status: 400 });
+  }
 
   const { error: uploadError } = await supabaseAdmin.storage
     .from(BUCKET)

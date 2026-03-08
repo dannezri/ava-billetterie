@@ -73,11 +73,11 @@ export function GroupCard({ group }: IGroupCardProps) {
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
               )}
             </div>
-            <h3 className="text-lg font-bold text-slate-900">
+            <h3 className="text-lg font-bold text-gray-900">
               {group.section || 'Placement libre'}
             </h3>
             {seatNumbers && (
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-gray-600">
                 Sièges : {seatNumbers}
               </p>
             )}
@@ -89,7 +89,7 @@ export function GroupCard({ group }: IGroupCardProps) {
               <p className="text-3xl font-bold text-blue-600">
                 {Number(group.totalPrice).toFixed(0)}€
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-gray-500">
                 soit {pricePerTicket.toFixed(0)}€ / billet
               </p>
             </div>
@@ -102,7 +102,7 @@ export function GroupCard({ group }: IGroupCardProps) {
                 <AvatarFallback className="text-xs">{sellerInitials}</AvatarFallback>
               </Avatar>
               <div className="text-left sm:text-right">
-                <p className="text-xs font-medium text-slate-900">
+                <p className="text-xs font-medium text-gray-900">
                   {group.seller.name || 'Vendeur anonyme'}
                 </p>
                 <div className="flex items-center gap-1">
@@ -114,7 +114,7 @@ export function GroupCard({ group }: IGroupCardProps) {
                   >
                     {group.seller.trustScore}/100
                   </span>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-gray-500">
                     • {group.seller.totalSales} vente
                     {group.seller.totalSales > 1 ? 's' : ''}
                   </span>

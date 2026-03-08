@@ -111,14 +111,14 @@ export function EventsClient() {
     (filters.priceRange ? 1 : 0);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold text-slate-900">
+          <h1 className="mb-2 text-4xl font-bold text-gray-900">
             Catalogue Événements
           </h1>
-          <p className="text-slate-600">
+          <p className="text-gray-600">
             Découvrez les meilleurs événements et achetez vos billets en toute sécurité
           </p>
         </div>
@@ -128,7 +128,7 @@ export function EventsClient() {
           {/* Recherche */}
           <form onSubmit={handleSearch} className="flex flex-1 gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
                 type="text"
                 placeholder="Rechercher un événement, artiste..."
@@ -197,7 +197,7 @@ export function EventsClient() {
           {/* Contenu principal */}
           <main className="flex-1">
             {/* Résultats count */}
-            <div className="mb-4 text-sm text-slate-600">
+            <div className="mb-4 text-sm text-gray-600">
               {isLoading ? (
                 'Chargement...'
               ) : (
@@ -213,7 +213,7 @@ export function EventsClient() {
             {/* Pagination (TODO) */}
             {pagination.totalPages > 1 && (
               <div className="mt-8 flex justify-center">
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-gray-500">
                   Page {pagination.page} sur {pagination.totalPages}
                 </p>
               </div>

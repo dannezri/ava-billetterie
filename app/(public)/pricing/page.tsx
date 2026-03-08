@@ -97,26 +97,26 @@ export default function PricingPage() {
             <span>Tarification 100% transparente</span>
           </div>
 
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl lg:text-6xl">
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
+            <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
               5% de frais
             </span>
             {' '}— rien de plus
           </h1>
 
-          <p className="text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Pas de frais cachés, pas de mauvaises surprises, pas de fine print.
             Ce que vous voyez sur l&apos;annonce + 5%, c&apos;est exactement ce que vous payez.
           </p>
 
           <div className="flex items-center justify-center gap-8 text-sm">
-            <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <div className="w-2 h-2 rounded-full bg-primary" />
-              <span>Acheteur : <strong className="text-zinc-900 dark:text-white">+5%</strong></span>
+              <span>Acheteur : <strong className="text-gray-900 dark:text-white">+5%</strong></span>
             </div>
-            <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <div className="w-2 h-2 rounded-full bg-green-500" />
-              <span>Vendeur : <strong className="text-zinc-900 dark:text-white">0%</strong></span>
+              <span>Vendeur : <strong className="text-gray-900 dark:text-white">0%</strong></span>
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@ export default function PricingPage() {
               <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                 <Calculator className="w-7 h-7 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                 Calculateur de Prix
               </h2>
               <p className="text-muted-foreground">
@@ -143,13 +143,13 @@ export default function PricingPage() {
       </section>
 
       {/* Ce qui est inclus */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 py-20">
+      <section className="bg-gray-50 dark:bg-gray-900 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
               Ce qui est inclus dans les 5%
             </h2>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Ce n&apos;est pas un frais de plateforme ordinaire.
               C&apos;est une assurance complète pour votre tranquillité d&apos;esprit.
             </p>
@@ -162,7 +162,7 @@ export default function PricingPage() {
                 <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-950/40 flex items-center justify-center">
                   <Shield className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                   Inclus dans les 5%
                 </h3>
               </div>
@@ -170,7 +170,7 @@ export default function PricingPage() {
                 {includedInFees.map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <Check className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                    <span className="text-sm text-zinc-700 dark:text-zinc-300">{item}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -182,7 +182,7 @@ export default function PricingPage() {
                 <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-950/40 flex items-center justify-center">
                   <Zap className="h-5 w-5 text-red-600 dark:text-red-400" />
                 </div>
-                <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                   Jamais facturé
                 </h3>
               </div>
@@ -190,7 +190,7 @@ export default function PricingPage() {
                 {neverCharged.map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <X className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" strokeWidth={2.5} />
-                    <span className="text-sm text-zinc-500 dark:text-zinc-500 line-through">
+                    <span className="text-sm text-gray-500 dark:text-gray-500 line-through">
                       {item}
                     </span>
                   </li>
@@ -204,10 +204,10 @@ export default function PricingPage() {
       {/* Comparaison */}
       <section className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
             Pourquoi AVA est différent
           </h2>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Comparaison honnête avec les autres plateformes
           </p>
         </div>
@@ -215,11 +215,11 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 py-20">
+      <section className="bg-gray-50 dark:bg-gray-900 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
                 Questions sur la tarification
               </h2>
             </div>
@@ -240,7 +240,7 @@ export default function PricingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="rounded-full bg-white text-zinc-900 hover:bg-zinc-100 font-semibold"
+              className="rounded-full bg-white text-gray-900 hover:bg-gray-100 font-semibold"
               asChild
             >
               <Link href="/signup">

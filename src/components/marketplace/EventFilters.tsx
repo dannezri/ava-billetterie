@@ -83,13 +83,13 @@ export function EventFilters({
     <div className="space-y-4">
       {/* Header avec reset */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">Filtres</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Filtres</h2>
         {activeFiltersCount > 0 && (
           <Button
             variant="ghost"
             size="sm"
             onClick={handleReset}
-            className="text-slate-600 hover:text-slate-900"
+            className="text-gray-600 hover:text-gray-900"
           >
             <X className="mr-1 h-4 w-4" />
             Réinitialiser
@@ -121,7 +121,7 @@ export function EventFilters({
               />
               <Label
                 htmlFor={`city-${city}`}
-                className="text-sm font-normal text-slate-700 cursor-pointer"
+                className="text-sm font-normal text-gray-700 cursor-pointer"
               >
                 {city}
               </Label>
@@ -153,7 +153,7 @@ export function EventFilters({
               />
               <Label
                 htmlFor={`category-${category}`}
-                className="text-sm font-normal text-slate-700 cursor-pointer"
+                className="text-sm font-normal text-gray-700 cursor-pointer"
               >
                 {category}
               </Label>
@@ -173,10 +173,10 @@ export function EventFilters({
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-600">
+              <span className="text-gray-600">
                 {localFilters.priceRange?.min || 0}€
               </span>
-              <span className="text-slate-600">
+              <span className="text-gray-600">
                 {localFilters.priceRange?.max || 500}€
               </span>
             </div>
@@ -203,7 +203,7 @@ export function EventFilters({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-xs text-slate-500">À venir : sélecteur de plage de dates</p>
+          <p className="text-xs text-gray-500">À venir : sélecteur de plage de dates</p>
         </CardContent>
       </Card>
     </div>

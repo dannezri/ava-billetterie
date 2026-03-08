@@ -30,10 +30,15 @@ export function EventDetails({ event }: IEventDetailsProps) {
     year: 'numeric',
   });
 
+  // Force Paris timezone so UTC midnight events don't appear as "02:00" in other locales
   const formattedTime = eventDate.toLocaleTimeString('fr-FR', {
-    hour: '2-digit',
-    minute: '2-digit',
+    hour:     '2-digit',
+    minute:   '2-digit',
+    timeZone: 'Europe/Paris',
   });
+
+  // Don't show start time if it looks like a midnight placeholder (00:00 or 02:00 UTC artefact)
+  const isPlaceholderTime = ['00:00', '01:00', '02:00', '03:00'].includes(formattedTime);
 
   const daysLeft = daysUntil(event.eventDate);
 
@@ -48,10 +53,10 @@ export function EventDetails({ event }: IEventDetailsProps) {
           <div className="mb-2 flex items-start">
             <CalendarDays className="mr-3 mt-0.5 h-5 w-5 text-blue-600" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-slate-500">Date</p>
-              <p className="capitalize text-slate-900">{formattedDate}</p>
+              <p className="text-sm font-medium text-gray-500">Date</p>
+              <p className="capitalize text-gray-900">{formattedDate}</p>
               {daysLeft > 0 && (
-                <p className="mt-1 text-xs text-slate-600">
+                <p className="mt-1 text-xs text-gray-600">
                   Dans {daysLeft} jour{daysLeft > 1 ? 's' : ''}
                 </p>
               )}
@@ -66,13 +71,17 @@ export function EventDetails({ event }: IEventDetailsProps) {
           <div className="flex items-start">
             <Clock className="mr-3 mt-0.5 h-5 w-5 text-blue-600" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-slate-500">Horaires</p>
+              <p className="text-sm font-medium text-gray-500">Horaires</p>
               {event.doorsOpenTime && (
-                <p className="text-sm text-slate-900">
+                <p className="text-sm text-gray-900">
                   Ouverture des portes : {event.doorsOpenTime}
                 </p>
               )}
-              <p className="text-sm text-slate-900">Début du concert : {formattedTime}</p>
+              {!isPlaceholderTime && (
+                <p className="text-sm text-gray-900">
+                  Début du concert : {formattedTime}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -84,9 +93,9 @@ export function EventDetails({ event }: IEventDetailsProps) {
           <div className="flex items-start">
             <MapPin className="mr-3 mt-0.5 h-5 w-5 text-blue-600" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-slate-500">Lieu</p>
-              <p className="font-medium text-slate-900">{event.venue}</p>
-              <p className="text-sm text-slate-600">{event.city}</p>
+              <p className="text-sm font-medium text-gray-500">Lieu</p>
+              <p className="font-medium text-gray-900">{event.venue}</p>
+              <p className="text-sm text-gray-600">{event.city}</p>
             </div>
           </div>
         </div>
@@ -99,8 +108,8 @@ export function EventDetails({ event }: IEventDetailsProps) {
               <div className="flex items-start">
                 <User className="mr-3 mt-0.5 h-5 w-5 text-blue-600" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-slate-500">Artiste</p>
-                  <p className="text-slate-900">{event.artist}</p>
+                  <p className="text-sm font-medium text-gray-500">Artiste</p>
+                  <p className="text-gray-900">{event.artist}</p>
                 </div>
               </div>
             </div>
@@ -115,8 +124,8 @@ export function EventDetails({ event }: IEventDetailsProps) {
               <div className="flex items-start">
                 <FileText className="mr-3 mt-0.5 h-5 w-5 text-blue-600" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-slate-500">Description</p>
-                  <p className="mt-1 text-sm text-slate-700">{event.description}</p>
+                  <p className="text-sm font-medium text-gray-500">Description</p>
+                  <p className="mt-1 text-sm text-gray-700">{event.description}</p>
                 </div>
               </div>
             </div>

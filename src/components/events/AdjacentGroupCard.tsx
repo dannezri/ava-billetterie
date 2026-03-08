@@ -118,7 +118,7 @@ export function AdjacentGroupCard({ group, eventId, eventTitle, eventDate }: IAd
             <p className="text-2xl font-bold text-green-700">
               {group.totalPrice.toFixed(2)}€
             </p>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-gray-500">
               {group.pricePerTicket.toFixed(2)}€ / billet
             </p>
           </div>
@@ -126,26 +126,26 @@ export function AdjacentGroupCard({ group, eventId, eventTitle, eventDate }: IAd
 
         {/* ── Catégorie ──────────────────────────────────────────────── */}
         <div className="mb-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
             Catégorie
           </p>
-          <p className="font-semibold text-slate-800">{group.section}</p>
+          <p className="font-semibold text-gray-800">{group.section}</p>
         </div>
 
         {/* ── Sièges consécutifs ─────────────────────────────────────── */}
         <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-green-200 bg-white p-3">
           <MapPin className="h-5 w-5 shrink-0 text-green-600" />
           <div>
-            <p className="text-xs font-medium text-slate-400">
+            <p className="text-xs font-medium text-gray-400">
               Sièges consécutifs détectés
             </p>
-            <p className="font-bold text-slate-800">{seatsDisplay}</p>
+            <p className="font-bold text-gray-800">{seatsDisplay}</p>
           </div>
           <CheckCircle2 className="ml-auto h-5 w-5 shrink-0 text-green-500" />
         </div>
 
         {/* ── CTA ────────────────────────────────────────────────────── */}
-        <div className="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+        <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
           {alreadyInCart ? (
             <div className="flex shrink-0 gap-2">
               <Button size="sm" variant="outline" asChild>
@@ -181,7 +181,7 @@ export function AdjacentGroupCard({ group, eventId, eventTitle, eventDate }: IAd
         </div>
 
         {/* ── Note ───────────────────────────────────────────────────── */}
-        <p className="mt-3 text-center text-xs text-slate-400">
+        <p className="mt-3 text-center text-xs text-gray-400">
           Ces {group.quantity} billets sont achetés ensemble — places garanties côte à côte
         </p>
       </CardContent>

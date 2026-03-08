@@ -35,7 +35,7 @@ export function SearchHistory({
           variant="ghost"
           size="sm"
           onClick={onClearHistory}
-          className="h-auto p-0 text-xs text-slate-500 hover:text-slate-900"
+          className="h-auto p-0 text-xs text-gray-500 hover:text-gray-900"
         >
           Effacer
         </Button>
@@ -46,7 +46,7 @@ export function SearchHistory({
             <button
               key={index}
               onClick={() => onSelectQuery(query)}
-              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100"
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100"
             >
               <span className="truncate">{query}</span>
             </button>

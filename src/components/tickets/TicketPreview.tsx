@@ -47,19 +47,19 @@ export function TicketPreview({ ticket }: ITicketPreviewProps) {
       <CardContent className="space-y-6">
         {/* Catégorie et siège */}
         <div>
-          <h3 className="mb-2 text-sm font-medium text-slate-500">Placement</h3>
+          <h3 className="mb-2 text-sm font-medium text-gray-500">Placement</h3>
           <div className="space-y-1">
-            <p className="text-2xl font-bold text-slate-900">
+            <p className="text-2xl font-bold text-gray-900">
               {ticket.section || 'Placement libre'}
             </p>
             {ticket.row && (
-              <p className="text-slate-700">Rangée : {ticket.row}</p>
+              <p className="text-gray-700">Rangée : {ticket.row}</p>
             )}
             {ticket.seatNumber && (
-              <p className="text-slate-700">Siège : {ticket.seatNumber}</p>
+              <p className="text-gray-700">Siège : {ticket.seatNumber}</p>
             )}
             {!ticket.row && !ticket.seatNumber && ticket.section === null && (
-              <p className="text-sm text-slate-600">Placement non numéroté</p>
+              <p className="text-sm text-gray-600">Placement non numéroté</p>
             )}
           </div>
         </div>
@@ -68,12 +68,12 @@ export function TicketPreview({ ticket }: ITicketPreviewProps) {
 
         {/* Prix */}
         <div>
-          <h3 className="mb-2 text-sm font-medium text-slate-500">Prix de vente</h3>
+          <h3 className="mb-2 text-sm font-medium text-gray-500">Prix de vente</h3>
           <div className="flex items-end gap-3">
             <p className="text-4xl font-bold text-blue-600">{ticket.price}€</p>
             {ticket.originalPrice && ticket.originalPrice !== ticket.price && (
               <div className="mb-1 flex items-center gap-2">
-                <p className="text-lg text-slate-400 line-through">
+                <p className="text-lg text-gray-400 line-through">
                   {ticket.originalPrice}€
                 </p>
                 {discount > 0 && (
@@ -86,7 +86,7 @@ export function TicketPreview({ ticket }: ITicketPreviewProps) {
             )}
           </div>
           {ticket.originalPrice && (
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-gray-600">
               Prix facial : {ticket.originalPrice}€
             </p>
           )}
@@ -101,13 +101,13 @@ export function TicketPreview({ ticket }: ITicketPreviewProps) {
 
         {/* Timeline */}
         <div>
-          <h3 className="mb-3 text-sm font-medium text-slate-500">Historique</h3>
+          <h3 className="mb-3 text-sm font-medium text-gray-500">Historique</h3>
           <div className="space-y-2">
             <div className="flex items-start gap-3">
               <Clock className="mt-0.5 h-4 w-4 text-blue-600" />
               <div>
-                <p className="text-sm font-medium text-slate-900">Mis en vente</p>
-                <p className="text-xs text-slate-600">
+                <p className="text-sm font-medium text-gray-900">Mis en vente</p>
+                <p className="text-xs text-gray-600">
                   Il y a {daysListed} jour{daysListed > 1 ? 's' : ''}
                 </p>
               </div>
@@ -116,8 +116,8 @@ export function TicketPreview({ ticket }: ITicketPreviewProps) {
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-600" />
                 <div>
-                  <p className="text-sm font-medium text-slate-900">Vérifié par notre équipe</p>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-sm font-medium text-gray-900">Vérifié par notre équipe</p>
+                  <p className="text-xs text-gray-600">
                     {formatShortDate(ticket.createdAt)}
                   </p>
                 </div>
@@ -130,7 +130,7 @@ export function TicketPreview({ ticket }: ITicketPreviewProps) {
 
         {/* Garanties */}
         <div>
-          <h3 className="mb-3 text-sm font-medium text-slate-500">Garanties</h3>
+          <h3 className="mb-3 text-sm font-medium text-gray-500">Garanties</h3>
           <div className="space-y-3">
             <div className="flex items-start gap-3 rounded-lg bg-green-50 p-3">
               <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />

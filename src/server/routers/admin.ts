@@ -40,7 +40,7 @@ export const adminRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      assertIsAdmin(ctx.session.user.email);
+      assertIsAdmin(ctx.session.user.email!);
 
       const { limit, cursor } = input;
 
@@ -100,7 +100,7 @@ export const adminRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      assertIsAdmin(ctx.session.user.email);
+      assertIsAdmin(ctx.session.user.email!);
 
       const ticket = await ctx.prisma.ticket.findUnique({
         where: { id: input.ticketId },
@@ -143,8 +143,8 @@ export const adminRouter = router({
             ticketId: input.ticketId,
             notes: input.adminNotes,
           },
-          ipAddress: ctx.req?.headers['x-forwarded-for'] as string || 'unknown',
-          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+          ipAddress: (ctx.req?.headers as any)?.['x-forwarded-for'] ?? 'unknown',
+          userAgent: (ctx.req?.headers as any)?.['user-agent'] ?? 'unknown',
         },
       });
 
@@ -170,7 +170,7 @@ export const adminRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      assertIsAdmin(ctx.session.user.email);
+      assertIsAdmin(ctx.session.user.email!);
 
       const ticket = await ctx.prisma.ticket.findUnique({
         where: { id: input.ticketId },
@@ -214,8 +214,8 @@ export const adminRouter = router({
             ticketId: input.ticketId,
             reason: input.rejectionReason,
           },
-          ipAddress: ctx.req?.headers['x-forwarded-for'] as string || 'unknown',
-          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+          ipAddress: (ctx.req?.headers as any)?.['x-forwarded-for'] ?? 'unknown',
+          userAgent: (ctx.req?.headers as any)?.['user-agent'] ?? 'unknown',
         },
       });
 
@@ -241,7 +241,7 @@ export const adminRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      assertIsAdmin(ctx.session.user.email);
+      assertIsAdmin(ctx.session.user.email!);
 
       const ticket = await ctx.prisma.ticket.findUnique({
         where: { id: input.ticketId },
@@ -275,8 +275,8 @@ export const adminRouter = router({
             ticketId: input.ticketId,
             message: input.message,
           },
-          ipAddress: ctx.req?.headers['x-forwarded-for'] as string || 'unknown',
-          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+          ipAddress: (ctx.req?.headers as any)?.['x-forwarded-for'] ?? 'unknown',
+          userAgent: (ctx.req?.headers as any)?.['user-agent'] ?? 'unknown',
         },
       });
 
@@ -296,7 +296,7 @@ export const adminRouter = router({
    * Récupérer les statistiques admin
    */
   getStats: protectedProcedure.query(async ({ ctx }) => {
-    assertIsAdmin(ctx.session.user.email);
+    assertIsAdmin(ctx.session.user.email!);
 
     const [
       pendingTickets,

@@ -63,7 +63,7 @@ export function EventCard({ event }: IEventCardProps) {
         )}
       >
         {/* Image événement */}
-        <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
+        <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
@@ -76,38 +76,33 @@ export function EventCard({ event }: IEventCardProps) {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
-            <div
-              className={cn(
-                'flex h-full items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600',
-                soldOut && 'from-slate-400 to-slate-600',
-              )}
-            >
-              <Ticket className="h-16 w-16 text-white opacity-50" />
+            <div className="flex h-full items-center justify-center bg-gray-100">
+              <Ticket className="h-16 w-16 text-gray-300" />
             </div>
           )}
 
-          {/* Badge complet (prioritaire, en haut à droite) */}
+          {/* Badge complet */}
           {soldOut ? (
             <div className="absolute right-2 top-2">
-              <Badge className="bg-slate-700 hover:bg-slate-800">
+              <span className="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-gray-800 text-white">
                 Complet
-              </Badge>
+              </span>
             </div>
           ) : event.isVerified ? (
             <div className="absolute right-2 top-2">
-              <Badge variant="default" className="bg-green-600 hover:bg-green-700">
-                <CheckCircle2 className="mr-1 h-3 w-3" />
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-emerald-600 text-white">
+                <CheckCircle2 className="h-3 w-3" />
                 Vérifié
-              </Badge>
+              </span>
             </div>
           ) : null}
 
-          {/* Badge catégorie (coin supérieur gauche) */}
+          {/* Badge catégorie */}
           {event.category && (
             <div className="absolute left-2 top-2">
-              <Badge variant="secondary" className="bg-slate-900/70 text-white backdrop-blur-sm">
+              <span className="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-white/90 text-gray-700 backdrop-blur-sm">
                 {event.category}
-              </Badge>
+              </span>
             </div>
           )}
         </div>
@@ -115,66 +110,57 @@ export function EventCard({ event }: IEventCardProps) {
         <CardContent className="p-4">
           {/* Nom événement + Artiste */}
           <div className="mb-3">
-            <h3 className="mb-1 line-clamp-1 text-lg font-bold text-slate-900">
+            <h3 className="mb-1 line-clamp-1 text-base font-semibold text-gray-900">
               {event.title}
             </h3>
             {event.artist && (
-              <p className="line-clamp-1 text-sm text-slate-600">{event.artist}</p>
+              <p className="line-clamp-1 text-sm text-gray-500">{event.artist}</p>
             )}
           </div>
 
           {/* Date */}
-          <div className="mb-2 flex items-center text-sm text-slate-700">
-            <CalendarDays className="mr-2 h-4 w-4 text-blue-600" />
+          <div className="mb-2 flex items-center text-sm text-gray-600">
+            <CalendarDays className="mr-2 h-3.5 w-3.5 text-gray-400" />
             <span className="capitalize">
-              {formattedDate} • {formattedTime}
+              {formattedDate} · {formattedTime}
             </span>
           </div>
 
           {/* Lieu */}
-          <div className="mb-3 flex items-center text-sm text-slate-700">
-            <MapPin className="mr-2 h-4 w-4 text-blue-600" />
+          <div className="mb-4 flex items-center text-sm text-gray-600">
+            <MapPin className="mr-2 h-3.5 w-3.5 text-gray-400" />
             <span className="line-clamp-1">
-              {event.venue} • {event.city}
+              {event.venue} · {event.city}
             </span>
           </div>
 
           {/* Séparateur */}
-          <div className="mb-3 border-t border-slate-200" />
+          <div className="mb-3 border-t border-gray-100" />
 
           {/* Prix et disponibilité */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-slate-500">{soldOut ? 'Disponibilité' : 'Prix'}</p>
-              <p
-                className={cn(
-                  'text-lg font-bold',
-                  soldOut ? 'text-slate-500' : 'text-blue-600',
-                )}
-              >
+              <p className="text-xs text-gray-400">{soldOut ? 'Disponibilité' : 'À partir de'}</p>
+              <p className={cn('text-lg font-bold', soldOut ? 'text-gray-400' : 'text-gray-900')}>
                 {priceDisplay}
               </p>
             </div>
 
             {soldOut ? (
-              <Badge
-                variant="outline"
-                className="border-slate-300 bg-slate-100 text-slate-600"
-              >
-                <Clock className="mr-1 h-3 w-3" />
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-500">
+                <Clock className="h-3 w-3" />
                 0 billet
-              </Badge>
+              </span>
             ) : (
-              <Badge
-                variant="outline"
-                className={cn(
-                  'border-blue-200 bg-blue-50 text-blue-700',
-                  event.ticketsAvailable < 5 && 'border-orange-200 bg-orange-50 text-orange-700',
-                )}
-              >
-                <Ticket className="mr-1 h-3 w-3" />
+              <span className={cn(
+                'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium',
+                event.ticketsAvailable < 5
+                  ? 'bg-orange-50 text-orange-700'
+                  : 'bg-emerald-50 text-emerald-700',
+              )}>
+                <Ticket className="h-3 w-3" />
                 {event.ticketsAvailable} {event.ticketsAvailable === 1 ? 'billet' : 'billets'}
-              </Badge>
+              </span>
             )}
           </div>
         </CardContent>

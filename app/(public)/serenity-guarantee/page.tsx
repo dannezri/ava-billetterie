@@ -166,14 +166,14 @@ export default function SerenityGuaranteePage() {
             <span>Garantie Sérénité — Exclusivement sur AVA</span>
           </div>
 
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
             Votre billet ne fonctionne pas ?{' '}
             <span className="bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
               On vous rembourse + 50€
             </span>
           </h1>
 
-          <p className="text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Aucune justification compliquée. Aucune attente interminable.
             Aucune dispute par email. On vous rembourse en moins de 10 minutes,
             et on ajoute 50€ pour la déception.
@@ -228,10 +228,10 @@ export default function SerenityGuaranteePage() {
       <section className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
               Quels problèmes sont couverts ?
             </h2>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
               La Garantie Sérénité vous protège dans toutes ces situations
             </p>
           </div>
@@ -240,16 +240,16 @@ export default function SerenityGuaranteePage() {
             {coveredCases.map((item, index) => (
               <div
                 key={index}
-                className="flex items-start gap-4 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:shadow-md transition-all"
+                className="flex items-start gap-4 p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 hover:shadow-md transition-all"
               >
                 <div className={`w-10 h-10 rounded-full ${item.bg} flex items-center justify-center flex-shrink-0`}>
                   <item.icon className={`h-5 w-5 ${item.color}`} strokeWidth={2.5} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-zinc-900 dark:text-white mb-1">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     {item.description}
                   </p>
                 </div>
@@ -276,14 +276,14 @@ export default function SerenityGuaranteePage() {
       </section>
 
       {/* Comment activer */}
-      <section id="how-it-works" className="bg-zinc-50 dark:bg-zinc-900 py-20">
+      <section id="how-it-works" className="bg-gray-50 dark:bg-gray-900 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
                 Comment activer la Garantie ?
               </h2>
-              <p className="text-lg text-zinc-600 dark:text-zinc-400">
+              <p className="text-lg text-gray-600 dark:text-gray-400">
                 4 étapes, moins de 10 minutes, depuis l&apos;entrée du concert
               </p>
             </div>
@@ -301,16 +301,16 @@ export default function SerenityGuaranteePage() {
                   </div>
 
                   <div className="flex-1 pb-4">
-                    <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6">
                       <div className="flex items-start justify-between gap-4 mb-2">
-                        <h3 className="text-lg font-bold text-zinc-900 dark:text-white">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                           {step.title}
                         </h3>
                         <span className="flex-shrink-0 text-xs font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 px-2 py-1 rounded-full">
                           {step.timing}
                         </span>
                       </div>
-                      <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
+                      <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                         {step.description}
                       </p>
                     </div>
@@ -330,7 +330,7 @@ export default function SerenityGuaranteePage() {
               <Star className="h-4 w-4 fill-current" />
               <span>Ils ont été protégés par la Garantie</span>
             </div>
-            <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
               Histoires vraies
             </h2>
           </div>
@@ -339,15 +339,15 @@ export default function SerenityGuaranteePage() {
             {testimonials.map((t, index) => (
               <Card key={index} className="p-6 hover:shadow-xl transition-all">
                 <div className="mb-4">
-                  <p className="font-bold text-zinc-900 dark:text-white">{t.name}</p>
+                  <p className="font-bold text-gray-900 dark:text-white">{t.name}</p>
                   <p className="text-sm text-muted-foreground">{t.event}</p>
                 </div>
 
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 italic mb-6 leading-relaxed">
+                <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-6 leading-relaxed">
                   &ldquo;{t.text}&rdquo;
                 </p>
 
-                <div className="flex items-center gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
                   <div className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
                     <Clock className="h-4 w-4" />
                     <span className="text-sm font-bold">{t.timing}</span>
@@ -364,11 +364,11 @@ export default function SerenityGuaranteePage() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 py-20">
+      <section className="bg-gray-50 dark:bg-gray-900 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
                 Questions sur la Garantie
               </h2>
             </div>
@@ -390,7 +390,7 @@ export default function SerenityGuaranteePage() {
           </p>
           <Button
             size="lg"
-            className="rounded-full bg-white text-green-700 hover:bg-zinc-100 font-bold shadow-xl"
+            className="rounded-full bg-white text-green-700 hover:bg-gray-100 font-bold shadow-xl"
             asChild
           >
             <Link href="/events">

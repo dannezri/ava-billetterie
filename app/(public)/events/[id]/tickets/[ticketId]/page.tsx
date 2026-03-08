@@ -80,26 +80,26 @@ export default async function TicketPreviewPage({ params }: TicketPreviewPagePro
   });
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <div className="border-b border-slate-200 bg-white">
+      <div className="border-b border-gray-200 bg-white">
         <div className="container mx-auto px-4 py-4">
           <nav className="flex items-center gap-2 text-sm">
             <Link
               href="/events"
-              className="text-slate-600 hover:text-slate-900"
+              className="text-gray-600 hover:text-gray-900"
             >
               Événements
             </Link>
-            <span className="text-slate-400">/</span>
+            <span className="text-gray-400">/</span>
             <Link
               href={`/events/${event.id}`}
-              className="text-slate-600 hover:text-slate-900"
+              className="text-gray-600 hover:text-gray-900"
             >
               {event.title}
             </Link>
-            <span className="text-slate-400">/</span>
-            <span className="text-slate-900">Ce billet</span>
+            <span className="text-gray-400">/</span>
+            <span className="text-gray-900">Ce billet</span>
           </nav>
         </div>
       </div>
@@ -120,11 +120,11 @@ export default async function TicketPreviewPage({ params }: TicketPreviewPagePro
             {/* Rappel événement (mini card) */}
             <Card className="border-l-4 border-l-blue-600">
               <CardContent className="p-4">
-                <h2 className="mb-2 text-xl font-bold text-slate-900">{event.title}</h2>
+                <h2 className="mb-2 text-xl font-bold text-gray-900">{event.title}</h2>
                 {event.artist && (
-                  <p className="mb-2 text-slate-600">{event.artist}</p>
+                  <p className="mb-2 text-gray-600">{event.artist}</p>
                 )}
-                <div className="flex flex-col gap-2 text-sm text-slate-700 sm:flex-row sm:gap-4">
+                <div className="flex flex-col gap-2 text-sm text-gray-700 sm:flex-row sm:gap-4">
                   <div className="flex items-center">
                     <Calendar className="mr-2 h-4 w-4 text-blue-600" />
                     <span className="capitalize">{formattedDate}</span>

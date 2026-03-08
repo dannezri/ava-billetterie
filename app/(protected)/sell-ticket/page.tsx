@@ -56,54 +56,45 @@ export default async function SellTicketPage({
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Vendre mon billet</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Vendre mon billet</h1>
+        <p className="text-gray-500">
           Mettez votre billet en vente en quelques clics. Notre équipe vérifiera votre billet avant
           publication.
         </p>
       </div>
 
-      {/* ✨ Bannière informative (remplace le blocage KYC) */}
-      <div className="mb-6 rounded-lg bg-blue-50 border border-blue-200 p-5">
-        <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-          <Shield className="h-4 w-4" />
+      {/* Bannière informative */}
+      <div className="mb-6 bg-blue-50 border border-blue-200 rounded-clean p-5">
+        <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2 text-sm">
+          <Shield className="h-4 w-4 flex-shrink-0" />
           Comment ça fonctionne ?
         </h3>
         <div className="grid sm:grid-cols-3 gap-4">
-          <div className="flex items-start gap-2">
-            <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-blue-900">Upload immédiat</p>
-              <p className="text-xs text-blue-700">Déposez votre PDF maintenant, sans prérequis</p>
+          {[
+            { icon: CheckCircle, title: 'Upload immédiat', desc: 'Déposez votre PDF maintenant, sans prérequis', color: 'text-emerald-600' },
+            { icon: Clock, title: 'Séquestre J+2', desc: "Vos gains sont sécurisés après l'événement", color: 'text-blue-600' },
+            { icon: Shield, title: 'KYC au retrait uniquement', desc: "Identité vérifiée seulement pour recevoir votre argent", color: 'text-blue-600' },
+          ].map(({ icon: Icon, title, desc, color }) => (
+            <div key={title} className="flex items-start gap-2.5">
+              <Icon className={`h-4 w-4 ${color} mt-0.5 flex-shrink-0`} />
+              <div>
+                <p className="text-sm font-medium text-blue-900">{title}</p>
+                <p className="text-xs text-blue-700 mt-0.5">{desc}</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <Clock className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-blue-900">Séquestre J+2</p>
-              <p className="text-xs text-blue-700">Vos gains sont sécurisés après l'événement</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <Shield className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-blue-900">KYC au retrait uniquement</p>
-              <p className="text-xs text-blue-700">
-                Identité vérifiée seulement pour recevoir votre argent
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
       {/* Info événement si fourni */}
       {event && (
-        <div className="mb-6 rounded-lg bg-green-50 border border-green-200 p-4">
-          <h3 className="font-semibold text-green-900 mb-1">Événement sélectionné</h3>
-          <p className="text-green-800 font-medium">{event.title}</p>
-          <p className="text-sm text-green-700">
+        <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-clean p-4">
+          <h3 className="font-semibold text-emerald-900 mb-1 text-sm">Événement sélectionné</h3>
+          <p className="text-emerald-800 font-medium">{event.title}</p>
+          <p className="text-sm text-emerald-700 mt-0.5">
             {new Date(event.eventDate).toLocaleDateString('fr-FR', {
               weekday: 'long',
               year: 'numeric',
@@ -115,43 +106,27 @@ export default async function SellTicketPage({
         </div>
       )}
 
-      {/* Formulaire — accessible à TOUS les users authentifiés */}
-      <div className="rounded-lg border bg-card p-6">
+      {/* Formulaire */}
+      <div className="bg-white border border-gray-200 rounded-clean shadow-clean p-6">
         <SellTicketForm eventId={params.eventId || ''} />
       </div>
 
-      {/* Informations complémentaires */}
-      <div className="mt-8 rounded-lg bg-muted/50 border p-6">
-        <h3 className="font-semibold mb-4">📋 Informations importantes</h3>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          <li className="flex items-start gap-2">
-            <span className="text-green-600 font-bold">✓</span>
-            <span>Votre billet sera vérifié par notre équipe dans les 24h</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-green-600 font-bold">✓</span>
-            <span>
-              Le prix de revente ne peut pas dépasser le prix facial du billet (loi française Art.
-              313-6-2)
-            </span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-green-600 font-bold">✓</span>
-            <span>Formats acceptés : PDF uniquement, maximum 5 MB</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-green-600 font-bold">✓</span>
-            <span>
-              Paiement sécurisé en séquestre — libéré 2 jours après l'événement
-            </span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-green-600 font-bold">✓</span>
-            <span>
-              La vérification d'identité (KYC) sera demandée{' '}
-              <strong>uniquement au moment de retirer votre argent</strong>
-            </span>
-          </li>
+      {/* Informations importantes */}
+      <div className="mt-6 bg-gray-50 border border-gray-200 rounded-clean p-6">
+        <h3 className="font-semibold text-gray-900 mb-4 text-sm">Informations importantes</h3>
+        <ul className="space-y-3">
+          {[
+            'Votre billet sera vérifié par notre équipe dans les 24h',
+            'Le prix de revente ne peut pas dépasser le prix facial du billet (loi française Art. 313-6-2)',
+            'Formats acceptés : PDF uniquement, maximum 5 MB',
+            "Paiement sécurisé en séquestre — libéré 2 jours après l'événement",
+            <span key="kyc">La vérification d'identité (KYC) sera demandée <strong>uniquement au moment de retirer votre argent</strong></span>,
+          ].map((item, i) => (
+            <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
+              <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+              <span>{item}</span>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

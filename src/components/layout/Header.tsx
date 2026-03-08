@@ -67,41 +67,32 @@ export function Header() {
   const isAuthenticated = currentSpace.space === 'buyer' || currentSpace.space === 'seller';
 
   return (
-    <header
-      className={cn(
-        'sticky top-0 z-50 w-full border-b backdrop-blur transition-colors duration-200',
-        isAuthenticated
-          ? cn(currentSpace.theme.background, 'supports-[backdrop-filter]:bg-opacity-95')
-          : 'bg-background/95 supports-[backdrop-filter]:bg-background/60'
-      )}
-    >
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
       <div className="container flex h-16 items-center justify-between">
         {/* Gauche : SpaceSwitcher (si auth) + Logo */}
         <div className="flex items-center gap-2 md:gap-4">
-          {/* SpaceSwitcher : visible uniquement en espace buyer/seller */}
           {user && <SpaceSwitcher />}
 
           <Link
             href="/"
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 no-underline"
             onClick={closeMobileMenu}
           >
-            <Ticket className={cn('h-6 w-6', isAuthenticated && currentSpace.theme.accent)} />
-            <span className="font-bold text-xl">AVA</span>
+            <Ticket className="h-5 w-5 text-blue-600" />
+            <span className="font-bold text-xl text-gray-900">AVA</span>
           </Link>
 
-          {/* Desktop Navigation publique (masquée en espace auth) */}
           {!isAuthenticated && (
-            <nav className="hidden md:flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-6 ml-2">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'text-sm font-medium transition-colors hover:text-primary',
+                    'text-sm font-medium transition-colors no-underline',
                     pathname === item.href
-                      ? 'text-primary'
-                      : 'text-muted-foreground'
+                      ? 'text-blue-600'
+                      : 'text-gray-500 hover:text-gray-900'
                   )}
                 >
                   {item.label}
@@ -245,17 +236,17 @@ export function Header() {
                 {/* User Info (if logged in) */}
                 {user && (
                   <>
-                    <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                    <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-clean border border-gray-200">
                       <Avatar>
-                        <AvatarFallback>
+                        <AvatarFallback className="bg-blue-600 text-white text-sm">
                           {getInitials(user.email || 'U')}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">
+                        <p className="text-sm font-medium text-gray-900 truncate">
                           {user.user_metadata?.name || 'Utilisateur'}
                         </p>
-                        <p className="text-xs text-muted-foreground truncate">
+                        <p className="text-xs text-gray-500 truncate">
                           {user.email}
                         </p>
                       </div>
@@ -265,17 +256,17 @@ export function Header() {
                 )}
 
                 {/* Navigation Links */}
-                <nav className="flex flex-col gap-2">
+                <nav className="flex flex-col gap-1">
                   {navItems.map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
                       onClick={closeMobileMenu}
                       className={cn(
-                        'flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors',
+                        'flex items-center px-4 py-3 text-sm font-medium rounded-clean transition-colors no-underline',
                         pathname === item.href
-                          ? 'bg-primary/10 text-primary'
-                          : 'hover:bg-muted'
+                          ? 'bg-blue-50 text-blue-600'
+                          : 'text-gray-700 hover:bg-gray-100'
                       )}
                     >
                       {item.label}
@@ -288,62 +279,25 @@ export function Header() {
                     <Separator />
                     {/* User Actions */}
                     <div className="flex flex-col gap-2">
-                      <Link
-                        href="/sell-ticket"
-                        onClick={closeMobileMenu}
-                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
-                      >
-                        <Ticket className="mr-3 h-4 w-4" />
-                        Vendre un billet
-                      </Link>
-                      <Link
-                        href="/dashboard"
-                        onClick={closeMobileMenu}
-                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
-                      >
-                        <LayoutDashboard className="mr-3 h-4 w-4" />
-                        Dashboard
-                      </Link>
-                      <Link
-                        href="/profile"
-                        onClick={closeMobileMenu}
-                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
-                      >
-                        <User className="mr-3 h-4 w-4" />
-                        Mon profil
-                      </Link>
-                      <Link
-                        href="/my-purchases"
-                        onClick={closeMobileMenu}
-                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
-                      >
-                        <ShoppingBag className="mr-3 h-4 w-4" />
-                        Mes achats
-                      </Link>
-                      <Link
-                        href="/favorites"
-                        onClick={closeMobileMenu}
-                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
-                      >
-                        <Heart className="mr-3 h-4 w-4" />
-                        Favoris
-                      </Link>
-                      <Link
-                        href="/notifications"
-                        onClick={closeMobileMenu}
-                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
-                      >
-                        <Bell className="mr-3 h-4 w-4" />
-                        Notifications
-                      </Link>
-                      <Link
-                        href="/profile"
-                        onClick={closeMobileMenu}
-                        className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
-                      >
-                        <Settings className="mr-3 h-4 w-4" />
-                        Paramètres
-                      </Link>
+                      {[
+                        { href: '/sell-ticket', label: 'Vendre un billet', icon: Ticket },
+                        { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+                        { href: '/profile', label: 'Mon profil', icon: User },
+                        { href: '/my-purchases', label: 'Mes achats', icon: ShoppingBag },
+                        { href: '/favorites', label: 'Favoris', icon: Heart },
+                        { href: '/notifications', label: 'Notifications', icon: Bell },
+                        { href: '/profile', label: 'Paramètres', icon: Settings },
+                      ].map(({ href, label, icon: Icon }) => (
+                        <Link
+                          key={`${href}-${label}`}
+                          href={href}
+                          onClick={closeMobileMenu}
+                          className="flex items-center px-4 py-3 text-sm font-medium rounded-clean text-gray-700 hover:bg-gray-100 no-underline transition-colors"
+                        >
+                          <Icon className="mr-3 h-4 w-4 text-gray-400" />
+                          {label}
+                        </Link>
+                      ))}
                     </div>
                     <Separator />
                     {/* Switcher de profil test (mobile) */}

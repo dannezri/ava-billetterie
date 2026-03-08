@@ -156,7 +156,7 @@ export async function deleteUserAccount(userId: string, password: string) {
   const supabase = await createClient();
   const { data: user } = await supabase.auth.getUser();
 
-  if (!user || user.user.id !== userId) {
+  if (!user || !user.user || user.user.id !== userId) {
     throw new Error('Unauthorized');
   }
 
@@ -269,7 +269,7 @@ export async function changePassword(userId: string, currentPassword: string, ne
   // 1. Vérifier l'utilisateur
   const { data: user } = await supabase.auth.getUser();
 
-  if (!user || user.user.id !== userId) {
+  if (!user || !user.user || user.user.id !== userId) {
     throw new Error('Unauthorized');
   }
 

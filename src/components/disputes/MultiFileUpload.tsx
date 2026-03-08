@@ -98,7 +98,8 @@ export function MultiFileUpload({
         const result = await uploadFile(file, {
           publicKey,
           store: true,
-          onProgress: ({ value: progress }) => {
+          onProgress: (progressInfo) => {
+            const progress = 'value' in progressInfo ? progressInfo.value : 0;
             setUploadProgress((prev) => ({
               ...prev,
               [file.name]: Math.round(progress * 100),

@@ -105,7 +105,7 @@ function Cell({ value }: { value: CellValue }) {
     );
   }
   return (
-    <div className="text-center text-sm font-medium text-zinc-700 dark:text-zinc-300">
+    <div className="text-center text-sm font-medium text-gray-700 dark:text-gray-300">
       {value}
     </div>
   );
@@ -113,11 +113,11 @@ function Cell({ value }: { value: CellValue }) {
 
 export function ComparisonTable() {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+    <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
       <table className="w-full min-w-[640px] border-collapse">
         <thead>
-          <tr className="border-b border-zinc-200 dark:border-zinc-800">
-            <th className="py-5 px-6 text-left text-sm font-semibold text-zinc-500 dark:text-zinc-400 w-[35%]">
+          <tr className="border-b border-gray-200 dark:border-gray-800">
+            <th className="py-5 px-6 text-left text-sm font-semibold text-gray-500 dark:text-gray-400 w-[35%]">
               Fonctionnalité
             </th>
             <th className="py-5 px-4 text-center bg-primary/5 dark:bg-primary/10">
@@ -129,13 +129,13 @@ export function ComparisonTable() {
               </div>
             </th>
             <th className="py-5 px-4 text-center">
-              <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">Viagogo</span>
+              <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">Viagogo</span>
             </th>
             <th className="py-5 px-4 text-center">
-              <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">StubHub</span>
+              <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">StubHub</span>
             </th>
             <th className="py-5 px-4 text-center">
-              <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">Facebook</span>
+              <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">Facebook</span>
             </th>
           </tr>
         </thead>
@@ -143,11 +143,11 @@ export function ComparisonTable() {
           {rows.map((row, index) => (
             <tr
               key={index}
-              className={`border-b border-zinc-100 dark:border-zinc-800/50 last:border-0 ${
-                index % 2 === 0 ? 'bg-white dark:bg-zinc-950' : 'bg-zinc-50/50 dark:bg-zinc-900/30'
+              className={`border-b border-gray-100 dark:border-gray-800/50 last:border-0 ${
+                index % 2 === 0 ? 'bg-white dark:bg-gray-950' : 'bg-gray-50/50 dark:bg-gray-900/30'
               }`}
             >
-              <td className="py-4 px-6 text-sm font-medium text-zinc-800 dark:text-zinc-200">
+              <td className="py-4 px-6 text-sm font-medium text-gray-800 dark:text-gray-200">
                 {row.feature}
               </td>
               <td className="py-4 px-4 bg-primary/5 dark:bg-primary/5">
@@ -168,7 +168,7 @@ export function ComparisonTable() {
       </table>
 
       {/* Legend */}
-      <div className="flex items-center gap-6 px-6 py-4 bg-zinc-50 dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 text-xs text-muted-foreground">
+      <div className="flex items-center gap-6 px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <Check className="h-3.5 w-3.5 text-green-600" />
           <span>Oui</span>

@@ -35,7 +35,7 @@ export function EventImageUpload({ value, onChange }: EventImageUploadProps) {
 
       const result = await uploadFile(file, {
         publicKey,
-        store: '1',
+        store: true,
         fileName: file.name,
         contentType: file.type,
       });

@@ -1,103 +1,95 @@
 import { CheckCircle2, Clock, RefreshCw, Shield } from 'lucide-react';
-import { Card } from '@/components/ui/card';
 
 const guarantees = [
   {
     icon: Shield,
     title: '100% remboursé en cas de fraude',
     description:
-      'Billet invalide ? Code-barres déjà utilisé ? Vous êtes intégralement remboursé sous 48h.',
+      "Billet invalide ? Code-barres déjà utilisé ? Vous êtes intégralement remboursé sous 48h.",
+    iconBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
   },
   {
     icon: Clock,
     title: 'Séquestre automatique J+2',
     description:
-      'L\'argent reste bloqué 2 jours après l\'événement. Le vendeur ne peut pas partir avec votre argent.',
+      "L'argent reste bloqué 2 jours après l'événement. Le vendeur ne peut pas partir avec votre argent.",
+    iconBg: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
   },
   {
     icon: CheckCircle2,
     title: 'Prix plafonné au prix facial',
     description:
-      'Impossible de vendre au-dessus du prix d\'origine. Nous bloquons toute surtarification abusive.',
+      "Impossible de vendre au-dessus du prix d'origine. Nous bloquons toute surtarification abusive.",
+    iconBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
   },
   {
     icon: RefreshCw,
     title: 'Support réactif 7j/7',
     description:
-      'Une question ? Un problème ? Notre équipe répond en moins de 2h, même le week-end.',
+      "Une question ? Un problème ? Notre équipe répond en moins de 2h, même le week-end.",
+    iconBg: 'bg-amber-50',
+    iconColor: 'text-amber-600',
   },
 ];
 
 export function Guarantees() {
   return (
-    <section className="bg-gradient-to-b from-white to-zinc-50 py-20 dark:from-zinc-950 dark:to-zinc-900 md:py-32">
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <div className="mx-auto mb-16 max-w-3xl text-center">
-          <h2 className="mb-4 text-4xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl">
+    <section className="bg-gray-50 py-20 md:py-28">
+      <div className="container mx-auto px-4 max-w-5xl">
+
+        {/* Header */}
+        <div className="mx-auto mb-16 max-w-2xl text-center">
+          <h2 className="mb-4 text-4xl font-bold tracking-tight text-gray-900">
             Nos garanties béton
           </h2>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400">
+          <p className="text-lg text-gray-600 leading-relaxed">
             Ava s'engage à protéger chaque transaction. Votre tranquillité d'esprit est notre priorité.
           </p>
         </div>
 
-        {/* Guarantees Grid */}
-        <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
+        {/* Guarantees grid */}
+        <div className="grid gap-5 md:grid-cols-2">
           {guarantees.map((guarantee, index) => (
-            <Card
+            <div
               key={index}
-              className="group relative overflow-hidden border-2 p-8 transition-all hover:border-blue-500 hover:shadow-xl"
+              className="bg-white border border-gray-200 rounded-clean shadow-clean p-6 transition-all duration-200 hover:shadow-clean-md hover:border-blue-200"
             >
-              <div className="flex gap-6">
-                {/* Icon */}
+              <div className="flex gap-5">
                 <div className="flex-shrink-0">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-500">
-                    <guarantee.icon className="h-7 w-7 text-white" strokeWidth={2.5} />
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-clean ${guarantee.iconBg}`}>
+                    <guarantee.icon className={`h-6 w-6 ${guarantee.iconColor}`} strokeWidth={2} />
                   </div>
                 </div>
-
-                {/* Content */}
                 <div>
-                  <h3 className="mb-2 text-xl font-bold text-zinc-900 dark:text-white">
+                  <h3 className="mb-1.5 text-lg font-semibold text-gray-900">
                     {guarantee.title}
                   </h3>
-                  <p className="text-zinc-600 dark:text-zinc-400">{guarantee.description}</p>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {guarantee.description}
+                  </p>
                 </div>
               </div>
-
-              {/* Decorative corner accent */}
-              <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 opacity-0 transition-opacity group-hover:opacity-20 dark:from-blue-900 dark:to-purple-900" />
-            </Card>
+            </div>
           ))}
         </div>
 
-        {/* Trust Stats */}
-        <div className="mx-auto mt-16 max-w-5xl">
-          <div className="grid gap-8 rounded-2xl border-2 border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-950 md:grid-cols-3">
-            <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-blue-600 dark:text-blue-500">
-                24h
-              </div>
-              <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                Délai moyen de résolution des litiges
-              </div>
+        {/* Stats */}
+        <div className="mt-10 bg-white border border-gray-200 rounded-clean shadow-clean">
+          <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+            <div className="p-8 text-center">
+              <div className="text-4xl font-bold text-blue-600 mb-2">24h</div>
+              <div className="text-sm text-gray-500">Délai moyen de résolution des litiges</div>
             </div>
-            <div className="border-l border-zinc-200 text-center dark:border-zinc-800">
-              <div className="mb-2 text-4xl font-bold text-green-600 dark:text-green-500">
-                100%
-              </div>
-              <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                Des fraudes détectées avant paiement
-              </div>
+            <div className="p-8 text-center">
+              <div className="text-4xl font-bold text-emerald-600 mb-2">100%</div>
+              <div className="text-sm text-gray-500">Des fraudes détectées avant paiement</div>
             </div>
-            <div className="border-l border-zinc-200 text-center dark:border-zinc-800">
-              <div className="mb-2 text-4xl font-bold text-purple-600 dark:text-purple-500">
-                2.5M€
-              </div>
-              <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                Sécurisés en séquestre chaque mois
-              </div>
+            <div className="p-8 text-center">
+              <div className="text-4xl font-bold text-gray-900 mb-2">2.5M€</div>
+              <div className="text-sm text-gray-500">Sécurisés en séquestre chaque mois</div>
             </div>
           </div>
         </div>

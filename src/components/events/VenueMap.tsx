@@ -5,7 +5,8 @@
 
 'use client';
 
-import { MapPin, Navigation } from 'lucide-react';
+import { MapPin, Navigation, LayoutGrid } from 'lucide-react';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -13,9 +14,11 @@ interface IVenueMapProps {
   venue: string;
   city: string;
   address?: string;
+  /** Quand fourni, affiche un bouton vers le plan interactif de la salle */
+  eventId?: string;
 }
 
-export function VenueMap({ venue, city, address }: IVenueMapProps) {
+export function VenueMap({ venue, city, address, eventId }: IVenueMapProps) {
   // Construction de l'URL Google Maps
   const mapQuery = encodeURIComponent(`${venue}, ${city}`);
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
@@ -35,17 +38,17 @@ export function VenueMap({ venue, city, address }: IVenueMapProps) {
       <CardContent className="space-y-3">
         {/* Adresse */}
         <div>
-          <p className="font-medium text-slate-900">{venue}</p>
-          {address && <p className="text-sm text-slate-600">{address}</p>}
-          <p className="text-sm text-slate-600">{city}</p>
+          <p className="font-medium text-gray-900">{venue}</p>
+          {address && <p className="text-sm text-gray-600">{address}</p>}
+          <p className="text-sm text-gray-600">{city}</p>
         </div>
 
         {/* Carte placeholder (à remplacer par vrai embed Google Maps) */}
-        <div className="relative h-48 w-full overflow-hidden rounded-lg bg-slate-100">
+        <div className="relative h-48 w-full overflow-hidden rounded-lg bg-gray-100">
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
-              <MapPin className="mx-auto mb-2 h-8 w-8 text-slate-400" />
-              <p className="text-xs text-slate-500">
+              <MapPin className="mx-auto mb-2 h-8 w-8 text-gray-400" />
+              <p className="text-xs text-gray-500">
                 Carte interactive (nécessite Google Maps API)
               </p>
             </div>
@@ -60,6 +63,16 @@ export function VenueMap({ venue, city, address }: IVenueMapProps) {
             referrerPolicy="no-referrer-when-downgrade"
           /> */}
         </div>
+
+        {/* Bouton plan interactif */}
+        {eventId && (
+          <Button variant="default" size="sm" className="w-full gap-2 bg-blue-600 hover:bg-blue-700" asChild>
+            <Link href={`/events/${eventId}/venue`}>
+              <LayoutGrid className="h-4 w-4" />
+              Plan interactif de la salle
+            </Link>
+          </Button>
+        )}
 
         {/* Boutons actions */}
         <div className="flex gap-2">

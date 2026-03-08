@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     // === IDEMPOTENCE ===
     const existingLog = await prisma.auditLog.findFirst({
       where: {
-        action: 'STRIPE_WEBHOOK_PROCESSED',
+        action: 'ADMIN_ACTION',
         metadata: {
           path: ['eventId'],
           equals: event.id,

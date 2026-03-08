@@ -82,7 +82,7 @@ export function SearchClient() {
 
   // Changement de tab
   const handleTabChange = (value: string) => {
-    setActiveTab(value);
+    setActiveTab(value as 'all' | 'events' | 'cities' | 'artists');
     if (query) {
       router.push(`/search?q=${encodeURIComponent(query)}&type=${value}`);
       fetchResults(query, value);
@@ -108,11 +108,11 @@ export function SearchClient() {
     (results.cities?.length || 0);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         {/* Header avec barre de recherche */}
         <div className="mb-8">
-          <h1 className="mb-6 text-4xl font-bold text-slate-900">Recherche</h1>
+          <h1 className="mb-6 text-4xl font-bold text-gray-900">Recherche</h1>
           <SearchBar query={query} onSearch={handleSearch} />
         </div>
 
@@ -157,7 +157,7 @@ export function SearchClient() {
                   <TabsContent value={activeTab}>
                     {isLoading ? (
                       <div className="py-12 text-center">
-                        <p className="text-slate-600">Recherche en cours...</p>
+                        <p className="text-gray-600">Recherche en cours...</p>
                       </div>
                     ) : (
                       <SearchResults results={results} query={query} />
@@ -167,7 +167,7 @@ export function SearchClient() {
               </>
             ) : (
               <div className="py-12 text-center">
-                <p className="text-lg text-slate-600">
+                <p className="text-lg text-gray-600">
                   Entrez un terme de recherche pour commencer
                 </p>
               </div>

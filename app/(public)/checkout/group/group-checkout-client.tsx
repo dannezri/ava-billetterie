@@ -355,7 +355,7 @@ function GroupCheckoutForm({
                         )}
                       </div>
                     </div>
-                    <span className="font-bold text-slate-800">
+                    <span className="font-bold text-gray-800">
                       {formatPrice(ticket.price)}
                     </span>
                   </div>

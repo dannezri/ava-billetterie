@@ -65,7 +65,7 @@ const values = [
     title: 'Communauté',
     description:
       'Score de confiance vendeur (0-100), avis vérifiés, KYC obligatoire. Chaque utilisateur est responsable de sa réputation. La communauté s\'autorégule naturellement.',
-    color: 'from-purple-500 to-indigo-500',
+    color: 'from-blue-500 to-indigo-500',
     bgColor: 'bg-purple-50 dark:bg-purple-950/20',
   },
   {
@@ -133,14 +133,14 @@ export default function AboutPage() {
             <span>Notre mission</span>
           </div>
 
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
             La revente de billets{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
               telle qu&apos;elle devrait être
             </span>
           </h1>
 
-          <p className="text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
             AVA Billetterie est née d&apos;une frustration simple : pourquoi est-il si difficile
             de revendre un billet sans risquer de se faire arnaquer — ou d&apos;arnaquer sans le vouloir ?
             Nous avons créé la plateforme que nous aurions voulu avoir.
@@ -171,10 +171,10 @@ export default function AboutPage() {
       <section className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-4xl mb-4">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl mb-4">
               Notre Histoire
             </h2>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
               De la frustration d&apos;un concert raté à une plateforme de confiance
             </p>
           </div>
@@ -198,11 +198,11 @@ export default function AboutPage() {
                     <div className="md:hidden inline-block mb-2 text-sm font-bold text-primary">
                       {milestone.year}
                     </div>
-                    <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm hover:shadow-md transition-shadow">
-                      <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-2">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 shadow-sm hover:shadow-md transition-shadow">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                         {milestone.title}
                       </h3>
-                      <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                         {milestone.description}
                       </p>
                     </div>
@@ -215,13 +215,13 @@ export default function AboutPage() {
       </section>
 
       {/* Nos Valeurs */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 py-20">
+      <section className="bg-gray-50 dark:bg-gray-900 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-4xl mb-4">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl mb-4">
               Nos Valeurs
             </h2>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Ce ne sont pas que des mots. Ce sont les principes qui guident chaque décision technique et produit.
             </p>
           </div>
@@ -230,7 +230,7 @@ export default function AboutPage() {
             {values.map((value, index) => (
               <Card
                 key={index}
-                className="group relative overflow-hidden border-zinc-200 dark:border-zinc-800 hover:shadow-xl transition-all"
+                className="group relative overflow-hidden border-gray-200 dark:border-gray-800 hover:shadow-xl transition-all"
               >
                 <CardHeader className="pb-4">
                   <div className={`inline-flex mb-4 rounded-xl ${value.bgColor} p-3.5 w-fit`}>
@@ -242,7 +242,7 @@ export default function AboutPage() {
                   <CardTitle className="text-xl">{value.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                     {value.description}
                   </p>
                 </CardContent>
@@ -257,10 +257,10 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-4xl mb-6">
+              <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl mb-6">
                 Nos engagements concrets
               </h2>
-              <p className="text-zinc-600 dark:text-zinc-400 mb-8 leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
                 Au-delà des discours, voici les garanties concrètes que nous prenons
                 envers chaque utilisateur de la plateforme.
               </p>
@@ -276,10 +276,10 @@ export default function AboutPage() {
               {commitments.map((commitment, index) => (
                 <div
                   key={index}
-                  className="flex items-start gap-3 p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800"
+                  className="flex items-start gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
                 >
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                  <span className="font-medium text-zinc-800 dark:text-zinc-200">
+                  <span className="font-medium text-gray-800 dark:text-gray-200">
                     {commitment}
                   </span>
                 </div>
@@ -302,7 +302,7 @@ export default function AboutPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="rounded-full bg-white text-zinc-900 hover:bg-zinc-100 font-semibold"
+              className="rounded-full bg-white text-gray-900 hover:bg-gray-100 font-semibold"
               asChild
             >
               <Link href="/signup">Créer un compte gratuit</Link>

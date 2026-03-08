@@ -24,7 +24,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.ucarecd.net', // Uploadcare (domaine CDN custom du projet)
+        hostname: '*.ucarecdn.net', // Uploadcare CDN (variante avec double n)
+      },
+      {
+        protocol: 'https',
+        hostname: '*.ucarecd.net', // Uploadcare CDN (domaine effectivement utilisé)
       },
       {
         protocol: 'https',
@@ -47,6 +51,10 @@ const nextConfig = {
         source: '/(.*)',
         headers: [
           {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains',
+          },
+          {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
           },
@@ -61,6 +69,10 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
           },
         ],
       },

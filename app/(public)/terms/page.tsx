@@ -137,13 +137,13 @@ export default function TermsPage() {
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="mb-12">
-            <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 px-4 py-2 text-sm text-muted-foreground mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-muted-foreground mb-6">
               Dernière mise à jour : {lastUpdated}
             </div>
-            <h1 className="text-4xl font-bold text-zinc-900 dark:text-white mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Conditions Générales d&apos;Utilisation
             </h1>
-            <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Ces conditions régissent l&apos;utilisation de la plateforme AVA Billetterie.
               Nous avons fait notre possible pour les rédiger de façon claire et honnête.
               Pour toute question, contactez-nous.
@@ -151,8 +151,8 @@ export default function TermsPage() {
           </div>
 
           {/* Navigation rapide */}
-          <div className="mb-10 p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-            <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
+          <div className="mb-10 p-6 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
               Navigation rapide
             </p>
             <ul className="space-y-1">
@@ -173,10 +173,10 @@ export default function TermsPage() {
           <div className="space-y-10">
             {sections.map((section, i) => (
               <div key={i} id={`section-${i}`} className="scroll-mt-24">
-                <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-800">
                   {section.title}
                 </h2>
-                <div className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed whitespace-pre-line">
+                <div className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed whitespace-pre-line">
                   {section.content}
                 </div>
               </div>
@@ -184,7 +184,7 @@ export default function TermsPage() {
           </div>
 
           {/* Liens vers autres pages légales */}
-          <div className="mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800">
             <p className="text-sm text-muted-foreground mb-4">Voir aussi :</p>
             <div className="flex flex-wrap gap-3">
               {[

@@ -4,6 +4,113 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ============================================================================
+// VENUES & SEATMAPS
+// ============================================================================
+
+model Venue {
+  id             String    @id @default(uuid())
+  name           String
+  ticketmasterId String?   @unique @map("ticketmaster_id")
+  city           String
+  address        String?
+  country        String    @default("France")
+  capacity       Int?
+  venueType      VenueType @default(ARENA) @map("venue_type")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  seatmaps VenueSeatmap[]
+
+  @@index([ticketmasterId])
+  @@index([name])
+  @@map("venues")
+}
+
+enum VenueType {
+  ARENA
+  STADIUM
+  THEATER
+  CLUB
+  OUTDOOR
+}
+
+model VenueSeatmap {
+  id                String     @id @default(uuid())
+  venueId           String     @map("venue_id")
+  venue             Venue      @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  stageSetup        StageSetup @default(FRONTAL) @map("stage_setup")
+  configurationName String     @map("configuration_name")
+
+  // Plan officiel (URL SVG Ticketmaster, stocké pour référence)
+  seatmapSvgUrl String? @db.Text @map("seatmap_svg_url")
+  seatmapData   Json?   @map("seatmap_data")
+
+  // Dimensions canvas SVG
+  viewboxWidth  Float @default(1000) @map("viewbox_width")
+  viewboxHeight Float @default(700)  @map("viewbox_height")
+
+  isDefault Boolean @default(false) @map("is_default")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  sections VenueSection[]
+  events   Event[]
+
+  @@index([venueId, stageSetup])
+  @@map("venue_seatmaps")
+}
+
+enum StageSetup {
+  FRONTAL   // Scène frontale classique (90% concerts)
+  ROUND_360 // Scène centrale 360° (Coldplay, Taylor Swift)
+  ARENA     // Configuration arène (sports)
+  THEATER   // Théâtre (assis uniquement)
+  FESTIVAL  // Outdoor festival
+}
+
+model VenueSection {
+  id        String       @id @default(uuid())
+  seatmapId String       @map("seatmap_id")
+  seatmap   VenueSeatmap @relation(fields: [seatmapId], references: [id], onDelete: Cascade)
+
+  // Identifiant unique dans ce seatmap
+  sectionCode  String          @map("section_code")
+  officialName String          @map("official_name")
+  category     SectionCategory
+
+  // Géométrie SVG (coordonnées exactes)
+  svgPath  String @db.Text @map("svg_path")
+  fillRule String @default("nonzero") @map("fill_rule") // "nonzero" | "evenodd"
+
+  // Position de la pastille prix
+  labelX Float @map("label_x")
+  labelY Float @map("label_y")
+
+  // Métadonnées
+  capacity  Int?
+  sortOrder Int      @default(0) @map("sort_order")
+  aliases   String[] // Noms alternatifs pour matching billets
+
+  @@unique([seatmapId, sectionCode])
+  @@index([seatmapId])
+  @@map("venue_sections")
+}
+
+enum SectionCategory {
+  STAGE        // Scène (non cliquable, décoratif)
+  STANDING_PIT // Fosse debout / Parterre
+  SEATED_FLOOR // Parterre assis
+  LOWER_TIER   // Tribune basse / Tribune A
+  MIDDLE_TIER  // Tribune moyenne / Tribune B
+  UPPER_TIER   // Tribune haute / Gradin supérieur
+  VIP_PREMIUM  // Carré Or / Golden Circle
+  VIP_LOGES    // Loges VIP
+  ACCESSIBLE   // PMR
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
@@ -86,20 +193,66 @@ model Event {
   imageUrl       String?   @map("image_url")
   officialUrl    String?   @map("official_url")
   isVerified     Boolean   @default(false) @map("is_verified")
-  
+
+  // ✨ Plan de salle associé (optionnel, résolu à partir du nom de venue)
+  seatmapId String?       @map("seatmap_id")
+  seatmap   VenueSeatmap? @relation(fields: [seatmapId], references: [id], onDelete: SetNull)
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   
   // Relations
-  tickets      Ticket[]
-  ticketGroups TicketGroup[]
-  favorites    Favorite[]
+  tickets          Ticket[]
+  ticketGroups     TicketGroup[]
+  favorites        Favorite[]
   userEventFollows UserEventFollow[]
+  priceHistories   PriceHistory[]
+  sectionAnalytics SectionAnalytics[]
 
   @@index([eventDate])
   @@index([city])
   @@index([artist])
+  @@index([seatmapId])
   @@map("events")
+}
+
+// ============================================================================
+// PRICE HISTORY (snapshots quotidiens pour sparkline tendance)
+// ============================================================================
+
+model PriceHistory {
+  id           String   @id @default(uuid())
+  eventId      String   @map("event_id")
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  sectionCode  String   @map("section_code")
+  minPrice     Decimal  @db.Decimal(10, 2) @map("min_price")
+  maxPrice     Decimal  @db.Decimal(10, 2) @map("max_price")
+  avgPrice     Decimal  @db.Decimal(10, 2) @map("avg_price")
+  ticketsCount Int      @map("tickets_count")
+  snapshotDate DateTime @default(now()) @map("snapshot_date")
+
+  @@index([eventId, sectionCode, snapshotDate])
+  @@index([snapshotDate])
+  @@map("price_history")
+}
+
+// ============================================================================
+// SECTION ANALYTICS (heatmap views/clicks par section)
+// ============================================================================
+
+model SectionAnalytics {
+  id             String   @id @default(cuid())
+  eventId        String   @map("event_id")
+  event          Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  sectionId      String   @map("section_id")
+  viewsCount     Int      @default(0) @map("views_count")
+  hoversCount    Int      @default(0) @map("hovers_count")
+  clicksCount    Int      @default(0) @map("clicks_count")
+  date           DateTime @default(now()) @db.Date @map("date")
+
+  @@unique([eventId, sectionId, date])
+  @@index([eventId, date])
+  @@map("section_analytics")
 }
 
 // ============================================================================

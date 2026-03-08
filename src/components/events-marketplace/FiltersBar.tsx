@@ -49,7 +49,7 @@ export function FiltersBar({ categories }: FiltersBarProps) {
           <Button variant="outline" size="sm" className="flex-shrink-0 gap-1.5">
             <MapPin className="h-4 w-4 text-emerald-600" />
             <span>Montmorency</span>
-            <ChevronDown className="h-3 w-3 text-slate-400" />
+            <ChevronDown className="h-3 w-3 text-gray-400" />
           </Button>
 
           {/* Filtres dates */}
@@ -70,7 +70,7 @@ export function FiltersBar({ categories }: FiltersBarProps) {
           ))}
 
           {/* Séparateur */}
-          <div className="h-6 w-px flex-shrink-0 bg-slate-200" />
+          <div className="h-6 w-px flex-shrink-0 bg-gray-200" />
 
           {/* Tous types */}
           <Button

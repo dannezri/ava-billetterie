@@ -2,11 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-client';
 import { prisma } from '@/lib/db/prisma';
 import { z } from 'zod';
-import Stripe from 'stripe';
+import { stripe } from '@/lib/stripe/client';
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim()).filter(Boolean);
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-04-10' });
 
 const resolveSchema = z.object({
   outcome: z.enum(['REFUND_BUYER', 'RELEASE_SELLER', 'PARTIAL_REFUND']),

@@ -176,10 +176,10 @@ export default function PrivacyPage() {
                 Dernière mise à jour : {lastUpdated}
               </span>
             </div>
-            <h1 className="text-4xl font-bold text-zinc-900 dark:text-white mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Politique de Confidentialité
             </h1>
-            <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Chez AVA, nous prenons la protection de vos données au sérieux.
               Cette politique explique clairement quelles données nous collectons,
               pourquoi, et comment vous pouvez exercer vos droits RGPD.
@@ -211,10 +211,10 @@ export default function PrivacyPage() {
           <div className="space-y-10">
             {sections.map((section, i) => (
               <div key={i} id={`section-${i}`} className="scroll-mt-24">
-                <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-800">
                   {section.title}
                 </h2>
-                <div className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed whitespace-pre-line">
+                <div className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed whitespace-pre-line">
                   {section.content}
                 </div>
               </div>
@@ -222,11 +222,11 @@ export default function PrivacyPage() {
           </div>
 
           {/* Contact DPO */}
-          <div className="mt-12 p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-            <h3 className="font-bold text-zinc-900 dark:text-white mb-2">
+          <div className="mt-12 p-6 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+            <h3 className="font-bold text-gray-900 dark:text-white mb-2">
               Contacter notre DPO
             </h3>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Pour toute question ou exercice de vos droits RGPD :
             </p>
             <a
@@ -238,7 +238,7 @@ export default function PrivacyPage() {
           </div>
 
           {/* Liens */}
-          <div className="mt-8 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800">
             <p className="text-sm text-muted-foreground mb-4">Voir aussi :</p>
             <div className="flex flex-wrap gap-3">
               {[

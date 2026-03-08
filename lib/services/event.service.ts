@@ -367,6 +367,7 @@ export async function searchGlobal(params: {
       },
       _count: { id: true },
       take: type === 'artists' ? limit : 3,
+      orderBy: { _count: { id: 'desc' } },
     });
 
     artists = artistsResults
@@ -388,6 +389,7 @@ export async function searchGlobal(params: {
       },
       _count: { id: true },
       take: type === 'cities' ? limit : 5,
+      orderBy: { _count: { id: 'desc' } },
     });
 
     cities = citiesResults.map((c) => ({

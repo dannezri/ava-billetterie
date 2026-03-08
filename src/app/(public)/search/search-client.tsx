@@ -82,7 +82,7 @@ export function SearchClient() {
 
   // Changement de tab
   const handleTabChange = (value: string) => {
-    setActiveTab(value);
+    setActiveTab(value as 'all' | 'events' | 'cities' | 'artists');
     if (query) {
       router.push(`/search?q=${encodeURIComponent(query)}&type=${value}`);
       fetchResults(query, value);

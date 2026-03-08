@@ -40,11 +40,11 @@ function EventCardSkeleton() {
 function EmptyState() {
   return (
     <div className="col-span-full flex min-h-[400px] flex-col items-center justify-center text-center">
-      <CalendarOff className="mb-4 h-16 w-16 text-slate-300" />
-      <h3 className="mb-2 text-xl font-semibold text-slate-900">
+      <CalendarOff className="mb-4 h-16 w-16 text-gray-300" />
+      <h3 className="mb-2 text-xl font-semibold text-gray-900">
         Aucun événement trouvé
       </h3>
-      <p className="text-slate-600">
+      <p className="text-gray-500">
         Essayez de modifier vos filtres ou revenez plus tard
       </p>
     </div>

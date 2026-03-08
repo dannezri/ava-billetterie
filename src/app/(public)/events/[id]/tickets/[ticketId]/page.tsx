@@ -158,6 +158,13 @@ export default async function TicketPreviewPage({ params }: TicketPreviewPagePro
                 eventId: event.id,
                 price: ticket.price,
                 status: ticket.status,
+                section: ticket.section ?? null,
+                seatNumber: ticket.seatNumber ?? null,
+              }}
+              event={{
+                id: event.id,
+                title: event.title,
+                eventDate: event.eventDate.toISOString(),
               }}
               platformFee={Math.round(ticket.price * 0.05 * 100) / 100}
               ticketsAvailable={1} // TODO: récupérer le vrai nombre

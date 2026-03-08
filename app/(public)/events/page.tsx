@@ -238,7 +238,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white">
       {/* Search bar */}
       <EventsSearchBar />
 

@@ -157,7 +157,7 @@ function CartCheckoutForm({ items, totalAmount, allTransactionIds }: CartCheckou
             {items.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-start justify-between rounded-lg border bg-slate-50 p-4"
+                className="flex items-start justify-between rounded-lg border bg-gray-50 p-4"
               >
                 <div className="space-y-1">
                   <p className="font-semibold text-sm">{item.eventTitle}</p>

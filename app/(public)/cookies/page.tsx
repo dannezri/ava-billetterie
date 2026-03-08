@@ -59,20 +59,8 @@ const cookieCategories: CookieCategory[] = [
     name: 'Cookies Analytiques',
     required: false,
     description:
-      'Ces cookies nous aident à comprendre comment vous utilisez AVA (pages visitées, temps passé, parcours utilisateur) afin d\'améliorer notre service. Ces données sont anonymisées.',
+      'Actuellement, nous n\'utilisons aucun cookie d\'analyse tiers. Seuls les cookies essentiels au fonctionnement (authentification, paiements) sont déposés. Des outils d\'analyse respectueux de la vie privée pourront être ajoutés dans le futur avec votre consentement préalable explicite.',
     cookies: [
-      {
-        name: '_ph_session',
-        purpose: 'Analyse d\'usage anonymisée (PostHog)',
-        duration: 'Session',
-        provider: 'PostHog',
-      },
-      {
-        name: '_ph_device',
-        purpose: 'Identification de device anonymisée (PostHog)',
-        duration: '1 an',
-        provider: 'PostHog',
-      },
       {
         name: 'sentry-sc',
         purpose: 'Monitoring des erreurs techniques (Sentry)',
@@ -104,13 +92,13 @@ export default function CookiesPage() {
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="mb-12">
-            <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 px-4 py-2 text-sm text-muted-foreground mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-muted-foreground mb-6">
               Dernière mise à jour : {lastUpdated}
             </div>
-            <h1 className="text-4xl font-bold text-zinc-900 dark:text-white mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Politique de Cookies
             </h1>
-            <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               AVA Billetterie utilise des cookies pour faire fonctionner la plateforme
               et améliorer votre expérience. Voici exactement quels cookies nous utilisons,
               pourquoi, et comment gérer vos préférences.
@@ -119,10 +107,10 @@ export default function CookiesPage() {
 
           {/* Qu'est-ce qu'un cookie */}
           <section className="mb-10">
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-800">
               Qu&apos;est-ce qu&apos;un cookie ?
             </h2>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
               Un cookie est un petit fichier texte déposé sur votre appareil par un site web.
               Il permet au site de mémoriser des informations sur votre visite (préférences,
               session, etc.) pour faciliter votre prochaine visite et rendre le site plus utile.
@@ -135,8 +123,8 @@ export default function CookiesPage() {
           <div className="space-y-10">
             {cookieCategories.map((category, i) => (
               <section key={i}>
-                <div className="flex items-center gap-3 mb-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
-                  <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
+                <div className="flex items-center gap-3 mb-4 pb-2 border-b border-gray-200 dark:border-gray-800">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                     {category.name}
                   </h2>
                   {category.required ? (
@@ -144,31 +132,31 @@ export default function CookiesPage() {
                       Obligatoire
                     </span>
                   ) : (
-                    <span className="text-xs bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 px-2.5 py-1 rounded-full font-medium">
+                    <span className="text-xs bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 px-2.5 py-1 rounded-full font-medium">
                       Optionnel
                     </span>
                   )}
                 </div>
 
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6 leading-relaxed">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
                   {category.description}
                 </p>
 
                 {/* Table des cookies */}
-                <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
+                <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
-                        <th className="text-left px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">
+                      <tr className="border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+                        <th className="text-left px-4 py-3 font-semibold text-gray-700 dark:text-gray-300">
                           Nom
                         </th>
-                        <th className="text-left px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">
+                        <th className="text-left px-4 py-3 font-semibold text-gray-700 dark:text-gray-300">
                           Finalité
                         </th>
-                        <th className="text-left px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">
+                        <th className="text-left px-4 py-3 font-semibold text-gray-700 dark:text-gray-300">
                           Durée
                         </th>
-                        <th className="text-left px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">
+                        <th className="text-left px-4 py-3 font-semibold text-gray-700 dark:text-gray-300">
                           Fournisseur
                         </th>
                       </tr>
@@ -177,20 +165,20 @@ export default function CookiesPage() {
                       {category.cookies.map((cookie, j) => (
                         <tr
                           key={j}
-                          className={`border-b border-zinc-100 dark:border-zinc-800/50 last:border-0 ${
-                            j % 2 === 0 ? 'bg-white dark:bg-zinc-950' : 'bg-zinc-50/50 dark:bg-zinc-900/30'
+                          className={`border-b border-gray-100 dark:border-gray-800/50 last:border-0 ${
+                            j % 2 === 0 ? 'bg-white dark:bg-gray-950' : 'bg-gray-50/50 dark:bg-gray-900/30'
                           }`}
                         >
-                          <td className="px-4 py-3 font-mono text-xs text-zinc-800 dark:text-zinc-200">
+                          <td className="px-4 py-3 font-mono text-xs text-gray-800 dark:text-gray-200">
                             {cookie.name}
                           </td>
-                          <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                          <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
                             {cookie.purpose}
                           </td>
-                          <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400 whitespace-nowrap">
+                          <td className="px-4 py-3 text-gray-600 dark:text-gray-400 whitespace-nowrap">
                             {cookie.duration}
                           </td>
-                          <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                          <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
                             {cookie.provider}
                           </td>
                         </tr>
@@ -204,37 +192,37 @@ export default function CookiesPage() {
 
           {/* Gestion des préférences */}
           <section className="mt-12">
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-800">
               Gérer vos Préférences
             </h2>
-            <div className="space-y-4 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <div className="space-y-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
               <p>
                 Vous pouvez gérer vos préférences de cookies de plusieurs façons :
               </p>
               <p>
-                <strong className="text-zinc-800 dark:text-zinc-200">Via votre navigateur :</strong>{' '}
+                <strong className="text-gray-800 dark:text-gray-200">Via votre navigateur :</strong>{' '}
                 La plupart des navigateurs vous permettent de refuser ou supprimer les cookies.
                 Consultez l&apos;aide de votre navigateur pour les instructions spécifiques.
                 Attention : désactiver certains cookies peut affecter le fonctionnement d&apos;AVA.
               </p>
               <p>
-                <strong className="text-zinc-800 dark:text-zinc-200">Via nos paramètres :</strong>{' '}
+                <strong className="text-gray-800 dark:text-gray-200">Via nos paramètres :</strong>{' '}
                 Un bandeau de gestion des cookies apparaît lors de votre première visite.
                 Vous pouvez modifier vos préférences à tout moment depuis
                 votre profil utilisateur (Paramètres → Cookies).
               </p>
               <p>
-                <strong className="text-zinc-800 dark:text-zinc-200">Opt-out analytiques :</strong>{' '}
-                Pour PostHog :{' '}
-                <a href="https://posthog.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                  posthog.com/privacy
+                <strong className="text-gray-800 dark:text-gray-200">Opt-out erreurs techniques :</strong>{' '}
+                Pour Sentry :{' '}
+                <a href="https://sentry.io/privacy/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                  sentry.io/privacy
                 </a>
               </p>
             </div>
           </section>
 
           {/* Liens */}
-          <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
             <p className="text-sm text-muted-foreground mb-4">Voir aussi :</p>
             <div className="flex flex-wrap gap-3">
               {[

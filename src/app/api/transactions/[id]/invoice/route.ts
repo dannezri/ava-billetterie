@@ -23,7 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const { transaction } = await getTransactionById(params.id, session.user.id);
 
     // 3. Vérifier que l'utilisateur est l'acheteur
-    if (transaction.buyer_id !== session.user.id) {
+    if (transaction.buyerId !== session.user.id) {
       return NextResponse.json(
         {
           error: 'Forbidden',
@@ -38,35 +38,33 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     // En production : Générer PDF serveur et retourner stream
 
     const invoiceData = {
-      invoiceNumber: `INV-${new Date(transaction.created_at).toISOString().split('T')[0].replace(/-/g, '')}-${transaction.id.substring(0, 6).toUpperCase()}`,
-      issueDate: transaction.created_at,
+      invoiceNumber: `INV-${new Date(transaction.createdAt).toISOString().split('T')[0].replace(/-/g, '')}-${transaction.id.substring(0, 6).toUpperCase()}`,
+      issueDate: transaction.createdAt,
       buyer: {
-        name: `${transaction.buyer.first_name} ${transaction.buyer.last_name}`,
+        name: transaction.buyer.name || transaction.buyer.email,
         email: transaction.buyer.email,
       },
       items: [
         {
           description: `Billet - ${transaction.ticket.event.title}`,
-          category: transaction.ticket.seat_category,
-          date: transaction.ticket.event.event_date,
+          category: transaction.ticket.section,
+          date: transaction.ticket.event.eventDate,
           quantity: 1,
-          unitPrice: Number(transaction.ticket_price),
-          total: Number(transaction.ticket_price),
+          unitPrice: Number(transaction.amount),
+          total: Number(transaction.amount),
         },
         {
           description: 'Frais de plateforme (5%)',
           quantity: 1,
-          unitPrice: Number(transaction.platform_fee),
-          total: Number(transaction.platform_fee),
+          unitPrice: Number(transaction.platformFee),
+          total: Number(transaction.platformFee),
         },
       ],
-      subtotal: Number(transaction.ticket_price),
-      fees: Number(transaction.platform_fee),
-      total: Number(transaction.total_amount),
-      paymentMethod: transaction.card_brand
-        ? `${transaction.card_brand.toUpperCase()} **** ${transaction.card_last4}`
-        : 'Carte bancaire',
-      transactionId: transaction.stripe_payment_intent_id,
+      subtotal: Number(transaction.amount),
+      fees: Number(transaction.platformFee),
+      total: Number(transaction.amount) + Number(transaction.platformFee),
+      paymentMethod: 'Carte bancaire',
+      transactionId: transaction.stripePaymentIntentId,
     };
 
     // Retour temporaire (JSON)

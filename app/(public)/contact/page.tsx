@@ -69,13 +69,13 @@ export default function ContactPage() {
       {/* Hero */}
       <section className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center space-y-4">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-5xl">
             Nous sommes là{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
               pour vous aider
             </span>
           </h1>
-          <p className="text-xl text-zinc-600 dark:text-zinc-400">
+          <p className="text-xl text-gray-600 dark:text-gray-400">
             Une vraie équipe, de vraies réponses — pas des bots.
             Nous répondons en moins de 2h, même le week-end.
           </p>
@@ -96,10 +96,10 @@ export default function ContactPage() {
                   strokeWidth={2}
                 />
               </div>
-              <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-2">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                 {option.title}
               </h3>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3 leading-relaxed">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 leading-relaxed">
                 {option.description}
               </p>
               <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mb-6">
@@ -108,7 +108,7 @@ export default function ContactPage() {
               </div>
               <a
                 href={option.href}
-                className="inline-flex items-center justify-center gap-2 w-full rounded-full border-2 border-zinc-200 dark:border-zinc-700 py-2.5 text-sm font-semibold text-zinc-900 dark:text-white hover:border-primary hover:text-primary transition-colors group-hover:border-primary group-hover:text-primary"
+                className="inline-flex items-center justify-center gap-2 w-full rounded-full border-2 border-gray-200 dark:border-gray-700 py-2.5 text-sm font-semibold text-gray-900 dark:text-white hover:border-primary hover:text-primary transition-colors group-hover:border-primary group-hover:text-primary"
               >
                 {option.action}
               </a>
@@ -118,14 +118,14 @@ export default function ContactPage() {
       </section>
 
       {/* Formulaire de contact */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 py-20">
+      <section className="bg-gray-50 dark:bg-gray-900 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-zinc-900 dark:text-white mb-3">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
                 Envoyer un message
               </h2>
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <p className="text-gray-600 dark:text-gray-400">
                 Remplissez le formulaire, on revient vers vous rapidement
               </p>
             </div>
@@ -142,7 +142,7 @@ export default function ContactPage() {
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
                       Nom complet <span className="text-red-500">*</span>
                     </label>
@@ -152,13 +152,13 @@ export default function ContactPage() {
                       type="text"
                       required
                       placeholder="Marie Dupont"
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-sm"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-sm"
                     />
                   </div>
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
                       Email <span className="text-red-500">*</span>
                     </label>
@@ -168,7 +168,7 @@ export default function ContactPage() {
                       type="email"
                       required
                       placeholder="marie@exemple.com"
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-sm"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-sm"
                     />
                   </div>
                 </div>
@@ -177,7 +177,7 @@ export default function ContactPage() {
                 <div>
                   <label
                     htmlFor="topic"
-                    className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                   >
                     Sujet de votre message <span className="text-red-500">*</span>
                   </label>
@@ -185,7 +185,7 @@ export default function ContactPage() {
                     id="topic"
                     name="topic"
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-sm"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-sm"
                   >
                     <option value="">Choisissez un sujet…</option>
                     {topics.map((topic, i) => (
@@ -200,7 +200,7 @@ export default function ContactPage() {
                 <div>
                   <label
                     htmlFor="order"
-                    className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                   >
                     Numéro de commande{' '}
                     <span className="text-muted-foreground font-normal">(si applicable)</span>
@@ -210,7 +210,7 @@ export default function ContactPage() {
                     name="order"
                     type="text"
                     placeholder="AVA-XXXX-XXXX"
-                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-sm"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-sm"
                   />
                 </div>
 
@@ -218,7 +218,7 @@ export default function ContactPage() {
                 <div>
                   <label
                     htmlFor="message"
-                    className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                   >
                     Message <span className="text-red-500">*</span>
                   </label>
@@ -228,7 +228,7 @@ export default function ContactPage() {
                     rows={5}
                     required
                     placeholder="Décrivez votre problème ou votre question en détail…"
-                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-sm resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-sm resize-none"
                   />
                 </div>
 
@@ -254,10 +254,10 @@ export default function ContactPage() {
       {/* Autres ressources */}
       <section className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             Avant de nous contacter…
           </h2>
-          <p className="text-zinc-600 dark:text-zinc-400">
+          <p className="text-gray-600 dark:text-gray-400">
             Votre réponse est peut-être déjà dans notre centre d&apos;aide
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -38,7 +38,7 @@ export function SearchFilters({ filters, onFiltersChange }: ISearchFiltersProps)
       </CardHeader>
       <CardContent className="space-y-3">
         <div>
-          <p className="mb-2 text-sm font-medium text-slate-700">Catégories</p>
+          <p className="mb-2 text-sm font-medium text-gray-700">Catégories</p>
           <div className="space-y-2">
             {CATEGORIES.map((category) => (
               <div key={category} className="flex items-center space-x-2">
@@ -49,7 +49,7 @@ export function SearchFilters({ filters, onFiltersChange }: ISearchFiltersProps)
                 />
                 <Label
                   htmlFor={`search-cat-${category}`}
-                  className="text-sm font-normal text-slate-700 cursor-pointer"
+                  className="text-sm font-normal text-gray-700 cursor-pointer"
                 >
                   {category}
                 </Label>

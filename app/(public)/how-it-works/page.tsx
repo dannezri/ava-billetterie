@@ -48,7 +48,7 @@ const buyerSteps = [
     description:
       'Votre paiement est immédiatement placé en séquestre sur un compte Stripe sécurisé. Ni le vendeur, ni nous ne pouvons y toucher. L\'argent est littéralement verrouillé.',
     detail: 'Séquestre Stripe · Chiffrement 256-bit · Conformité DSP2',
-    color: 'from-purple-500 to-pink-500',
+    color: 'from-blue-500 to-pink-500',
     bgColor: 'bg-purple-50 dark:bg-purple-950/20',
   },
   {
@@ -87,7 +87,7 @@ const sellerSteps = [
     description:
       'Uploadez votre billet PDF. Notre système extrait automatiquement les informations (événement, date, prix facial) et détecte les doublons (hash SHA-256 + analyse code-barres).',
     detail: 'PDF uniquement · Analyse auto · Détection doublons',
-    color: 'from-purple-500 to-violet-500',
+    color: 'from-blue-500 to-violet-500',
     bgColor: 'bg-purple-50 dark:bg-purple-950/20',
   },
   {
@@ -171,14 +171,14 @@ export default function HowItWorksPage() {
             <span>Transparent par design</span>
           </div>
 
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
             Comment fonctionne{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
               AVA ?
             </span>
           </h1>
 
-          <p className="text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Séquestre bancaire, KYC, vérification des billets, Garantie Sérénité.
             Nous expliquons tout — sans jargon, avec honnêteté.
           </p>
@@ -192,10 +192,10 @@ export default function HowItWorksPage() {
             <CheckCircle2 className="h-4 w-4" />
             <span>Pour les acheteurs</span>
           </div>
-          <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
             Acheter un billet en 4 étapes
           </h2>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             De la recherche à l&apos;entrée du concert, voici exactement ce qui se passe
           </p>
         </div>
@@ -208,9 +208,9 @@ export default function HowItWorksPage() {
                 <div className="absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-zinc-200 to-zinc-100 dark:from-zinc-700 dark:to-zinc-800 hidden lg:block z-0 -ml-3 mr-3" />
               )}
 
-              <div className="relative z-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 h-full flex flex-col hover:shadow-xl transition-all group">
+              <div className="relative z-10 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 h-full flex flex-col hover:shadow-xl transition-all group">
                 {/* Step number */}
-                <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-600 dark:from-zinc-200 dark:to-zinc-400 text-white dark:text-zinc-900 text-sm font-bold flex items-center justify-center shadow-lg">
+                <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-600 dark:from-zinc-200 dark:to-zinc-400 text-white dark:text-gray-900 text-sm font-bold flex items-center justify-center shadow-lg">
                   {index + 1}
                 </div>
 
@@ -222,15 +222,15 @@ export default function HowItWorksPage() {
                   />
                 </div>
 
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-3">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
                   {step.title}
                 </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed flex-1 mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed flex-1 mb-4">
                   {step.description}
                 </p>
 
                 {/* Detail badge */}
-                <div className="text-xs text-muted-foreground bg-zinc-50 dark:bg-zinc-900 rounded-lg px-3 py-2 font-medium">
+                <div className="text-xs text-muted-foreground bg-gray-50 dark:bg-gray-900 rounded-lg px-3 py-2 font-medium">
                   {step.detail}
                 </div>
               </div>
@@ -240,17 +240,17 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Pour les vendeurs */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 py-20">
+      <section className="bg-gray-50 dark:bg-gray-900 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-4 py-2 text-sm font-medium text-purple-700 dark:border-purple-900 dark:bg-purple-950/20 dark:text-purple-300 mb-4">
               <Banknote className="h-4 w-4" />
               <span>Pour les vendeurs</span>
             </div>
-            <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
               Vendre un billet en 4 étapes
             </h2>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               De l&apos;upload à la réception de votre argent, zéro frais pour vous
             </p>
           </div>
@@ -259,9 +259,9 @@ export default function HowItWorksPage() {
             {sellerSteps.map((step, index) => (
               <div
                 key={index}
-                className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 flex flex-col hover:shadow-xl transition-all relative"
+                className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 flex flex-col hover:shadow-xl transition-all relative"
               >
-                <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-600 dark:from-zinc-200 dark:to-zinc-400 text-white dark:text-zinc-900 text-sm font-bold flex items-center justify-center shadow-lg">
+                <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-600 dark:from-zinc-200 dark:to-zinc-400 text-white dark:text-gray-900 text-sm font-bold flex items-center justify-center shadow-lg">
                   {index + 1}
                 </div>
 
@@ -272,14 +272,14 @@ export default function HowItWorksPage() {
                   />
                 </div>
 
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-3">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
                   {step.title}
                 </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed flex-1 mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed flex-1 mb-4">
                   {step.description}
                 </p>
 
-                <div className="text-xs text-muted-foreground bg-zinc-50 dark:bg-zinc-900 rounded-lg px-3 py-2 font-medium">
+                <div className="text-xs text-muted-foreground bg-gray-50 dark:bg-gray-900 rounded-lg px-3 py-2 font-medium">
                   {step.detail}
                 </div>
               </div>
@@ -292,10 +292,10 @@ export default function HowItWorksPage() {
       <section className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
               Pourquoi le séquestre bancaire ?
             </h2>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
               C&apos;est la pièce maîtresse qui rend tout le reste possible
             </p>
           </div>
@@ -308,7 +308,7 @@ export default function HowItWorksPage() {
                 </div>
                 <h3 className="text-xl font-bold">Sans séquestre (les autres)</h3>
               </div>
-              <ul className="space-y-3 text-zinc-600 dark:text-zinc-400 text-sm">
+              <ul className="space-y-3 text-gray-600 dark:text-gray-400 text-sm">
                 {[
                   'Le vendeur reçoit l\'argent avant l\'événement',
                   'S\'il disparaît ou envoie un faux billet, pas de recours',
@@ -331,7 +331,7 @@ export default function HowItWorksPage() {
                 </div>
                 <h3 className="text-xl font-bold">Avec séquestre AVA</h3>
               </div>
-              <ul className="space-y-3 text-zinc-600 dark:text-zinc-400 text-sm">
+              <ul className="space-y-3 text-gray-600 dark:text-gray-400 text-sm">
                 {[
                   'L\'argent est bloqué chez Stripe (ni acheteur ni vendeur)',
                   'Le vendeur ne peut pas partir avec votre argent',
@@ -351,13 +351,13 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Sécurité multi-niveaux */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 py-20">
+      <section className="bg-gray-50 dark:bg-gray-900 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
               Architecture de sécurité multi-niveaux
             </h2>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Quatre couches de protection pour garantir chaque transaction
             </p>
           </div>
@@ -366,16 +366,16 @@ export default function HowItWorksPage() {
             {securityFeatures.map((feature, index) => (
               <div
                 key={index}
-                className="flex gap-5 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:shadow-lg transition-all"
+                className="flex gap-5 p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 hover:shadow-lg transition-all"
               >
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
                   <feature.icon className="h-6 w-6 text-white" strokeWidth={2} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-zinc-900 dark:text-white mb-2">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -389,10 +389,10 @@ export default function HowItWorksPage() {
       <section className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-zinc-900 dark:text-white md:text-4xl mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl mb-4">
               En cas de problème à l&apos;entrée
             </h2>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
               La Garantie Sérénité s&apos;active en quelques clics
             </p>
           </div>
@@ -401,21 +401,21 @@ export default function HowItWorksPage() {
             {disputeSteps.map((step, index) => (
               <div
                 key={index}
-                className="flex gap-5 p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950"
+                className="flex gap-5 p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950"
               >
                 <div className="flex flex-col items-center gap-1">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
                     <step.icon className="h-5 w-5 text-white" strokeWidth={2} />
                   </div>
                   {index < disputeSteps.length - 1 && (
-                    <div className="w-0.5 flex-1 bg-zinc-200 dark:bg-zinc-800 my-1" />
+                    <div className="w-0.5 flex-1 bg-gray-200 dark:bg-gray-800 my-1" />
                   )}
                 </div>
                 <div className="flex-1 pb-1">
                   <span className="text-xs font-bold text-primary uppercase tracking-wide">
                     {step.time}
                   </span>
-                  <p className="font-medium text-zinc-900 dark:text-white mt-1">
+                  <p className="font-medium text-gray-900 dark:text-white mt-1">
                     {step.action}
                   </p>
                 </div>
@@ -446,7 +446,7 @@ export default function HowItWorksPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              className="rounded-full bg-white text-zinc-900 hover:bg-zinc-100 font-semibold"
+              className="rounded-full bg-white text-gray-900 hover:bg-gray-100 font-semibold"
               asChild
             >
               <Link href="/signup">

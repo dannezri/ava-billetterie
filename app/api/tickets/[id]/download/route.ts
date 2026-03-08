@@ -214,7 +214,7 @@ async function generateSecureTicketUrl(
  * Génère une URL signée avec expiration
  */
 function generateSignedUrl(url: string, params: Record<string, any> = {}): string {
-  const secret = process.env.TICKET_SIGNATURE_SECRET || 'default-secret-change-me';
+  const secret = process.env.TICKET_SIGNATURE_SECRET || process.env.NEXTAUTH_SECRET || 'default-secret-change-me';
   const expiresAt = params.expiresAt || Date.now() + 3600000; // 1h par défaut
   
   const urlObj = new URL(url);

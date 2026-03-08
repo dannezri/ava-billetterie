@@ -173,16 +173,16 @@ export function PurchaseCard({ ticket, event, platformFee, ticketsAvailable }: I
         {/* Détails prix */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-600">Prix du billet</span>
-            <span className="font-medium text-slate-900">{ticket.price}€</span>
+            <span className="text-gray-600">Prix du billet</span>
+            <span className="font-medium text-gray-900">{ticket.price}€</span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-600">Frais plateforme (5%)</span>
-            <span className="font-medium text-slate-900">{calculatedFee}€</span>
+            <span className="text-gray-600">Frais plateforme (5%)</span>
+            <span className="font-medium text-gray-900">{calculatedFee}€</span>
           </div>
           <Separator />
           <div className="flex items-center justify-between">
-            <span className="text-lg font-bold text-slate-900">Total</span>
+            <span className="text-lg font-bold text-gray-900">Total</span>
             <span className="text-2xl font-bold text-blue-600">{total.toFixed(2)}€</span>
           </div>
         </div>
@@ -199,8 +199,8 @@ export function PurchaseCard({ ticket, event, platformFee, ticketsAvailable }: I
 
         {/* Bouton panier */}
         {isUnavailable ? (
-          <div className="rounded-lg bg-slate-100 p-4 text-center">
-            <p className="text-sm font-medium text-slate-700">Billet non disponible</p>
+          <div className="rounded-lg bg-gray-100 p-4 text-center">
+            <p className="text-sm font-medium text-gray-700">Billet non disponible</p>
             <Button variant="outline" size="sm" className="mt-2" asChild>
               <Link href={`/events/${ticket.eventId}`}>Voir autres billets</Link>
             </Button>
@@ -283,11 +283,11 @@ export function PurchaseCard({ ticket, event, platformFee, ticketsAvailable }: I
         </div>
 
         {/* Info séquestre */}
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-          <p className="text-xs text-slate-700">
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+          <p className="text-xs text-gray-700">
             💳 <strong>Paiement sécurisé</strong> via Stripe
           </p>
-          <p className="mt-1 text-xs text-slate-600">
+          <p className="mt-1 text-xs text-gray-600">
             Les fonds sont bloqués en séquestre et libérés au vendeur 2 jours après l'événement.
           </p>
         </div>

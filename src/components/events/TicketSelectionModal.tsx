@@ -96,7 +96,7 @@ export function TicketSelectionModal({
             <Ticket className="h-5 w-5 text-blue-600" />
             Combien de billets souhaitez-vous ?
           </DialogTitle>
-          <DialogDescription className="truncate font-medium text-slate-700">
+          <DialogDescription className="truncate font-medium text-gray-700">
             {eventName}
           </DialogDescription>
         </DialogHeader>
@@ -104,7 +104,7 @@ export function TicketSelectionModal({
         <div className="space-y-6 py-2">
           {/* Sélection quantité */}
           <div className="space-y-3">
-            <Label className="text-sm font-semibold text-slate-900">
+            <Label className="text-sm font-semibold text-gray-900">
               Nombre de billets
             </Label>
             <div className="grid grid-cols-3 gap-2">
@@ -165,7 +165,7 @@ export function TicketSelectionModal({
                 'flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-all',
                 together
                   ? 'border-blue-300 bg-blue-50'
-                  : 'border-slate-200 bg-slate-50 hover:border-slate-300'
+                  : 'border-gray-200 bg-gray-50 hover:border-gray-300'
               )}
               onClick={() => setTogether(!together)}
             >
@@ -178,12 +178,12 @@ export function TicketSelectionModal({
               <div className="space-y-1">
                 <Label
                   htmlFor="together"
-                  className="cursor-pointer text-base font-semibold text-slate-900"
+                  className="cursor-pointer text-base font-semibold text-gray-900"
                 >
                   <Users className="mr-1.5 inline h-4 w-4 text-blue-600" />
                   Places côte à côte
                 </Label>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-gray-500">
                   {together
                     ? `Afficher uniquement les groupes de ${effectiveQuantity} billets garantis côte à côte`
                     : `Je peux acheter ${effectiveQuantity} billets séparément (places non garanties côte à côte)`}
@@ -194,7 +194,7 @@ export function TicketSelectionModal({
 
           {/* Info 1 billet */}
           {effectiveQuantity === 1 && (
-            <p className="rounded-lg bg-slate-50 p-3 text-sm text-slate-500">
+            <p className="rounded-lg bg-gray-50 p-3 text-sm text-gray-500">
               Tous les billets individuels disponibles seront affichés.
             </p>
           )}

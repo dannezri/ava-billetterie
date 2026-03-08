@@ -93,7 +93,7 @@ export default function AdminAnalyticsPage() {
                     width={80}
                   />
                   <Tooltip
-                    formatter={(v: number) => [v.toLocaleString('fr-FR'), 'Utilisateurs']}
+                    formatter={(v: number | undefined) => [(v ?? 0).toLocaleString('fr-FR'), 'Utilisateurs']}
                   />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                     {conversionFunnel.map((entry, index) => (
@@ -143,7 +143,7 @@ export default function AdminAnalyticsPage() {
                       <Cell key={index} fill={DISPUTE_COLORS[index % DISPUTE_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(v: number) => [`${v}%`, 'Part']} />
+                  <Tooltip formatter={(v: number | undefined) => [`${v ?? 0}%`, 'Part']} />
                   <Legend
                     formatter={(value) => <span className="text-xs text-gray-600">{value}</span>}
                   />

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server-client';
 import { TicketStatus, TicketVerificationStatus } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { config } from '@/config/env';
 
 /**
  * Schéma de validation pour la création d'un billet
@@ -158,8 +159,8 @@ export async function POST(request: NextRequest) {
     // 7.5 Stocker définitivement le fichier sur Uploadcare (secret key côté serveur)
     // Nécessaire car le paramètre store:true du client upload peut être ignoré
     // si le projet Uploadcare a "Allow client uploads to control store time" désactivé.
-    const ucPublicKey = process.env.NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY;
-    const ucSecretKey = process.env.UPLOADCARE_SECRET_KEY;
+    const ucPublicKey = config.upload.uploadcare?.publicKey;
+    const ucSecretKey = config.upload.uploadcare?.secretKey;
     const fileUuid = validatedData.pdfHash; // pdfHash contient l'UUID Uploadcare
     if (ucPublicKey && ucSecretKey && fileUuid && /^[0-9a-f-]{36}$/.test(fileUuid)) {
       try {

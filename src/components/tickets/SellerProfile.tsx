@@ -69,7 +69,7 @@ export function SellerProfile({ seller }: ISellerProfileProps) {
           </Avatar>
           <div className="flex-1">
             <div className="mb-1 flex items-center gap-2">
-              <h3 className="text-lg font-bold text-slate-900">
+              <h3 className="text-lg font-bold text-gray-900">
                 {seller.name || 'Vendeur anonyme'}
               </h3>
               <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
@@ -77,7 +77,7 @@ export function SellerProfile({ seller }: ISellerProfileProps) {
                 Vérifié
               </Badge>
             </div>
-            <p className="text-sm text-slate-600">Membre depuis {memberSince}</p>
+            <p className="text-sm text-gray-600">Membre depuis {memberSince}</p>
           </div>
         </div>
 
@@ -86,14 +86,14 @@ export function SellerProfile({ seller }: ISellerProfileProps) {
         {/* Trust Score */}
         <div>
           <div className="mb-3 flex items-center justify-between">
-            <h4 className="text-sm font-medium text-slate-700">Score de confiance</h4>
+            <h4 className="text-sm font-medium text-gray-700">Score de confiance</h4>
             <span className={cn('text-sm font-semibold', trustLabel.color)}>
               {trustLabel.label}
             </span>
           </div>
 
           {/* Gauge circulaire simplifiée */}
-          <div className="relative mb-2 h-4 w-full overflow-hidden rounded-full bg-slate-100">
+          <div className="relative mb-2 h-4 w-full overflow-hidden rounded-full bg-gray-100">
             <div
               className={cn(
                 'h-full transition-all duration-500',
@@ -105,7 +105,7 @@ export function SellerProfile({ seller }: ISellerProfileProps) {
               style={{ width: `${seller.trustScore}%` }}
             />
           </div>
-          <p className="text-center text-2xl font-bold text-slate-900">
+          <p className="text-center text-2xl font-bold text-gray-900">
             {seller.trustScore}/100
           </p>
         </div>
@@ -134,10 +134,10 @@ export function SellerProfile({ seller }: ISellerProfileProps) {
           <>
             <Separator />
             <div>
-              <h4 className="mb-3 text-sm font-medium text-slate-700">Avis récents</h4>
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Avis récents</h4>
               <div className="space-y-3">
                 {seller.reviews.slice(0, 3).map((review, index) => (
-                  <div key={index} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                  <div key={index} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
                     <div className="mb-1 flex items-center justify-between">
                       <div className="flex items-center gap-1">
                         {Array.from({ length: 5 }).map((_, i) => (
@@ -147,12 +147,12 @@ export function SellerProfile({ seller }: ISellerProfileProps) {
                               'h-3 w-3',
                               i < review.rating
                                 ? 'fill-yellow-400 text-yellow-400'
-                                : 'text-slate-300'
+                                : 'text-gray-300'
                             )}
                           />
                         ))}
                       </div>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-gray-500">
                         {new Date(review.createdAt).toLocaleDateString('fr-FR', {
                           day: 'numeric',
                           month: 'short',
@@ -160,9 +160,9 @@ export function SellerProfile({ seller }: ISellerProfileProps) {
                       </p>
                     </div>
                     {review.comment && (
-                      <p className="text-xs text-slate-700">{review.comment}</p>
+                      <p className="text-xs text-gray-700">{review.comment}</p>
                     )}
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-gray-500">
                       par {review.reviewer.name || 'Anonyme'}
                     </p>
                   </div>

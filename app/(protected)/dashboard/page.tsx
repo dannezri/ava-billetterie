@@ -19,11 +19,11 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* En-tête */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Tableau de bord</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-3xl font-bold text-gray-900">Tableau de bord</h1>
+        <p className="text-gray-500 mt-1.5">
           Bienvenue ! Voici un aperçu de vos achats et activités récentes.
         </p>
       </div>

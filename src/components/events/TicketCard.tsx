@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CheckCircle2, TrendingDown, Clock, Lock } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -84,30 +83,27 @@ export function TicketCard({ ticket }: ITicketCardProps) {
           {/* Gauche : Catégorie + Siège */}
           <div className="flex-1">
             <div className="mb-1 flex items-center gap-2">
-              <h3 className="text-lg font-bold text-slate-900">
+              <h3 className="text-base font-semibold text-gray-900">
                 {ticket.section || 'Placement libre'}
               </h3>
               {ticket.verificationStatus === 'APPROVED' && !isReserved && (
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
               )}
               {isReserved && (
-                <Lock className="h-4 w-4 text-slate-400" />
+                <Lock className="h-4 w-4 text-gray-400" />
               )}
             </div>
             {ticket.seatNumber && (
-              <p className="text-sm text-slate-600">Siège : {ticket.seatNumber}</p>
+              <p className="text-sm text-gray-500">Siège : {ticket.seatNumber}</p>
             )}
             {/* Badge + décompte si réservé */}
             {isReserved && (
               <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
-                <Badge
-                  variant="outline"
-                  className="border-orange-200 bg-orange-50 text-orange-700 text-xs gap-1"
-                >
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-medium bg-orange-50 text-orange-700">
                   <Clock className="h-3 w-3" />
                   Réservé par un acheteur
-                </Badge>
-                <span className="text-xs text-slate-500 font-mono">
+                </span>
+                <span className="text-xs text-gray-400 font-mono">
                   Libre dans {countdown}
                 </span>
               </div>
@@ -117,19 +113,19 @@ export function TicketCard({ ticket }: ITicketCardProps) {
           {/* Centre : Prix */}
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className={cn('text-3xl font-bold', isReserved ? 'text-slate-400' : 'text-blue-600')}>
-                {ticket.price}€
+              <p className={cn('text-2xl font-bold', isReserved ? 'text-gray-400' : 'text-gray-900')}>
+                {ticket.price.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}€
               </p>
               {ticket.originalPrice && ticket.originalPrice !== ticket.price && (
-                <div className="flex items-center justify-end gap-1">
-                  <p className="text-sm text-slate-500 line-through">
+                <div className="flex items-center justify-end gap-1.5">
+                  <p className="text-sm text-gray-400 line-through">
                     {ticket.originalPrice}€
                   </p>
                   {discount > 0 && !isReserved && (
-                    <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
-                      <TrendingDown className="mr-1 h-3 w-3" />
+                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700">
+                      <TrendingDown className="h-3 w-3" />
                       -{discount}%
-                    </Badge>
+                    </span>
                   )}
                 </div>
               )}

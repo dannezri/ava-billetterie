@@ -13,10 +13,8 @@ import prisma from '@/lib/db/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-client';
 import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-});
+import { stripePayments as stripe } from '@/lib/stripe/client';
+import { paymentLimiter, applyRateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,6 +34,9 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    const rateLimitResponse = await applyRateLimit(paymentLimiter, user.id);
+    if (rateLimitResponse) return rateLimitResponse;
 
     const body = await request.json();
     const { ticketId, transactionId } = body;
