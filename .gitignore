@@ -87,3 +87,4 @@ Desktop.ini
 .env.sentry-build-plugin
 *.backup
 *.bak
+.credentials-temp.txt
