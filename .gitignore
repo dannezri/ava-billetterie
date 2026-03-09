@@ -72,6 +72,8 @@ Desktop.ini
 *.tmp
 *.temp
 *.log
+*credentials-temp*
+*.credentials-temp.*
 .cache
 
 # Husky (keep the hooks but ignore the installed scripts)
