@@ -251,27 +251,42 @@ npx prisma migrate deploy
 
 ---
 
-## 🤝 Contribution
+## 🌳 Git Workflow
 
-Nous suivons **Trunk-Based Development**. Voir [CONTRIBUTING.md](./CONTRIBUTING.md) pour :
+Ce projet utilise une structure **2 branches** :
 
-- Workflow Git
-- Convention de commits (Conventional Commits)
-- Code review process
-- Standards de qualité
+- **`main`** : Production (protégée, déploiement Vercel automatique)
+- **`feature/*`** : Développement nouvelles fonctionnalités (Preview Vercel auto)
+- **`hotfix/*`** : Fixes urgents production (Preview Vercel auto)
 
-### Quick Start
+### Développer une feature
 
 ```bash
-# Créer une branche feature
-git checkout -b feat/my-feature
+# Créer une branche depuis main à jour
+git checkout main && git pull origin main
+git checkout -b feature/ma-feature
 
-# Commits fréquents et atomiques
-git commit -m "feat(tickets): add barcode validation"
+# Développer + committer (Conventional Commits)
+git add . && git commit -m "feat: description"
 
-# Push et créer une PR
-git push origin feat/my-feature
+# Push → Preview Vercel créée automatiquement
+git push origin feature/ma-feature
+
+# Tester la Preview URL → ouvrir PR → Merge → Deploy prod
 ```
+
+Voir [docs/GIT_WORKFLOW.md](./docs/GIT_WORKFLOW.md) pour le guide complet (hotfix, conventions de commits, commandes utiles).
+
+---
+
+## 🤝 Contribution
+
+Voir [docs/GIT_WORKFLOW.md](./docs/GIT_WORKFLOW.md) pour :
+
+- Workflow Git (feature branches, hotfix)
+- Convention de commits (Conventional Commits)
+- Code review process
+- Commandes utiles
 
 ---
 
